@@ -3,7 +3,7 @@ import React from "react";
 
 function Register() {
   return (
-    <div>
+    <div className="w-screen  h-screen max-h-auto px-[160px] py-[20px] flex items-center justify-center  bg-bg  register-container">
       <RegisterForm />
     </div>
   );
