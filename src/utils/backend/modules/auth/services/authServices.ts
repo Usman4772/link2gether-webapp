@@ -1,18 +1,17 @@
-import { ObjectId } from "mongoose";
-import { ERROR_RESPONSE } from "../../../helpers/responseHelpers";
-import { UserPayload } from "../../../../frontend/types";
-import User from "@/models/user";
-import { uploadMedia } from "../../../../frontend/uploadMedia";
-import { loginSchema, registerSchema } from "../../../helpers/validationSchema";
 import { connectDb } from "@/db/connectDb";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import { NextRequest } from "next/server";
-import { LoginProps } from "../types/types";
-import BlackListTokens from "@/models/blacklistTokens";
-import { jwtVerify } from "jose";
-import moment from "moment";
 import Tokens from "@/models/tokens";
+import User from "@/models/user";
+import bcrypt from "bcrypt";
+import { jwtVerify } from "jose";
+import jwt from "jsonwebtoken";
+import moment from "moment";
+import { ObjectId } from "mongoose";
+import { NextRequest } from "next/server";
+import { UserPayload } from "../../../../frontend/types";
+import { uploadMedia } from "../../../../frontend/uploadMedia";
+import { ERROR_RESPONSE } from "../../../helpers/responseHelpers";
+import { loginSchema, registerSchema } from "../../../helpers/validationSchema";
+import { LoginProps } from "../types/types";
 
 export async function connectToDatabase() {
   if (!(await connectDb())) {
@@ -47,10 +46,10 @@ export function validateUserData(userData: any, route: "register" | "login") {
   }
 }
 
-export async function handleProfileImage(profileImage: Blob | null) {
-  if (!profileImage) return null;
+export async function handleMediaUpload(media: Blob | null) {
+  if (!media) return null;
 
-  const { secure_url }: any = await uploadMedia(profileImage, "link-to-gether");
+  const { secure_url }: any = await uploadMedia(media, "link-to-gether");
   return secure_url || null;
 }
 
@@ -94,7 +93,19 @@ export function userPayload(user: any, token: string): UserPayload {
 }
 
 export function handleError(error: any) {
-  const parsedError = JSON.parse(error.message);
+  let parsedError;
+  try {
+    parsedError =
+      typeof error.message === "string" && error.message.trim()
+        ? JSON.parse(error.message)
+        : { message: error?.message || "Something went wrong", status: 500 };
+  } catch {
+    parsedError = {
+      message: error?.message || "Something went wrong",
+      errors: null,
+      status: 500,
+    };
+  }
   return ERROR_RESPONSE(
     parsedError.errors || "",
     parsedError.status || 500,
@@ -176,9 +187,6 @@ export async function parseLoginFormData(req: NextRequest) {
 
 export async function verifyLoginDetails(userData: LoginProps) {
   const user = await User.findOne({ email: userData.email });
-  user.remember = false;
-  await user.save();
-  const remember = userData.remember;
   if (!user) {
     throw new Error(
       JSON.stringify({
@@ -188,6 +196,10 @@ export async function verifyLoginDetails(userData: LoginProps) {
       })
     );
   }
+  user.remember = false;
+  await user.save();
+  const remember = userData.remember;
+
   const isPasswordCorrect = await decryptPassword(userData?.password, user);
   if (!isPasswordCorrect) {
     throw new Error(

@@ -45,3 +45,10 @@ export const loginSchema = z
     password: z.string({ message: "Password is required" }),
   })
   .required();
+
+export const communitySchema = z
+  .object({
+    community_name: z.string({ message: "Community name is required" }),
+    category: z.string({ message: "Please choose a category" }),
+  })
+  .required();

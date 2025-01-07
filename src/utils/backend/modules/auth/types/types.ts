@@ -7,3 +7,10 @@ export interface LoginProps {
   password: string;
   remember?: boolean;
 }
+
+export interface CommunityProps {
+  community_name: string;
+  category: string;
+  description?: string;
+  displayPIc?: Blob | null;
+}

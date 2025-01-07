@@ -1,8 +1,8 @@
 "use client";
 import useToast from "@/hooks/useToast";
-import { CommunityCategory } from "@/utils/enums/enums";
 import { UploadFile } from "antd";
 import axios from "axios";
+import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { UseFormSetError } from "react-hook-form";
@@ -32,6 +32,7 @@ function useRegister(formSchema: any, setError: UseFormSetError<any>) {
       const response = await axios.post("/api/auth/register", formData);
       if (response.data?.success) {
         toast.success(response?.data?.message);
+        setCookie("token", response?.data?.data?.token);
         router.push("/categories");
       }
     } catch (error: any) {

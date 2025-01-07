@@ -1,4 +1,4 @@
-import { CommunityCategory } from "@/utils/enums/enums";
+import { GeneralCommunityTypes } from "@/utils/enums/enums";
 import mongoose from "mongoose";
 const communitySchema = new mongoose.Schema({
   community_name: {
@@ -14,7 +14,7 @@ const communitySchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    enum: Object.values(CommunityCategory),
+    enum: Object.values(GeneralCommunityTypes),
     required: true,
   },
   members: [
@@ -23,6 +23,10 @@ const communitySchema = new mongoose.Schema({
       ref: "User",
     },
   ],
+  memberCount: {
+    type: Number,
+    default: 0,
+  },
   posts: [
     {
       type: mongoose.Schema.Types.ObjectId,

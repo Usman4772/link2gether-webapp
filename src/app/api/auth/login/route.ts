@@ -7,7 +7,7 @@ import {
   validateUserData,
   verifyLoginDetails,
 } from "@/utils/backend/modules/auth/services/authServices";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { handleError } from "../../../../utils/backend/modules/auth/services/authServices";
 import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";
 import { LoginProps } from "@/utils/backend/modules/auth/types/types";

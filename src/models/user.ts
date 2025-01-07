@@ -1,4 +1,4 @@
-import { CommunityCategory } from "@/utils/enums/enums";
+import { GeneralCommunityTypes } from "@/utils/enums/enums";
 import mongoose from "mongoose";
 const userSchema = new mongoose.Schema({
   username: {
@@ -22,17 +22,14 @@ const userSchema = new mongoose.Schema({
     default: false,
   },
   preferences: {
-    categories: [
-      {
-        type: String,
-        enum: Object.values(CommunityCategory),
-        required: true,
-      },
-    ],
+    categories: {
+      type: [String],
+      enum: Object.values(GeneralCommunityTypes),
+      minLength: [3, "Please select at least 3 categories"],
+      required: true,
+    },
   },
-  token: {
-    type: String,
-  },
+
   communityMemberships: [
     {
       type: mongoose.Schema.Types.ObjectId,

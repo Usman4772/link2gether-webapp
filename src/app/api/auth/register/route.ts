@@ -5,7 +5,7 @@ import {
   createUser,
   getTokenExpiration,
   handleError,
-  handleProfileImage,
+  handleMediaUpload,
   hashPassword,
   parseRegisterFormData,
   userPayload,
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     validateUserData(userData, "register");
     await checkUserExistence(userData.email);
     const hashedPassword = await hashPassword(userData.password);
-    const imageUrl = await handleProfileImage(userData.profileImage);
+    const imageUrl = await handleMediaUpload(userData.profileImage);
     const user = await createUser({
       ...userData,
       password: hashedPassword,

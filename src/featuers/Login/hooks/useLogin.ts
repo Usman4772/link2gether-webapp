@@ -1,6 +1,7 @@
 import useToast from "@/hooks/useToast";
 import { LoginProps } from "@/utils/backend/modules/auth/types/types";
 import axios from "axios";
+import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { UseFormSetError } from "react-hook-form";
@@ -15,6 +16,7 @@ function useLogin(setError: UseFormSetError<any>) {
       const response = await axios.post("/api/auth/login", values);
       if (response?.data?.success) {
         toast.success(response?.data?.message);
+        setCookie("token", response?.data?.data?.token);
         router.push("/");
       }
     } catch (error: any) {

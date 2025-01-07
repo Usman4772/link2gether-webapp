@@ -66,6 +66,63 @@ body {
   background-image: url("/bg-img.png");
 }
 
+.button-container-2 {
+  position: relative;
+  width: 100px;
+  height: 50px;
+  margin: 7vh auto;
+  overflow: hidden;
+  border: 1px solid #000;
+  font-family: "Lato", sans-serif;
+  font-weight: 300;
+  transition: 0.5s;
+  letter-spacing: 1px;
+  border-radius: 8px;
+}
+
+.button-container-2 button {
+  width: 101%;
+  height: 100%;
+  font-family: "Lato", sans-serif;
+  font-weight: bold;
+  font-size: 11px;
+  letter-spacing: 1px;
+  background: #000;
+  color: #fff;
+  mask: url("https://raw.githubusercontent.com/robin-dela/css-mask-animation/master/img/urban-sprite.png");
+  -webkit-mask: url("https://raw.githubusercontent.com/robin-dela/css-mask-animation/master/img/urban-sprite.png");
+  -webkit-mask-size: 3000% 100%;
+  mask-size: 3000% 100%;
+  cursor: pointer;
+  animation: ani2 0.7s steps(29) forwards;
+}
+
+.button-container-2 button:hover {
+  animation: ani 0.7s steps(29) forwards;
+}
+
+.button-container-2 .mas {
+  position: absolute;
+  color: #000;
+  text-align: center;
+  width: 101%;
+  font-family: "Lato", sans-serif;
+  font-weight: bold;
+  font-size: 11px;
+  margin-top: 17px;
+}
+
+@keyframes ani2 {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
