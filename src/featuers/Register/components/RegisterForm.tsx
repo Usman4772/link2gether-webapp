@@ -1,68 +1,55 @@
 "use client";
+import FormInput from "@/components/Global/FormInput";
+import PasswordInput from "@/components/Global/PasswordInput";
+import Uploader from "@/components/Global/Uploader";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import Title from "antd/es/typography/Title";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-
-const formSchema = z.object({
-  username: z.string().min(3, {
-    message: "Username must be at least 3 characters",
-  }),
-  email: z.string().email("Please enter valid email address"),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters long" }),
-  confirm_password: z.string(),
-});
+import Image from "next/image";
+import Link from "next/link";
+import useFormConfigration from "../hooks/useFormConfigration";
+import useRegister from "../hooks/useRegister";
 
 function RegisterForm() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      confirm_password: "",
-    },
-  });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-  }
+  const { form, formSchema, setError } = useFormConfigration();
+  const { handleRegister, fileList, setFileList, btnLoading } = useRegister(
+    formSchema,
+    setError
+  );
 
   return (
-    <div className="w-full h-full flex flex-col items-center pt-20 pb-12 px-16 bg-white rounded-[1rem] shadow-sm">
+    <div className="w-full overflow-x-hidden min-h-screen flex  items-center justify-center flex-col lg:flex-row md:justify-between  pb-12 md:px-16 bg-white md:rounded-[1rem] shadow-sm lg:w-full lg:h-full">
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex w-[960px] h-[695px] max-w-[960px] flex-col items-start py-20 "
+          onSubmit={form.handleSubmit(handleRegister)}
+          className="flex max-w-[960px] flex-col items-start py-20  justify-start"
         >
-          <h2 className="self-stretch text-[#0D141C] text-center  text-[22px] font-bold leading-paragraph-100 py-4">
+          <p className="text-[14px] font-[400] text-[#706F6F] leading-[22px] mx-[16px]">
+            LET'S GET YOU STARTED
+          </p>
+          <h2 className="self-stretch text-[#0D141C] text-start  text-[22px] font-bold leading-paragraph-100 py-4 mx-[16px]">
             Create Account
           </h2>
+          <div className="w-full flex items-center justify-center">
+            <Uploader fileList={fileList} setFileList={setFileList} />
+          </div>
+
           <FormField
             name="username"
             control={form.control}
             render={({ field }) => (
-              <FormItem className=" my-[12px] mx-[16px] ">
+              <FormItem className=" my-[12px] mx-[16px] max-w-[450px]">
                 <FormControl>
-                  <Input
+                  <FormInput
                     placeholder="Username"
                     {...field}
-                    className="flex h-[56px] items-center self-stretch bg-[#E8EDF5] p-[16px] w-[448px] rounded-12"
+                    name="username"
                   />
                 </FormControl>
                 <FormMessage />
@@ -74,12 +61,12 @@ function RegisterForm() {
             name="email"
             control={form.control}
             render={({ field }) => (
-              <FormItem className=" my-[12px] mx-[16px] ">
+              <FormItem className=" my-[12px] mx-[16px] max-w-[450px]">
                 <FormControl>
-                  <Input
-                    placeholder="Email"
+                  <FormInput
+                    placeholder="example@google.com"
                     {...field}
-                    className="flex h-[56px] items-center self-stretch bg-[#E8EDF5] p-[16px] w-[448px] rounded-12"
+                    name="email"
                   />
                 </FormControl>
                 <FormMessage />
@@ -90,13 +77,9 @@ function RegisterForm() {
             name="password"
             control={form.control}
             render={({ field }) => (
-              <FormItem className=" my-[12px] mx-[16px] ">
+              <FormItem className=" my-[12px] mx-[16px] max-w-[450px]">
                 <FormControl>
-                  <Input
-                    placeholder="Password"
-                    {...field}
-                    className="flex h-[56px] items-center self-stretch bg-[#E8EDF5] p-[16px] w-[448px] rounded-12"
-                  />
+                  <PasswordInput placeholder="Password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -107,28 +90,40 @@ function RegisterForm() {
             name="confirm_password"
             control={form.control}
             render={({ field }) => (
-              <FormItem className=" my-[12px] mx-[16px] ">
+              <FormItem className=" my-[12px] mx-[16px] max-w-[450px]">
                 <FormControl>
-                  <Input
-                    placeholder="Confirm Password"
-                    {...field}
-                    className="flex h-[56px] items-center self-stretch bg-[#E8EDF5] p-[16px] w-[448px] rounded-12"
-                  />
+                  <PasswordInput placeholder="Confirm password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
           <Button
             type="submit"
-            variant={"default"}
-            className="w-[448px] h-[56px]  px-[16px] py-[12px]"
+            variant={"blue"}
+            className="w-[448px] h-[56px]  mx-[16px] py-[12px] hover:bg-blue-500"
           >
-            {/* <Loader2 className="animate-spin" /> */}
+            {btnLoading && <Loader2 className="animate-spin" />}
             Register
           </Button>
+          <h2 className="px-[16px] py-4 text-[#706F6F]">
+            Already have an account?{" "}
+            <Link href={"/login"} className="text-btn">
+              Login here
+            </Link>
+          </h2>
         </form>
       </Form>
+
+      <div>
+        <Image
+          src={"/register-illustration.svg"}
+          width={400}
+          height={400}
+          alt="Register"
+        />
+      </div>
     </div>
   );
 }

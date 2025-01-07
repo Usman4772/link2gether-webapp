@@ -1,0 +1,33 @@
+import User from "@/models/user";
+import {
+  parseCommunityFormData,
+  validateCommunityPayload,
+} from "@/utils/backend/helpers/user.helpers";
+import { validateToken } from "@/utils/backend/helpers/globals";
+import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";
+import {
+  connectToDatabase,
+  handleError,
+  handleMediaUpload,
+} from "@/utils/backend/modules/auth/services/authServices";
+import { createCommunity } from "@/utils/backend/modules/auth/services/user.services.";
+import { NextRequest } from "next/server";
+
+export async function POST(req: NextRequest) {
+  try {
+    await connectToDatabase();
+    const userId = await validateToken(req);
+    const formData = await req.formData();
+    await validateCommunityPayload(formData);
+    const data = await parseCommunityFormData(formData);
+    const displayPic = await handleMediaUpload(data.displayPic);
+    data.displayPic = displayPic;
+    const community = await createCommunity(data, userId);
+    const user = await User.findById(userId);
+    user.communityMemberships.push(community._id);
+    await user.save();
+    return SUCCESS_RESPONSE(community, 201, "Community created successfully");
+  } catch (error) {
+    return handleError(error);
+  }
+}
