@@ -3,6 +3,7 @@ import { Mongoose, ObjectId } from "mongoose";
 export interface FormInputProps {
   placeholder: string;
   name?: string;
+  className?: string;
 }
 
 export interface UserPayload {

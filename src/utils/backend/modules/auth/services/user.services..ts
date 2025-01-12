@@ -1,19 +1,19 @@
 import Community from "@/models/community";
 import { CommunityProps } from "../types/types";
 import User from "@/models/user";
+import apiErrors from "@/utils/backend/helpers/apiErrors";
 
 export async function createCommunity(data: CommunityProps, userId: any) {
   const alreadyPresent = await Community.findOne({
     community_name: data.community_name,
   });
   if (alreadyPresent)
-    throw new Error(
-      JSON.stringify({
-        message: "Community already exists",
-        status: 400,
-        errors: [{ community_name: "Community already exists" }],
-      })
+    throw new apiErrors(
+      [{ community_name: "Community already exists" }],
+      "Community already exists",
+      400
     );
+
   const community = await Community.create({
     ...data,
   });

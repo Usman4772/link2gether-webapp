@@ -1,17 +1,16 @@
 "use client";
-import useToast from "@/hooks/useToast";
 import { UploadFile } from "antd";
 import axios from "axios";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { UseFormSetError } from "react-hook-form";
+import toast from "react-hot-toast";
 import { z } from "zod";
 
 function useRegister(formSchema: any, setError: UseFormSetError<any>) {
   const [btnLoading, setBtnLoading] = useState(false);
   const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const toast = useToast();
   const router = useRouter();
 
   async function handleRegister(values: z.infer<typeof formSchema>) {
@@ -33,7 +32,7 @@ function useRegister(formSchema: any, setError: UseFormSetError<any>) {
       if (response.data?.success) {
         toast.success(response?.data?.message);
         setCookie("token", response?.data?.data?.token);
-        router.push("/categories");
+        router.push("/onboarding/categories");
       }
     } catch (error: any) {
       handleFormErrors(error?.response?.data?.errors);

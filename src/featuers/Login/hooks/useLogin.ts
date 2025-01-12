@@ -1,14 +1,13 @@
-import useToast from "@/hooks/useToast";
 import { LoginProps } from "@/utils/backend/modules/auth/types/types";
 import axios from "axios";
 import { setCookie } from "cookies-next";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { UseFormSetError } from "react-hook-form";
+import toast from "react-hot-toast";
 
 function useLogin(setError: UseFormSetError<any>) {
   const [btnLoading, setBtnLoading] = useState(false);
-  const toast = useToast();
   const router = useRouter();
   async function handleLogin(values: LoginProps) {
     try {

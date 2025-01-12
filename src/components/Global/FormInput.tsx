@@ -3,13 +3,15 @@ import { Input } from "../ui/input";
 import { HiOutlineMail } from "react-icons/hi";
 import { FormInputProps } from "@/utils/frontend/types";
 import { LuUser } from "react-icons/lu";
+import { FiSearch } from "react-icons/fi";
 
 const icons = {
   username: <LuUser />,
   email: <HiOutlineMail />,
+  search: <FiSearch />,
 };
 
-function FormInput({ placeholder, name, ...props }: FormInputProps) {
+function FormInput({ placeholder, name, className, ...props }: FormInputProps) {
   const iconKey = name as keyof typeof icons;
   return (
     <div className="relative w-full ">
@@ -20,7 +22,7 @@ function FormInput({ placeholder, name, ...props }: FormInputProps) {
         type={"text"}
         placeholder={placeholder}
         {...props}
-        className="flex h-[56px] items-center self-stretch bg-[#E8EDF5] p-[16px] px-[35px] w-[448px] rounded-12 "
+        className={`flex h-[56px] items-center self-stretch bg-[#E8EDF5] p-[16px] px-[35px] w-[448px] rounded-12  ${className}`}
       />
     </div>
   );

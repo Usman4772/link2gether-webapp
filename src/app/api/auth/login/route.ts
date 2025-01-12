@@ -1,18 +1,17 @@
+import Tokens from "@/models/tokens";
+import { errorHandler } from "@/utils/backend/helpers/globals";
+import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";
 import {
   connectToDatabase,
   createToken,
-  getLoginPaylod,
+  getLoginPayload,
   getTokenExpiration,
   parseLoginFormData,
   validateUserData,
   verifyLoginDetails,
 } from "@/utils/backend/modules/auth/services/authServices";
-import { NextRequest, NextResponse } from "next/server";
-import { handleError } from "../../../../utils/backend/modules/auth/services/authServices";
-import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";
 import { LoginProps } from "@/utils/backend/modules/auth/types/types";
-import Tokens from "@/models/tokens";
-import moment from "moment";
+import { NextRequest } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -24,9 +23,9 @@ export async function POST(req: NextRequest) {
 
     const expires_at = getTokenExpiration(userData?.remember);
     await Tokens.create({ token, userId: user?._id, expires_at });
-    const payload = getLoginPaylod(user, token);
+    const payload = getLoginPayload(user, token);
     return SUCCESS_RESPONSE(payload, 200, "Logged in successfully");
   } catch (error) {
-    return handleError(error);
+    return errorHandler(error);
   }
 }

@@ -9,19 +9,13 @@ import { ObjectId } from "mongoose";
 import { NextRequest } from "next/server";
 import { UserPayload } from "../../../../frontend/types";
 import { uploadMedia } from "../../../../frontend/uploadMedia";
-import { ERROR_RESPONSE } from "../../../helpers/responseHelpers";
 import { loginSchema, registerSchema } from "../../../helpers/validationSchema";
 import { LoginProps } from "../types/types";
+import apiErrors from "@/utils/backend/helpers/apiErrors";
 
 export async function connectToDatabase() {
   if (!(await connectDb())) {
-    throw new Error(
-      JSON.stringify({
-        errors: "Database not connected",
-        status: 500,
-        message: "Database connection error",
-      })
-    );
+    throw new apiErrors([], "Database connection error", 500);
   }
 }
 
@@ -36,13 +30,7 @@ export function validateUserData(userData: any, route: "register" | "login") {
         [err?.path.toString()]: err?.message,
       };
     });
-    throw new Error(
-      JSON.stringify({
-        errors,
-        status: 400,
-        message: "Validation errors found",
-      })
-    );
+    throw new apiErrors(errors, "Validation errors found", 400);
   }
 }
 
@@ -56,12 +44,10 @@ export async function handleMediaUpload(media: Blob | null) {
 export async function checkUserExistence(email: string) {
   const user = await User.findOne({ email });
   if (user) {
-    throw new Error(
-      JSON.stringify({
-        errors: [{ email: "This email is already registered" }],
-        status: 404,
-        message: "User already exists",
-      })
+    throw new apiErrors(
+      [{ email: "This email is already registered" }],
+      "User already exists",
+      404
     );
   }
 }
@@ -92,27 +78,6 @@ export function userPayload(user: any, token: string): UserPayload {
   };
 }
 
-export function handleError(error: any) {
-  let parsedError;
-  try {
-    parsedError =
-      typeof error.message === "string" && error.message.trim()
-        ? JSON.parse(error.message)
-        : { message: error?.message || "Something went wrong", status: 500 };
-  } catch {
-    parsedError = {
-      message: error?.message || "Something went wrong",
-      errors: null,
-      status: 500,
-    };
-  }
-  return ERROR_RESPONSE(
-    parsedError.errors || "",
-    parsedError.status || 500,
-    parsedError.message || "Something went wrong"
-  );
-}
-
 export async function parseRegisterFormData(req: NextRequest) {
   try {
     const formData = await req.formData();
@@ -132,25 +97,23 @@ export async function parseRegisterFormData(req: NextRequest) {
       profileImage: profileImage as Blob | null,
     };
   } catch (error) {
-    throw new Error(
-      JSON.stringify({
-        errors: [
-          {
-            username: "Username is required",
-          },
-          {
-            email: "Email is required",
-          },
-          {
-            password: "Password is required",
-          },
-          {
-            confirm_password: "Confirm password is required",
-          },
-        ],
-        status: 401,
-        message: "Validation errors",
-      })
+    throw new apiErrors(
+      [
+        {
+          username: "Username is required",
+        },
+        {
+          email: "Email is required",
+        },
+        {
+          password: "Password is required",
+        },
+        {
+          confirm_password: "Confirm password is required",
+        },
+      ],
+      "Validation errors",
+      400
     );
   }
 }
@@ -171,15 +134,10 @@ export async function parseLoginFormData(req: NextRequest) {
         remember: formData.remember as boolean,
       };
     } catch (error) {
-      throw new Error(
-        JSON.stringify({
-          errors: [
-            { email: "Email is required" },
-            { password: "Password is required" },
-          ],
-          status: 401,
-          message: "Validation errors found",
-        })
+      throw new apiErrors(
+        [{ email: "Email is required" }, { password: "Password is required" }],
+        "Validation errors found",
+        401
       );
     }
   }
@@ -188,12 +146,10 @@ export async function parseLoginFormData(req: NextRequest) {
 export async function verifyLoginDetails(userData: LoginProps) {
   const user = await User.findOne({ email: userData.email });
   if (!user) {
-    throw new Error(
-      JSON.stringify({
-        errors: [{ email: "This email is not registered" }],
-        status: 401,
-        message: "This email is not registered",
-      })
+    throw new apiErrors(
+      [{ email: "This email is not registered" }],
+      "This email is not registered",
+      400
     );
   }
   user.remember = false;
@@ -202,13 +158,7 @@ export async function verifyLoginDetails(userData: LoginProps) {
 
   const isPasswordCorrect = await decryptPassword(userData?.password, user);
   if (!isPasswordCorrect) {
-    throw new Error(
-      JSON.stringify({
-        errors: [],
-        status: 401,
-        message: "Invalid email or password",
-      })
-    );
+    throw new apiErrors([], "Invalid email or password", 400);
   }
   if (remember) user.remember = remember;
   await user.save();
@@ -219,7 +169,7 @@ export async function decryptPassword(password: string, user: any) {
   return await bcrypt.compare(password, user?.password);
 }
 
-export function getLoginPaylod(user: any, token: string) {
+export function getLoginPayload(user: any, token: string) {
   return {
     id: user?._id,
     name: user?.name,
@@ -247,31 +197,27 @@ export function LogoutError(
 }
 export async function validateLogoutRequest(req: NextRequest) {
   const headers = req.headers.get("authorization");
-  if (!headers) return LogoutError([], "Logout request failed");
+  if (!headers) throw new apiErrors([], "Logout request failed", 400);
   const token = headers.split(" ")[1];
-  if (!token) return LogoutError([], "Logout request failed");
+  if (!token) return new apiErrors([], "Logout request failed", 400);
   await verifyToken(token);
 }
 
 export async function verifyToken(token: string) {
-  try {
-    const isVerified = await jwtVerify(
-      token,
-      new TextEncoder().encode("u$man2309")
-    );
-    if (!isVerified) return LogoutError([], "Logout request failed");
-    const loggedIn = await Tokens.findOne({ token });
-    if (!loggedIn) throw new Error("User already logged out");
-    await Tokens.findOneAndDelete({ token });
-    const userId = isVerified?.payload?.id;
-    const user = await User.findById(userId);
-    if (!user) return LogoutError([], "Logout request failed");
-    user.token = null;
-    user.remember = false;
-    await user.save();
-  } catch (error: any) {
-    return LogoutError(error?.message, "Logout request failed");
-  }
+  const isVerified = await jwtVerify(
+    token,
+    new TextEncoder().encode("u$man2309")
+  );
+  if (!isVerified) return new apiErrors([], "Logout request failed", 400);
+  const loggedIn = await Tokens.findOne({ token });
+  if (!loggedIn) throw new apiErrors([], "User already logged out", 400);
+  await Tokens.findOneAndDelete({ token });
+  const userId = isVerified?.payload?.id;
+  const user = await User.findById(userId);
+  if (!user) return new apiErrors([], "Logout request failed", 400);
+  user.token = null;
+  user.remember = false;
+  await user.save();
 }
 
 export function getTokenExpiration(remember: boolean | undefined) {

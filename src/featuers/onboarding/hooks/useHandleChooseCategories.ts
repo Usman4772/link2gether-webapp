@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { getRecommendedCategoriesAPI } from "../apis/api";
-import useToast from "@/hooks/useToast";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { handleAPIErrors } from "@/utils/frontend/handleErrors";
 
-function useGetRecommendedCommunities() {
+function useHandleChooseCategories() {
   const [btnLoading, setBtnLoading] = useState(false);
-  const toast = useToast();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const router = useRouter();
 
   async function handleSubmit() {
     try {
@@ -15,9 +17,10 @@ function useGetRecommendedCommunities() {
       });
       if (response.data?.success) {
         toast.success("Categories added successfully");
+        router.push("/onboarding/communities");
       }
     } catch (error: any) {
-      toast.error(error?.response?.data?.message);
+      handleAPIErrors(error);
     } finally {
       setBtnLoading(false);
     }
@@ -30,4 +33,4 @@ function useGetRecommendedCommunities() {
   };
 }
 
-export default useGetRecommendedCommunities;
+export default useHandleChooseCategories;

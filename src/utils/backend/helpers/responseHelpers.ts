@@ -1,28 +1,9 @@
 import { NextResponse } from "next/server";
 
-interface ErrorResponse {
-  message: string;
-  success: boolean;
-  errors: any;
-}
 interface SuccessResponse {
   message: string;
   success: boolean;
   data: any;
-}
-export function ERROR_RESPONSE(
-  error: any[],
-  status: number,
-  message: string = "Something went wrong"
-): NextResponse<ErrorResponse> {
-  return NextResponse.json(
-    {
-      message,
-      success: false,
-      errors: error,
-    },
-    { status: status }
-  );
 }
 
 export function SUCCESS_RESPONSE(
