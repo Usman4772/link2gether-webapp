@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
     await connectToDatabase();
     const userData: LoginProps = await parseLoginFormData(req);
     validateUserData(userData, "login");
+
     const user = await verifyLoginDetails(userData);
     const token = createToken(user?._id, userData.remember);
 
