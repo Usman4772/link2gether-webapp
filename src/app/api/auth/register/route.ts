@@ -1,20 +1,19 @@
+import Tokens from "@/models/tokens";
+import { errorHandler } from "@/utils/backend/helpers/globals";
+import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";
 import {
   checkUserExistence,
   connectToDatabase,
   createToken,
   createUser,
   getTokenExpiration,
-  handleError,
   handleMediaUpload,
   hashPassword,
   parseRegisterFormData,
   userPayload,
   validateUserData,
 } from "@/utils/backend/modules/auth/services/authServices";
-import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";
 import { NextRequest } from "next/server";
-import Tokens from "@/models/tokens";
-import moment from "moment";
 
 export async function POST(req: NextRequest) {
   try {
@@ -38,6 +37,6 @@ export async function POST(req: NextRequest) {
     const payload = userPayload(user, token);
     return SUCCESS_RESPONSE(payload, 201, "User  created successfully");
   } catch (error: any) {
-    return handleError(error);
+    return errorHandler(error);
   }
 }

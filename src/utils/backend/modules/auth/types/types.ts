@@ -14,3 +14,18 @@ export interface CommunityProps {
   description?: string;
   displayPIc?: Blob | null;
 }
+
+export interface CommunitiesDataType {
+  community_name: string;
+  description?: string;
+  displayPic: string | null;
+  memberCount: number;
+}
+
+export interface RecommendedCommunityType {
+  id: string;
+  community_name: string;
+  membersCount: number;
+  displayPic: string | null;
+  content?: string;
+}

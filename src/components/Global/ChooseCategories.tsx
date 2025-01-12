@@ -1,5 +1,5 @@
 "use client";
-import useGetRecommendedCommunities from "@/featuers/onboarding/hooks/useGetRecommendedCommunities";
+import useHandleChooseCategories from "@/featuers/onboarding/hooks/useHandleChooseCategories";
 import {
   categories,
   chooseCategoryHeading,
@@ -21,7 +21,7 @@ function ChooseCategories() {
     btnLoading,
     setSelectedCategories,
     selectedCategories,
-  } = useGetRecommendedCommunities();
+  } = useHandleChooseCategories();
 
   //in future we can fetch categories which are created already from backend
 

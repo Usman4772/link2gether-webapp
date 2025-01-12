@@ -1,13 +1,12 @@
 import User from "@/models/user";
+import { errorHandler, validateToken } from "@/utils/backend/helpers/globals";
+import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";
 import {
   parseCommunityFormData,
   validateCommunityPayload,
 } from "@/utils/backend/helpers/user.helpers";
-import { validateToken } from "@/utils/backend/helpers/globals";
-import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";
 import {
   connectToDatabase,
-  handleError,
   handleMediaUpload,
 } from "@/utils/backend/modules/auth/services/authServices";
 import { createCommunity } from "@/utils/backend/modules/auth/services/user.services.";
@@ -28,6 +27,6 @@ export async function POST(req: NextRequest) {
     await user.save();
     return SUCCESS_RESPONSE(community, 201, "Community created successfully");
   } catch (error) {
-    return handleError(error);
+    return errorHandler(error);
   }
 }
