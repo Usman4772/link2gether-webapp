@@ -15,7 +15,7 @@ import { NextRequest } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     await connectToDatabase();
-    const userId = await validateToken(req);
+    const { userId } = await validateToken(req);
     const formData = await req.formData();
     await validateCommunityPayload(formData);
     const data = await parseCommunityFormData(formData);

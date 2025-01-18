@@ -1,9 +1,8 @@
 "use client";
-import Image from "next/image";
-import React, { useEffect, useId, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { useOutsideClick } from "@/hooks/use-outside-click";
-import { CommunitiesDataType } from "@/utils/backend/modules/auth/types/types";
+import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
+import { useEffect, useId, useRef, useState } from "react";
 
 export function ExpandableCards({
   cards,
@@ -136,15 +135,15 @@ export function ExpandableCards({
           </div>
         ) : null}
       </AnimatePresence>
-      <ul className="max-w-2xl  w-full gap-4">
+      <ul className="  w-full gap-4  ">
         {cards.map((card, index) => (
           <motion.div
             layoutId={`card-${card.community_name}-${id}`}
             key={`card-${card.community_name}-${id}`}
             onClick={() => setActive(card)}
-            className="p-4 flex flex-col md:flex-row justify-between items-center hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer"
+            className="p-4 py-2  flex flex-col md:flex-row justify-between items-center hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl cursor-pointer  w-full"
           >
-            <div className="flex gap-4 flex-col md:flex-row ">
+            <div className="flex gap-4 items-center flex-col md:flex-row ">
               <motion.div layoutId={`image-${card.community_name}-${id}`}>
                 <Image
                   width={100}
@@ -157,21 +156,26 @@ export function ExpandableCards({
               <div className="">
                 <motion.h3
                   layoutId={`title-${card.community_name}-${id}`}
-                  className="font-medium text-neutral-800 dark:text-neutral-200 text-center md:text-left"
+                  className="font-[700] text-neutral-800 dark:text-neutral-200 text-center md:text-left"
                 >
                   {card.community_name}
                 </motion.h3>
                 <motion.p
                   layoutId={`description-${card.membersCount}-${id}`}
-                  className="text-neutral-600 dark:text-neutral-400 text-center md:text-left"
+                  className="text-paragraph dark:text-neutral-400 text-sm text-center md:text-left"
                 >
-                  {active?.membersCount}
+                  {card?.membersCount} members
                 </motion.p>
               </div>
             </div>
             <motion.button
               layoutId={`button-${card.community_name}-${id}`}
               className="px-4 py-2 text-sm rounded-full font-bold bg-gray-100 hover:bg-green-500 hover:text-white text-black mt-4 md:mt-0"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onClick(card?.id);
+              }}
             >
               {joined.includes(card?.id) ? "Exit" : okText}
             </motion.button>

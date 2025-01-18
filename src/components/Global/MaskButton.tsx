@@ -15,7 +15,7 @@ const MaskButton = ({
   className?: string;
 }) => {
   return (
-    <div className={`${className} container`} role="button" onClick={onClick}>
+    <div className={`${className} `} role="button" onClick={onClick}>
       <div className="button-container-2">
         <span className="mas">{text}</span>
         <button

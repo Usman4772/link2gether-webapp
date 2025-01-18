@@ -9,9 +9,12 @@ import MaskButton from "./MaskButton";
 import { TextGenerateEffect } from "./TextGenerateEffect";
 import { ThreeDCard } from "./ThreeDCard";
 import { TypewriterEffectSmooth } from "./TypewriterEffect ";
+import useFetchCategories from "@/featuers/onboarding/hooks/useFetchCategories";
+import Loading from "./Loading";
 export interface CategoryType {
   name: string;
   icon: string;
+  onboardingStatus: string;
   description: string;
   value: string;
 }
@@ -22,9 +25,10 @@ function ChooseCategories() {
     setSelectedCategories,
     selectedCategories,
   } = useHandleChooseCategories();
+  const { categories, pageLoading } = useFetchCategories();
 
-  //in future we can fetch categories which are created already from backend
-
+  //TODO: in future we can fetch categories which are created already from backend
+  if (pageLoading) return <Loading />;
   return (
     <div className="w-screen">
       <h2 className="self-stretch text-[#0D141C] text-center w-full py-8  text-[22px] font-bold leading-paragraph-100  mx-[16px] flex items-center justify-center flex-col ">
@@ -59,7 +63,7 @@ function ChooseCategories() {
           })}
         </div>
       </div>
-      <div className="w-full flex items-center justify-end">
+      <div className="w-full flex items-center justify-center">
         <MaskButton
           text="Continue"
           onClick={handleSubmit}
