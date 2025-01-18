@@ -3,7 +3,7 @@ import { getCookie, deleteCookie } from "cookies-next";
 
 const createHttpInstance = () => {
   const instance = axios.create({
-    baseURL: "http://localhost:3000/api",
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
     responseType: "json",
   });
 
