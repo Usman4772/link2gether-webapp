@@ -8,7 +8,7 @@ import { NextRequest } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     await connectToDatabase();
-    const userId = await validateToken(req);
+    const { userId } = await validateToken(req);
     const community = await checkCommunityExistence(req);
     return SUCCESS_RESPONSE(
       community,

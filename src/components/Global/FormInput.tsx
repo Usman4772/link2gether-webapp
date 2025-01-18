@@ -11,7 +11,13 @@ const icons = {
   search: <FiSearch />,
 };
 
-function FormInput({ placeholder, name, className, ...props }: FormInputProps) {
+function FormInput({
+  placeholder,
+  name,
+  className,
+  onChange = () => {},
+  ...props
+}: FormInputProps) {
   const iconKey = name as keyof typeof icons;
   return (
     <div className="relative w-full ">
@@ -21,6 +27,7 @@ function FormInput({ placeholder, name, className, ...props }: FormInputProps) {
       <Input
         type={"text"}
         placeholder={placeholder}
+        onChange={onChange}
         {...props}
         className={`flex h-[56px] items-center self-stretch bg-[#E8EDF5] p-[16px] px-[35px] w-[448px] rounded-12  ${className}`}
       />

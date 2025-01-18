@@ -13,6 +13,8 @@ export default {
       colors: {
         bg: "#F7FAFC",
         text: "#4A709C",
+        heading: "0D171C",
+        paragraph: "#697D95",
         btn: "#0A70D9",
         placeholder: "#4A709C",
         fields: "#E8EDF5",

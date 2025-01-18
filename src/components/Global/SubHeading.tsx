@@ -9,7 +9,7 @@ function SubHeading({
 }) {
   return (
     <h2
-      className={`self-stretch text-[#0D141C] text-start  text-[22px] font-bold leading-paragraph-100 py-4 mx-[16px] ${className}`}
+      className={` text-[#0D141C] text-start  text-[22px] font-bold leading-paragraph-100 py-4 mx-[16px] ${className}`}
     >
       {text}{" "}
     </h2>

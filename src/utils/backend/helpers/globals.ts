@@ -3,6 +3,7 @@ import { jwtVerify } from "jose";
 import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import apiErrors from "./apiErrors";
+import User from "@/models/user";
 
 export async function validateToken(req: NextRequest) {
   const headers = req.headers;
@@ -18,7 +19,8 @@ export async function validateToken(req: NextRequest) {
     new TextEncoder().encode("u$man2309")
   );
   const userId = tokenDetails?.payload?.id;
-  return userId;
+  const user = await User.findById(userId);
+  return { userId, user };
 }
 
 export const errorHandler = (error: any) => {

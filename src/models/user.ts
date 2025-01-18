@@ -17,6 +17,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  onboardingStatus: {
+    type: String,
+    enum: ["pending", "completed"],
+    default: "pending",
+  },
   remember: {
     type: Boolean,
     default: false,
