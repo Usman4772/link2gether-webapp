@@ -16,6 +16,7 @@ export interface CommunityProps {
 }
 
 export interface CommunitiesDataType {
+  id: string;
   community_name: string;
   description?: string;
   displayPic: string | null;

@@ -18,6 +18,7 @@ const CommunitiesSlice = createSlice({
       const data: CommunitiesDataType[] = action.payload;
       const response = data?.map((data) => {
         return {
+          id: data?.id,
           community_name: data?.community_name,
           membersCount: data?.memberCount,
           displayPic: data?.displayPic,
