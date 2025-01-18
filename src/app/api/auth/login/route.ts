@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
   try {
     await connectToDatabase();
     const userData: LoginProps = await parseLoginFormData(req);
+
     validateUserData(userData, "login");
 
     const user = await verifyLoginDetails(userData);
