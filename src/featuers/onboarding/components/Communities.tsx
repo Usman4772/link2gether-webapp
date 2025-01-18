@@ -22,6 +22,7 @@ function Communities() {
       return [...prev, id];
     });
   }
+
   return (
     <div className="w-screen min-h-screen bg-[#F7F8FA] flex items-center justify-center pl-36 pr-96 py-12">
       <div className="flex items-center justify-center flex-col min-h-[20%] w-full  gap-4 px-4">
