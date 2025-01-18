@@ -12,7 +12,7 @@ function useLogin(setError: UseFormSetError<any>) {
   async function handleLogin(values: LoginProps) {
     try {
       setBtnLoading(true);
-      const response = await axios.post("/api/auth/login", values);
+      const response = await axios.post("/auth/login", values);
       if (response?.data?.success) {
         toast.success(response?.data?.message);
         setCookie("token", response?.data?.data?.token);
