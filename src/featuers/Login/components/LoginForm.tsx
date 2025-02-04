@@ -42,6 +42,7 @@ function LoginForm() {
                   <FormInput
                     placeholder="example@google.com"
                     {...field}
+                    className="w-[448px]"
                     name="email"
                   />
                 </FormControl>

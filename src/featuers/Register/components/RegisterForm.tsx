@@ -49,6 +49,7 @@ function RegisterForm() {
                   <FormInput
                     placeholder="Username"
                     {...field}
+                    className="w-[448px]"
                     name="username"
                   />
                 </FormControl>
@@ -66,6 +67,7 @@ function RegisterForm() {
                   <FormInput
                     placeholder="example@google.com"
                     {...field}
+                    className="w-[448px]"
                     name="email"
                   />
                 </FormControl>

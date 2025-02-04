@@ -1,5 +1,5 @@
+import { communitySchema } from "../validation-schema/community.schema";
 import apiErrors from "./apiErrors";
-import { communitySchema } from "./validationSchema";
 
 export async function parseCommunityFormData(formData: FormData) {
   let displayPic: any = formData?.get("displayPic");
@@ -18,9 +18,11 @@ export async function validateCommunityPayload(formData: FormData) {
   const payload = {
     community_name: formData.get("community_name"),
     category: formData.get("category"),
+    description: formData.get("description"),
   };
 
   const result = communitySchema.safeParse(payload);
+
   if (!result.success) {
     const errors = result.error?.errors.map((err) => {
       return {

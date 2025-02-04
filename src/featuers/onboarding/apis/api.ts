@@ -1,9 +1,17 @@
-import httpInstance from "@/utils/config/axios";
+import axios from "@/utils/config/axios";
 
 export function getRecommendedCategoriesAPI(data: { categories: string[] }) {
-  return httpInstance.post("/user/preferences", data);
+  return axios.post("/user/preferences", data);
 }
 
 export function getRecommendedCommunitiesAPI() {
-  return httpInstance.get("/user/community/recommended");
+  return axios.get("/community/recommended");
+}
+
+export function joinCommunitiesAPI(data: string[]) {
+  return axios.post("/community/multiple", { joined: data });
+}
+
+export function fetchCategoriesAPI() {
+  return axios.get("/user/categories");
 }

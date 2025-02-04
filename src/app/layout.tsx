@@ -1,9 +1,10 @@
+import ReactQueryProvider from "@/components/Global/ReactQueryProvider";
+import ReduxWrapper from "@/components/Global/ReduxWrapper";
+import { QueryClient } from "@tanstack/react-query";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import "./globals.css";
-import ReduxWrapper from "@/components/Global/ReduxWrapper";
 import { Toaster } from "react-hot-toast";
-
+import "./globals.css";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -25,19 +26,23 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const queryClient = new QueryClient();
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ReduxWrapper>
-          <Toaster
-            toastOptions={{
-              position: "top-right",
-            }}
-          />
-          {children}
-        </ReduxWrapper>
+        <ReactQueryProvider>
+          <ReduxWrapper>
+            <Toaster
+              toastOptions={{
+                position: "top-right",
+              }}
+            />
+            {children}
+          </ReduxWrapper>
+        </ReactQueryProvider>
       </body>
     </html>
   );

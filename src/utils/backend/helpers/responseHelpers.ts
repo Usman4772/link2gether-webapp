@@ -5,6 +5,11 @@ interface SuccessResponse {
   success: boolean;
   data: any;
 }
+interface ErrorResponse {
+  message: string;
+  success: boolean;
+  errors: any;
+}
 
 export function SUCCESS_RESPONSE(
   data: any,

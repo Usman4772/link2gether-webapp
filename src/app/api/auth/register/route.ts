@@ -28,7 +28,6 @@ export async function POST(req: NextRequest) {
       password: hashedPassword,
       profileImage: imageUrl,
     });
-
     const token = createToken(user._id);
     const expires_at = getTokenExpiration(false);
     await Tokens.create({ token, userId: user?._id, expires_at });

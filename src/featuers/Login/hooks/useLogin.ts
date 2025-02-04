@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { UseFormSetError } from "react-hook-form";
 import toast from "react-hot-toast";
+import { LoginAPI } from "../apis/api";
 
 function useLogin(setError: UseFormSetError<any>) {
   const [btnLoading, setBtnLoading] = useState(false);
@@ -12,7 +13,7 @@ function useLogin(setError: UseFormSetError<any>) {
   async function handleLogin(values: LoginProps) {
     try {
       setBtnLoading(true);
-      const response = await axios.post("/api/auth/login", values);
+      const response = await LoginAPI(values);
       if (response?.data?.success) {
         toast.success(response?.data?.message);
         setCookie("token", response?.data?.data?.token);

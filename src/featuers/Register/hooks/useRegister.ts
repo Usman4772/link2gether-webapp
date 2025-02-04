@@ -7,6 +7,7 @@ import { useState } from "react";
 import { UseFormSetError } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
+import { RegisterAPI } from "../apis/api";
 
 function useRegister(formSchema: any, setError: UseFormSetError<any>) {
   const [btnLoading, setBtnLoading] = useState(false);
@@ -28,7 +29,7 @@ function useRegister(formSchema: any, setError: UseFormSetError<any>) {
 
     try {
       setBtnLoading(true);
-      const response = await axios.post("/api/auth/register", formData);
+      const response = await RegisterAPI(formData);
       if (response.data?.success) {
         toast.success(response?.data?.message);
         setCookie("token", response?.data?.data?.token);

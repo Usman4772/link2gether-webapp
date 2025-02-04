@@ -3,8 +3,7 @@ import { Types } from "mongoose";
 import { NextRequest } from "next/server";
 import apiErrors from "./apiErrors";
 
-export async function checkCommunityExistence(req: NextRequest) {
-  const communityId = req.nextUrl.pathname.split("/")[4];
+export async function checkCommunityExistence(communityId: string) {
   if (!Types.ObjectId.isValid(communityId)) {
     throw new apiErrors([], "This community does not exists", 404);
   }

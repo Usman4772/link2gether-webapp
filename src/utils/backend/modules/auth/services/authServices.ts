@@ -9,9 +9,9 @@ import { ObjectId } from "mongoose";
 import { NextRequest } from "next/server";
 import { UserPayload } from "../../../../frontend/types";
 import { uploadMedia } from "../../../../frontend/uploadMedia";
-import { loginSchema, registerSchema } from "../../../helpers/validationSchema";
 import { LoginProps } from "../types/types";
 import apiErrors from "@/utils/backend/helpers/apiErrors";
+import { loginSchema, registerSchema } from "@/utils/backend/validation-schema/auth.schema";
 
 export async function connectToDatabase() {
   if (!(await connectDb())) {
@@ -71,6 +71,7 @@ export function userPayload(user: any, token: string): UserPayload {
   return {
     id: user._id,
     username: user.username,
+    onboardingStatus: user.onboardingStatus,
     email: user.email,
     profileImage: user.profileImage,
     remember: user.remember,
@@ -175,6 +176,7 @@ export function getLoginPayload(user: any, token: string) {
     name: user?.name,
     email: user?.email,
     remember: user?.remember,
+    onboardingStatus: user?.onboardingStatus,
     profileImage: user?.profileImage,
     communityMemberships: user?.communityMemberships,
     posts: user?.posts,
