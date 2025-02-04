@@ -12,6 +12,7 @@ function useFetchCategories() {
     try {
       setPageLoading(true);
       const response = await fetchCategoriesAPI();
+      console.log(response?.data,'data')
       if (response?.data?.success) {
         setCategories(response?.data?.data);
       } else if (response?.data?.errors[0]?.onboardingStatus == "completed") {
@@ -26,6 +27,7 @@ function useFetchCategories() {
   useEffect(() => {
     fetchCategories();
   }, []);
+  console.log(categories,'categories')
   return {
     categories,
     pageLoading,

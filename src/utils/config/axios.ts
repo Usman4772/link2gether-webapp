@@ -3,7 +3,7 @@ import { getCookie, deleteCookie } from "cookies-next";
 
 const createHttpInstance = () => {
   const instance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    baseURL: "https://link2gether-webapp.vercel.app/api",
     responseType: "json",
   });
 
