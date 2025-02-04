@@ -13,7 +13,7 @@ const getBase64 = (file: FileType): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 
-function Uploader({ fileList, setFileList }: any) {
+function Uploader({ fileList, setFileList,placeholder="Profile Picture" }: any) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
 
@@ -32,7 +32,7 @@ function Uploader({ fileList, setFileList }: any) {
   const uploadButton = (
     <button style={{ border: 0, background: "none" }} type="button">
       <div style={{ marginTop: 8 }} className="!text-[#706F6F]">
-        Profile Picture
+        {placeholder}
       </div>
     </button>
   );

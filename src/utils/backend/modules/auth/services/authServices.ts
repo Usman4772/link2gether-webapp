@@ -9,10 +9,9 @@ import { ObjectId } from "mongoose";
 import { NextRequest } from "next/server";
 import { UserPayload } from "../../../../frontend/types";
 import { uploadMedia } from "../../../../frontend/uploadMedia";
-import { loginSchema, registerSchema } from "../../../helpers/validationSchema";
 import { LoginProps } from "../types/types";
 import apiErrors from "@/utils/backend/helpers/apiErrors";
-import { on } from "events";
+import { loginSchema, registerSchema } from "@/utils/backend/validation-schema/auth.schema";
 
 export async function connectToDatabase() {
   if (!(await connectDb())) {

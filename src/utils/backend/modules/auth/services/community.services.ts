@@ -15,7 +15,7 @@ export async function JoinCommunity(userId: any, community: any) {
   user.communityMemberships.push(community._id);
   await user.save();
   await community.save();
-  return community;
+  return community; 
 }
 
 export async function joinMultipleCommunities(data: string[], userId: any) {

@@ -1,4 +1,5 @@
 import User from "@/models/user";
+import apiErrors from "@/utils/backend/helpers/apiErrors";
 import { errorHandler, validateToken } from "@/utils/backend/helpers/globals";
 import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";
 import {
@@ -15,14 +16,14 @@ import { NextRequest } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     await connectToDatabase();
-    const { userId } = await validateToken(req);
+    const { user, userId } = await validateToken(req);
+   
     const formData = await req.formData();
     await validateCommunityPayload(formData);
     const data = await parseCommunityFormData(formData);
     const displayPic = await handleMediaUpload(data.displayPic);
     data.displayPic = displayPic;
     const community = await createCommunity(data, userId);
-    const user = await User.findById(userId);
     user.communityMemberships.push(community._id);
     await user.save();
     return SUCCESS_RESPONSE(community, 201, "Community created successfully");

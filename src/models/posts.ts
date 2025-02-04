@@ -1,28 +1,29 @@
 import mongoose from "mongoose";
 
 const postSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true,
-  },
   description: {
     type: String,
   },
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
   media: {
     type: String,
-    required: true,
+  },
+  created_at: {
+    type: Date,
+    default: Date.now
   },
   type: {
     type: String,
-    required: true,
+    enum: ["video", "image", "text"],
   },
   community: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Community",
+    required: true,
   },
   likes: [
     {
