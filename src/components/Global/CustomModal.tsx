@@ -8,7 +8,7 @@ interface ModalProps {
   closeable?: boolean;
   className?: string;
   onConfirmAction?: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
   title?: string | React.ReactNode;
   btnBg?: string;
   width?: number;
@@ -17,7 +17,7 @@ interface ModalProps {
   okText?: string;
   cancelText?: string;
     okBtnStyles?: string;
-    dispatchEvent: boolean;
+    dispatchEvent?: boolean;
   cancelBtnStyles?: string;
   footer?: boolean | null;
 }

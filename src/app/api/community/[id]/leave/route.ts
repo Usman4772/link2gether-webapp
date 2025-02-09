@@ -2,23 +2,17 @@ import { checkCommunityExistence } from "@/utils/backend/helpers/community.helpe
 import { errorHandler, validateToken } from "@/utils/backend/helpers/globals";
 import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";
 import { connectToDatabase } from "@/utils/backend/modules/auth/services/authServices";
-import { getCommunityDetails } from "@/utils/backend/modules/auth/services/community.services";
-
+import { handleLeaveCommunity } from "@/utils/backend/modules/auth/services/community.services";
 import { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function PUT(req: NextRequest) {
   try {
     await connectToDatabase();
-    const {userId }=await validateToken(req);
+    const { user } = await validateToken(req);
     const communityId = req.nextUrl.pathname.split("/")[3];
-    await checkCommunityExistence(communityId);
-    const community = await getCommunityDetails(communityId,userId);
-
-    return SUCCESS_RESPONSE(
-      community,
-      200,
-      "Community fetched successfully!!!"
-    );
+    const community = await checkCommunityExistence(communityId);
+    await handleLeaveCommunity(community, user);
+    return SUCCESS_RESPONSE([], 200, "Community Left successfully!");
   } catch (error) {
     return errorHandler(error);
   }

@@ -11,6 +11,7 @@ export async function parseCommunityFormData(formData: FormData) {
     description: formData.get("description") as string,
     category: formData.get("category") as string,
     displayPic: displayPic as Blob | null,
+    visibility: formData.get("visibility") as string,
   };
 }
 
@@ -19,6 +20,7 @@ export async function validateCommunityPayload(formData: FormData) {
     community_name: formData.get("community_name"),
     category: formData.get("category"),
     description: formData.get("description"),
+    visibility: formData.get("visibility"),
   };
 
   const result = communitySchema.safeParse(payload);

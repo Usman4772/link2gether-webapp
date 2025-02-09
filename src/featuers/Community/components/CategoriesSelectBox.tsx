@@ -90,7 +90,7 @@ export function CategoriesSelectBox({
                     }}
                     className="py-3 px-4 hover:bg-fields cursor-pointer transition-colors duration-150"
                   >
-                    <span className="font-medium text-gray-700">
+                    <span className="">
                       {community.label}
                     </span>
                   </CommandItem>

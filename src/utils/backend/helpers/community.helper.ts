@@ -7,10 +7,11 @@ export async function checkCommunityExistence(communityId: string) {
   if (!Types.ObjectId.isValid(communityId)) {
     throw new apiErrors([], "This community does not exists", 404);
   }
-  const community = await Community.findById(communityId);
+  const community = await Community.findById(communityId)
+    .populate("posts")
+    .populate({ path: "posts", populate: { path: "author" } });
   if (!community)
     throw new apiErrors([], "This community does not exists", 404);
-
   return community;
 }
 
@@ -47,4 +48,18 @@ export async function validateMultipleCommunitiesData(req: NextRequest) {
     throw new apiErrors(errors, "Invalid community ids", 400);
   }
   return data;
+}
+
+export function getCommunityMembershipStatus(community: any, userId: any) {
+  if (!community || !userId) return "not_requested";
+  const memberShipStatus =
+    !community?.members.includes(userId) &&
+    !community?.joinRequests.includes(userId)
+      ? "not_requested"
+      : community?.members.includes(userId)
+      ? "joined"
+      : community?.joinRequests.includes(userId)
+      ? "requested"
+      : "not_requested";
+  return memberShipStatus;
 }

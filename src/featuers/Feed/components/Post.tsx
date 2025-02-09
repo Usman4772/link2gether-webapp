@@ -84,7 +84,7 @@ export default Post;
 
 
 interface UserHeaderProps {
-    id: string;
+    _id: string;
     username: string;
     profileImage: string;
   
@@ -102,7 +102,7 @@ function UserHeader({author,created_at}:{author:UserHeaderProps,created_at:strin
       />
       <div className="flex flex-col justify-center ">
         <Link
-          href={`#`}
+          href={`/profile/${author?._id}`}
           className="text-[#0D171C] text-[16px] font-[600] tracking-tighter"
         >
           {author?.username}

@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   try {
     await connectToDatabase();
     const { user, userId } = await validateToken(req);
-   
+
     const formData = await req.formData();
     await validateCommunityPayload(formData);
     const data = await parseCommunityFormData(formData);

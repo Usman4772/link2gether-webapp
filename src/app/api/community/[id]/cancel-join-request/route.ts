@@ -3,7 +3,7 @@ import { checkCommunityExistence } from "@/utils/backend/helpers/community.helpe
 import { errorHandler, validateToken } from "@/utils/backend/helpers/globals";
 import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";
 import { connectToDatabase } from "@/utils/backend/modules/auth/services/authServices";
-import { JoinCommunity } from "@/utils/backend/modules/auth/services/community.services";
+import { handleCancelRequest } from "@/utils/backend/modules/auth/services/community.services";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -12,21 +12,9 @@ export async function GET(req: NextRequest) {
     const { userId } = await validateToken(req);
     const communityId = req.nextUrl.pathname.split("/")[3];
     const community = await checkCommunityExistence(communityId);
-    if (
-      community.visibility == "private" &&
-      !community.members.includes(userId)
-    ) {
-      if (!community.joinRequests.includes(userId)) {
-        community.joinRequests.push(userId);
-      }
-      await community.save();
-      return SUCCESS_RESPONSE([], 200, "Request sent successfully!");
-    }
-
-    await JoinCommunity(userId, community);
-    return SUCCESS_RESPONSE([], 200, "Community Joined successfully!");
+    await handleCancelRequest(community, userId);
+    return SUCCESS_RESPONSE([], 200, "Request cancelled successfully!!!");
   } catch (error) {
     return errorHandler(error);
   }
 }
-
