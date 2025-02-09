@@ -1,17 +1,13 @@
 "use client";
-import { forwardRef, useRef, useState } from "react";
-import { Modal, Button } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import CreateForm from "./CreateForm";
-import { motion } from "framer-motion";
-import Image from "next/image";
+import CustomModal from "@/components/Global/CustomModal";
 import Heading from "@/components/Global/Heading";
 import Paragraph from "@/components/Global/Paragraph";
-import CustomModal from "@/components/Global/CustomModal";
 import { useAppDispatch, useAppSelector } from "@/hooks/useAppSelector";
 import { setOpenCreateCommunityModal } from "@/redux/Slices/create.community.slice";
-import useCreateFormConfig from "../hooks/useCreateFormConfig";
-import useCreateCommunity from "../hooks/useCreateCommunity";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import { forwardRef, useRef } from "react";
+import CreateForm from "./CreateForm";
 
 
 

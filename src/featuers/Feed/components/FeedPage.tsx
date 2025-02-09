@@ -20,7 +20,7 @@ export interface PostProps {
     displayPic: string;
   };
   author: {
-    id: string;
+    _id: string;
     username: string;
     profileImage: string;
   };

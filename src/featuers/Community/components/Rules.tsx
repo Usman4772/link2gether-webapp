@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/accordion";
 import { FAQItem } from "./DetailSidebar";
 
-// Define the type for FAQ items
 
 interface FAQAccordionProps {
   items: FAQItem[];
@@ -16,7 +15,7 @@ interface FAQAccordionProps {
 
 export default function Rules({ items }: FAQAccordionProps) {
   return (
-    <Accordion type="single" collapsible className="w-full">
+    <Accordion type="single" collapsible className="w-full px-8">
       {items.map((item,i) => (
         <AccordionItem key={item.id} value={item.id} className="px-4">
               <AccordionTrigger className="">{i + 1}{ " " }{ item.question}</AccordionTrigger>

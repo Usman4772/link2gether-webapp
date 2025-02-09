@@ -9,7 +9,7 @@ const icons = {
   username: <LuUser />,
   email: <HiOutlineMail />,
   search: <FiSearch />,
-  community_name:<img src="/community_name.svg" alt="community_name" width={"19px"} height={"19px"} />,
+  // community_name:<img src="/community_name.svg" alt="community_name" width={"19px"} height={"19px"} />,
 };
 
 function FormInput({

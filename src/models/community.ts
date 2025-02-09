@@ -9,6 +9,12 @@ const communitySchema = new mongoose.Schema({
   description: {
     type: String,
   },
+  visibility: {
+    type: String,
+    enum: ["public", "private"],
+    default: "public",
+  },
+  joinRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   displayPic: {
     type: String,
   },

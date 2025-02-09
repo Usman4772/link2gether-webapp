@@ -26,16 +26,18 @@ function useRegister(formSchema: any, setError: UseFormSetError<any>) {
     } else {
       formData.append("profileImage", "");
     }
-
+console.log(formData,'formdata')
     try {
       setBtnLoading(true);
       const response = await RegisterAPI(formData);
+      console.log(response,'res')
       if (response.data?.success) {
         toast.success(response?.data?.message);
         setCookie("token", response?.data?.data?.token);
         router.push("/onboarding/categories");
       }
     } catch (error: any) {
+      console.log(error,'error')
       handleFormErrors(error?.response?.data?.errors);
     } finally {
       setBtnLoading(false);

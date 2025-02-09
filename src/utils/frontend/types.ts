@@ -25,3 +25,13 @@ export interface TextAreaProps {
   className?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
+
+export interface ButtonProps {
+  text: string;
+  className?: string;
+  onClick?: () => void;
+  loading?: boolean;
+  icon?: React.ReactNode;
+}
+
+

@@ -1,16 +1,15 @@
 import { communitySchema } from "@/utils/backend/validation-schema/community.schema";
+import { postSchema } from "@/utils/backend/validation-schema/post.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-function useCreateFormConfig() {
+function useCreatePostConfig() {
   const form = useForm({
-    resolver: zodResolver(communitySchema),
+    resolver: zodResolver(postSchema),
     defaultValues: {
-      community_name: "",
-      category: "",
       description: "",
-      visibility:"public",
-      displayPic: null,
+      media: null,
+      
     },
   });
 
@@ -22,4 +21,4 @@ function useCreateFormConfig() {
   };
 }
 
-export default useCreateFormConfig;
+export default useCreatePostConfig;
