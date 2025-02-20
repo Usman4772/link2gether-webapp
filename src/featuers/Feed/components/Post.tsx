@@ -14,7 +14,7 @@ function Post({ data }: { data: PostProps }) {
       <div className="flex items-center justify-between  px-2">
        {data?.community ? <div className="flex items-start gap-4 ">
           <Image
-            src={data?.community?.displayPic || "/group-default.png"}
+            src={data?.community?.avatar || "/group-default.png"}
             width={50}
             height={50}
             className="rounded-[50%] object-cover w-[50px] h-[50px]"

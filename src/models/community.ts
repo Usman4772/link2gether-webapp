@@ -15,14 +15,30 @@ const communitySchema = new mongoose.Schema({
     default: "public",
   },
   joinRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-  displayPic: {
+  avatar: {
     type: String,
+    default: null,
+  },
+  cover: {
+    type: String,
+    default: null,
   },
   category: {
     type: String,
     enum: Object.values(GeneralCommunityTypes),
     required: true,
   },
+  rules: [
+    {
+      title: {
+        type: String,
+      },
+      description: {
+        type: String,
+      },
+    },
+  ],
+  moderators: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   members: [
     {
       type: mongoose.Schema.Types.ObjectId,

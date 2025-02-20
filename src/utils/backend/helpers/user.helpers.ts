@@ -2,15 +2,15 @@ import { communitySchema } from "../validation-schema/community.schema";
 import apiErrors from "./apiErrors";
 
 export async function parseCommunityFormData(formData: FormData) {
-  let displayPic: any = formData?.get("displayPic");
-  if (displayPic?.name == "" || displayPic?.size == 0 || displayPic == "") {
-    displayPic = null;
+  let avatar: any = formData?.get("avatar");
+  if (avatar?.name == "" || avatar?.size == 0 || avatar == "") {
+    avatar = null;
   }
   return {
     community_name: formData.get("community_name") as string,
     description: formData.get("description") as string,
     category: formData.get("category") as string,
-    displayPic: displayPic as Blob | null,
+    avatar: avatar as Blob | null,
     visibility: formData.get("visibility") as string,
   };
 }
@@ -20,6 +20,7 @@ export async function validateCommunityPayload(formData: FormData) {
     community_name: formData.get("community_name"),
     category: formData.get("category"),
     description: formData.get("description"),
+    avatar:formData?.get("avatar"),
     visibility: formData.get("visibility"),
   };
 

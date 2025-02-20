@@ -17,7 +17,7 @@ export interface PostProps {
   community?: {
     id: string;
     community_name: string;
-    displayPic: string;
+    avatar: string;
   };
   author: {
     _id: string;

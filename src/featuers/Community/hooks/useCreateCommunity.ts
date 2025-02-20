@@ -24,10 +24,10 @@ function useCreateCommunity({
     try {
       setBtnLoading(true);
       const formData = new FormData();
-      const displayPic = fileList[0]?.originFileObj;
+      const avatar = fileList[0]?.originFileObj;
       formData.append("community_name", values?.community_name);
       formData.append("category", values?.category);
-      formData.append("displayPic", displayPic || "");
+      formData.append("avatar", avatar || "");
       formData.append("visibility", values?.visibility);
 
       const response = await createCommunityAPI(formData);

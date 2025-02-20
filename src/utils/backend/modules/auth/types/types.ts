@@ -12,14 +12,14 @@ export interface CommunityProps {
   community_name: string;
   category: string;
   description?: string;
-  displayPIc?: Blob | null;
+  avatar?: Blob | null;
 }
 
 export interface CommunitiesDataType {
   id: string;
   community_name: string;
   description?: string;
-  displayPic: string | null;
+  avatar: string | null;
   memberCount: number;
 }
 
@@ -27,6 +27,6 @@ export interface RecommendedCommunityType {
   id: string;
   community_name: string;
   membersCount: number;
-  displayPic: string | null;
+  avatar: string | null;
   content?: string;
 }

@@ -29,7 +29,7 @@ function DetailPageHeader({ id, data }: { id: string | number; data: any }) {
       >
         <div className="flex items-center gap-4 px-4">
           <img
-            src={data?.displayPic || "/group-default.png"}
+            src={data?.avatar || "/group-default.png"}
             className="rounded-[50%] object-cover w-[70px] h-[70px]  "
           />
           <div className="flex flex-col ">

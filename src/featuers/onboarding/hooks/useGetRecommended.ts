@@ -20,7 +20,7 @@ function useGetRecommended() {
             id: data?._id,
             community_name: data?.community_name,
             membersCount: data?.memberCount,
-            displayPic: data?.displayPic,
+            avatar: data?.avatar,
             content: data?.description,
           };
         });
