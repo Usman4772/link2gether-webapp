@@ -21,8 +21,8 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     await validateCommunityPayload(formData);
     const data = await parseCommunityFormData(formData);
-    const displayPic = await handleMediaUpload(data.displayPic);
-    data.displayPic = displayPic;
+    const avatar = await handleMediaUpload(data.avatar);
+    data.avatar = avatar;
     const community = await createCommunity(data, userId);
     user.communityMemberships.push(community._id);
     await user.save();

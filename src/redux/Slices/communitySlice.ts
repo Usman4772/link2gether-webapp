@@ -21,7 +21,7 @@ const CommunitiesSlice = createSlice({
           id: data?.id,
           community_name: data?.community_name,
           membersCount: data?.memberCount,
-          displayPic: data?.displayPic,
+          avatar: data?.avatar,
           content: data?.description,
         };
       });

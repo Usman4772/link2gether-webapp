@@ -28,7 +28,7 @@ function getPayload(data: any[], user: any) {
     return {
       name: item.community_name,
       description: item.description,
-      icon: item.displayPic,
+      icon: item.avatar,
       value: item?.category,
       onboardingStatus: user.onboardingStatus,
     };

@@ -10,7 +10,7 @@ function useCreateFormConfig() {
       category: "",
       description: "",
       visibility:"public",
-      displayPic: null,
+      avatar: null,
     },
   });
 

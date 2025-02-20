@@ -1,3 +1,4 @@
+import Comment from "@/models/comments";
 import Community from "@/models/community";
 import Post from "@/models/posts";
 import User from "@/models/user";
@@ -73,11 +74,16 @@ export async function handleLeaveCommunity(community: any, user: any) {
   const isMember = community.members.includes(user?._id);
   if (!isMember) throw new apiErrors([], "Unauthorized action", 401);
 
-  if (community?.createdBy.toString() === user?._id)
+  if (community?.createdBy.toString() === user?._id.toString())
     throw new apiErrors([], "You cannot leave a community you created", 404);
   const members = community.members.filter(
     (id: any) => id.toString() !== user?._id.toString()
   );
+
+  community.moderators = community.moderators.filter(
+    (id: any) => id.toString() !== user._id.toString()
+  );
+
   user.communityMemberships = user.communityMemberships.filter(
     (id: any) => id.toString() !== community._id.toString()
   );
@@ -86,7 +92,6 @@ export async function handleLeaveCommunity(community: any, user: any) {
   await user.save();
   await community.save();
 }
-
 
 export async function handleCancelRequest(community: any, userId: any) {
   const hasRequested = community.joinRequests.some(
@@ -100,4 +105,55 @@ export async function handleCancelRequest(community: any, userId: any) {
   } else {
     throw new apiErrors([], "No request found with this user!", 400);
   }
+}
+
+export async function deleteCommunity(communityId: any) {
+  await Community.findByIdAndDelete(communityId);
+
+  //!remove community id from all members memberShip status
+  await User.updateMany(
+    { communityMemberships: communityId }, //where communityMemberships include this id
+    { $pull: { communityMemberships: communityId } }
+  );
+
+  //! remove posts from users who have posted in this community.
+  const posts = await Post.find({ community: communityId });
+  const postIds = posts.map((post) => post._id);
+
+  await User.updateMany(
+    { posts: { $in: postIds } },
+    { $pull: { posts: { $in: postIds } } }
+  );
+
+  //!Remove all posts related to this community from post collection.
+  await Post.deleteMany({ community: communityId });
+
+  //!Remove all the comments related on this community and on those posts
+  //todo VERIFY THIS THING ONCE IMPLEMENTED COMMENT FEATURE
+  await Comment.deleteMany({ community: communityId });
+  await Comment.deleteMany({ post: { $in: postIds } });
+}
+
+export async function addModerators(communityId: any, moderatorsId: any) {
+  const community = await Community.updateOne(
+    { _id: communityId },
+    { $addToSet: { moderators: { $each: moderatorsId } } }
+  );
+  return community;
+}
+
+export async function removeModerator(communityId: string, modId: string) {
+  await Community.updateOne(
+    { _id: communityId },
+    { $pull: { moderators: modId } }
+  );
+}
+
+export type RulesPayload = Array<{
+  title: string;
+  description: string;
+}>;
+export async function addRules(rules: RulesPayload, community: any) {
+  community.rules = rules;
+  await community.save();
 }

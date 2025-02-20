@@ -46,7 +46,7 @@ export function createPayload(posts: any[], userId: any) {
       community: {
         id: post.community._id,
         community_name: post.community.community_name,
-        displayPic: post.community.displayPic,
+        avatar: post.community.avatar,
       },
       author: {
         id: post.author._id,
