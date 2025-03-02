@@ -4,7 +4,7 @@ import { UseFormSetError } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import { createCommunityAPI } from "../api/api";
-import { handleFormErrors } from "@/utils/frontend/handleErrors";
+import { handleAPIErrors, handleFormErrors } from "@/utils/frontend/handleErrors";
 import { communitySchema } from "@/utils/backend/validation-schema/community.schema";
 import { useAppDispatch } from "@/hooks/useAppSelector";
 import { setOpenCreateCommunityModal } from "@/redux/Slices/create.community.slice";

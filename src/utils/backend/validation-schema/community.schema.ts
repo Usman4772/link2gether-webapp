@@ -144,28 +144,18 @@ export const rulesSchema = z
   .object({
     rules: z
       .array(
-        z.object({
-          title: z
-            .string({ message: "title is must be a string" })
-            .trim()
-            .min(1, { message: "title is required" })
-            .max(100, {
-              message: "title must not be longer than 100 characters",
-            }),
-          description: z
-            .string({ message: "description must be string" })
-            .trim()
-            .min(1, { message: "description is required" })
-            .max(2000, {
-              message: "description must not be longer than 2000 characters",
-            }),
-        },{message: "Rules must be an array of title and description objects"}),
-        { message: "Rules must be an array of title and description objects" }
+        z.object(
+          {
+            rule: z
+              .string({ message: "Rule must be of type string" })
+              .trim()
+              .min(1, { message: "Rule can't be empty" }),
+          },
+          { message: "Rules are required" }
+        )
       )
       .nonempty({ message: "Rules are required" }),
-    merge: z
-      .boolean({ message: "merge must be either true or false" })
-      .optional()
-      .default(false),
+    merge: z.boolean({message:"Merge must be either true or false"}).optional(),
   })
+
   .required();

@@ -1,7 +1,12 @@
 import { Modal } from "antd";
-
+import Image from "next/image";
+import Heading from "./Heading";
+import Paragraph from "./Paragraph";
 
 interface ModalProps {
+  heading: string;
+  subheading: string;
+  icon?: string | null;
   openModal: boolean;
   btnLoading?: boolean;
   setOpenModal: any;
@@ -11,47 +16,39 @@ interface ModalProps {
   onCancel?: () => void;
   title?: string | React.ReactNode;
   btnBg?: string;
-  width?: number;
-  body: React.ReactNode;
-  height?: number;
+  width?: number;  height?: number;
   okText?: string;
   cancelText?: string;
-    okBtnStyles?: string;
-    dispatchEvent?: boolean;
+  okBtnStyles?: string;
   cancelBtnStyles?: string;
-  footer?: boolean | null;
+  footer?: React.ReactNode | null;
 }
 
-function CustomModal({
+function ActionModal({
+  heading,
+  subheading,
+  icon=null,
   openModal,
   btnLoading,
   setOpenModal,
-    closeable = true,
-  dispatchEvent=false,
+  closeable = true,
   className = "",
   onConfirmAction = () => {},
   onCancel = () => {},
   title,
   btnBg = "red",
   width = 400,
-  body,
   height = 400,
   okText = "Confirm",
   cancelText = "Cancel",
   okBtnStyles = "",
   cancelBtnStyles = "",
-  footer = true,
-}:ModalProps) {
-    const handleCancel = () => {
-        if (dispatchEvent) {
-            setOpenModal()
-        } else {
-            setOpenModal(false)
-      }
+  footer = null,
+}: ModalProps) {
+  const handleCancel = () => {
+    setOpenModal(false)
     onCancel();
   };
-
-
   return (
     <div>
       <Modal
@@ -72,11 +69,15 @@ function CustomModal({
           className: cancelBtnStyles,
         }}
         width={width}
-      >
-        {body}
+          >
+              <div className="flex items-start justify-center flex-col gap-4">
+          {icon && <Image src={icon} alt="confirm" width={200} height={200} />}
+          <Heading text={heading} size="17px"/>
+          <Paragraph text={ subheading} />
+              </div>
       </Modal>
     </div>
   );
 }
 
-export default CustomModal;
+export default ActionModal;

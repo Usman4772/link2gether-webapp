@@ -2,26 +2,23 @@
 
 import type React from "react";
 import { useState } from "react";
-import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
 import { GoPlus } from "react-icons/go";
+import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
 
+import { Button } from "@/components/ui/button";
+import { useAppDispatch } from "@/hooks/useAppSelector";
+import { cn } from "@/lib/utils";
+import { setOpenCreateCommunityModal } from "@/redux/Slices/create.community.slice";
 import {
   IconArrowLeft,
   IconBrandTabler,
-  IconSettings,
   IconMenu2,
+  IconSettings,
 } from "@tabler/icons-react";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
 import Header from "./Header";
-import { HiOutlinePlus } from "react-icons/hi2";
-import { useDispatch } from "react-redux";
-import { Button } from "@/components/ui/button";
-import CreateCommunityModal from "@/featuers/Community/components/CreateCommunityModal";
-import { useAppDispatch } from "@/hooks/useAppSelector";
-import { setOpenCreateCommunityModal } from "@/redux/Slices/create.community.slice";
 
 export function AppSidebar({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);

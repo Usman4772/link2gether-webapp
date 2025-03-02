@@ -11,12 +11,13 @@ function useHandleChooseCategories() {
 
   async function handleSubmit() {
     try {
+      const payload=selectedCategories.map((category:any)=>category.value)
       setBtnLoading(true);
       const response = await getRecommendedCategoriesAPI({
-        categories: selectedCategories,
+        categories: payload,
       });
       if (response.data?.success) {
-        toast.success("Categories added successfully");
+        toast.success(response?.data?.message);
         router.push("/onboarding/communities");
       }
     } catch (error: any) {

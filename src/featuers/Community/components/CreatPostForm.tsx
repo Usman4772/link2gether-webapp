@@ -15,6 +15,7 @@ import React, { forwardRef, useImperativeHandle } from "react";
 import useCreatePostConfig from "../hooks/useCreatePostConfig";
 import useCreateCommunity from "../hooks/useCreateCommunity";
 import useCreatePost from "../hooks/useCreatePost";
+import CustomButton from "@/components/Global/CustomButton";
 
 
 interface CreatePostFormProps {
@@ -26,7 +27,6 @@ const CreatePostForm = forwardRef<any, CreatePostFormProps>(function CreatePostF
   { setOpenModal,id },
   ref
 ) {
-    console.log('id',id)
   const { form, setError } = useCreatePostConfig();
 
   const { fileList, setFileList, btnLoading, createPost } =
@@ -82,14 +82,14 @@ const CreatePostForm = forwardRef<any, CreatePostFormProps>(function CreatePostF
 
        
 
-          <Button
+        
+          <CustomButton
+            text="Create"
+            variant={"secondary"}
+            size={"xl"}
+            loading={btnLoading}
             type="submit"
-            variant={"blue"}
-            className="w-[95%] h-[56px]  mx-[16px] py-[12px] hover:bg-blue-500"
-          >
-            {btnLoading && <Loader2 className="animate-spin" />}
-            Create
-          </Button>
+          />
         </form>
       </Form>
     </div>

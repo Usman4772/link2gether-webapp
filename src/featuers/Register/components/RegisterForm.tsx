@@ -15,6 +15,7 @@ import Image from "next/image";
 import Link from "next/link";
 import useFormConfigration from "../hooks/useFormConfigration";
 import useRegister from "../hooks/useRegister";
+import CustomButton from "@/components/Global/CustomButton";
 
 function RegisterForm() {
   const { form, formSchema, setError } = useFormConfigration();
@@ -100,15 +101,13 @@ function RegisterForm() {
               </FormItem>
             )}
           />
-
-          <Button
+          <CustomButton
+            variant={"secondary"}
+            text="Register"
+            loading={btnLoading}
             type="submit"
-            variant={"blue"}
-            className="w-[448px] h-[56px]  mx-[16px] py-[12px] hover:bg-blue-500"
-          >
-            {btnLoading && <Loader2 className="animate-spin" />}
-            Register
-          </Button>
+            size={"xl"}
+          />
           <h2 className="px-[16px] py-4 text-[#706F6F]">
             Already have an account?{" "}
             <Link href={"/login"} className="text-btn">

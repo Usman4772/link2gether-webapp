@@ -14,7 +14,6 @@ export default function RootLayout({
         <AppSidebar>
           {children}
           <CreateCommunityModal/>
-          
           </AppSidebar>
         </TimeAgoProvider>
       </div>

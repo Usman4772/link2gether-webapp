@@ -41,6 +41,7 @@ function Uploader({ fileList, setFileList,placeholder="Profile Picture" }: any) 
       <Upload
         listType="picture-circle"
         fileList={fileList}
+        accept="image/*"
         onPreview={handlePreview}
         onChange={handleChange}
       >

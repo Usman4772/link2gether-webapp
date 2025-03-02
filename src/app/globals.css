@@ -39,6 +39,12 @@ body {
   background-color: #9ca3af;
 }
 
+.custom-form-item.ant-form-item-has-error .ant-input {
+  border-color: transparent !important;
+  border-bottom-color: #ff4d4f !important;
+  box-shadow: none !important;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

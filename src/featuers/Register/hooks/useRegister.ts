@@ -37,7 +37,6 @@ console.log(formData,'formdata')
         router.push("/onboarding/categories");
       }
     } catch (error: any) {
-      console.log(error,'error')
       handleFormErrors(error?.response?.data?.errors);
     } finally {
       setBtnLoading(false);

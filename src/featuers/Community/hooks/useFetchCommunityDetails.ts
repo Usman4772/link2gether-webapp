@@ -5,14 +5,15 @@ import { useState } from "react";
 
 function useFetchCommunityDetails(id: string | number) {
   const [posts, setPosts] = useState([]);
-  const { data, error, isLoading,refetch } = useQuery({
+  const [notFound, setNotFound] = useState(null);
+  const { data, error, isLoading, refetch } = useQuery({
     queryKey: ["community-details"],
     queryFn: () => fetchCommunityDetails(id),
   });
 
   async function fetchCommunityDetails(id: string | number) {
-    console.log('again fetching')
     try {
+      setNotFound(null);
       const response = await fetchCommunityDetailsAPI(id);
       if (response?.data?.success) {
         setPosts(response?.data?.data?.posts);
@@ -22,6 +23,9 @@ function useFetchCommunityDetails(id: string | number) {
         return [];
       }
     } catch (error: any) {
+      if (error.status == 404) {
+        setNotFound(error?.response?.data?.message);
+      }
       handleAPIErrors(error);
       return error?.response?.data;
     }
@@ -31,8 +35,9 @@ function useFetchCommunityDetails(id: string | number) {
     data,
     error,
     isLoading,
-      posts,
-    refetchDetails:refetch
+    posts,
+    notFound,
+    refetchDetails: refetch,
   };
 }
 

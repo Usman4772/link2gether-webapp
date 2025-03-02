@@ -18,6 +18,7 @@ import { forwardRef, useImperativeHandle } from "react";
 import useCreateCommunity from "../hooks/useCreateCommunity";
 import useCreateFormConfig from "../hooks/useCreateFormConfig";
 import { CategoriesSelectBox } from "./CategoriesSelectBox";
+import CustomButton from "@/components/Global/CustomButton";
 
 interface CreateFormProps {
   props?: any;
@@ -131,14 +132,13 @@ const CreateForm = forwardRef<any, CreateFormProps>(function CreateForm(
             )}
           />
 
-          <Button
+          <CustomButton
+            variant={"secondary"}
             type="submit"
-            variant={"blue"}
-            className="w-[95%] h-[56px]  mx-[16px] py-[12px] hover:bg-blue-500"
-          >
-            {btnLoading && <Loader2 className="animate-spin" />}
-            Create
-          </Button>
+            loading={btnLoading}
+            size={"xl"}
+            text="Create"
+          />
         </form>
       </Form>
     </div>

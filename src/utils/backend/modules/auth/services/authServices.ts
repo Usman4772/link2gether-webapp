@@ -47,7 +47,7 @@ export async function checkUserExistence(email: string) {
     throw new apiErrors(
       [{ email: "This email is already registered" }],
       "User already exists",
-      404
+      400
     );
   }
 }

@@ -155,7 +155,7 @@ export function validateSingleModData(
 
 export async function validateRulesPayload(
   req: NextRequest
-): Promise<{ rules: RulesPayload; merge: boolean }> {
+): Promise<{ rules: { rule: string }[]; merge: boolean }> {
   const data = await req.json();
   if (!data || !data.rules) {
     throw new apiErrors([], "Please add rules", 400);
@@ -171,5 +171,8 @@ export async function validateRulesPayload(
     });
     throw new apiErrors(errors, "Validation errors found!", 400);
   }
+
+
+  
   return data;
 }

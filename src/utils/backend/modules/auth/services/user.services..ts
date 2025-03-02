@@ -18,9 +18,10 @@ export async function createCommunity(data: CommunityProps, userId: any) {
     ...data,
   });
   community.createdBy = userId;
+  community.moderators.push(userId);
   community.members.push(userId);
-  community.memberCount = community?.members?.length;
-  community.joinRequests=[]
+  community.memberCount = community.members.length;
+  community.joinRequests = [];
   await community.save();
   return community;
 }

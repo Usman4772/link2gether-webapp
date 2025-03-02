@@ -27,6 +27,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.7",
     "antd": "^5.22.2",
+    "antd-img-crop": "^4.24.0",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",

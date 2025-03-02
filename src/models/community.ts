@@ -30,11 +30,9 @@ const communitySchema = new mongoose.Schema({
   },
   rules: [
     {
-      title: {
+      rule: {
         type: String,
-      },
-      description: {
-        type: String,
+        required: true,
       },
     },
   ],

@@ -6,56 +6,28 @@ import { RiChatPrivateLine } from "react-icons/ri";
 import { CiTimer } from "react-icons/ci";
 import { FiCheckCircle } from "react-icons/fi";
 
-import React from "react";
+import React, { useState } from "react";
 import Rules from "./Rules";
 import Link from "next/link";
 import { capitalize, getFormattedDate } from "@/utils/frontend/helpers/globals";
+import useUpdateCommunity from "../hooks/useUpdateCommunity";
+import { Button } from "@/components/Global/Button";
+import CustomButton from "@/components/Global/CustomButton";
+import ActionModal from "@/components/Global/ActionModal";
+import ChangeVisibilityModal from "./ChangeVisibilityModal";
+import DotDropdown from "@/components/Global/DotDropdown";
+import RulesModal from "./RulesModal";
 export interface FAQItem {
   id: string;
   question: string;
   answer: string;
 }
 
-function DetailSidebar({ data }: any) {
-  // Sample FAQ data
-  const faqData: FAQItem[] = [
-    {
-      id: "item-1",
-      question: "Is it FQA or FAQ?",
-      answer:
-        "It is FAQ (Frequently Asked Questions). FQA is often a misspelling of FAQ.",
-    },
-    {
-      id: "item-2",
-      question: "What is the FQA in quality?",
-      answer:
-        "In quality management, FQA typically refers to Final Quality Assurance, which is the process of verifying that a product meets quality standards before release.",
-    },
-    {
-      id: "item-3",
-      question: "What is the full form of FQA in computer?",
-      answer:
-        "In computing, FAQ (not FQA) stands for Frequently Asked Questions. It's a list of common questions and their answers about a specific topic.",
-    },
-    {
-      id: "item-4",
-      question: "What is professional FQA?",
-      answer:
-        "Professional FQA typically refers to professional Final Quality Assurance roles in various industries, focusing on ensuring product or service quality.",
-    },
-    {
-      id: "item-5",
-      question: "What FAQ means?",
-      answer:
-        "FAQ stands for Frequently Asked Questions. It's a list of common questions and their answers about a particular subject.",
-    },
-    {
-      id: "item-6",
-      question: "Is FAQ correct?",
-      answer:
-        "Yes, FAQ is the correct abbreviation for Frequently Asked Questions. It's widely used and recognized across the internet and in documentation.",
-    },
-  ];
+function DetailSidebar({ data, id }: any) {
+  const [openVisibilityModal, setOpenVisibilityModal] =
+    useState<boolean>(false);
+  const [openRulesModal, setOpenRulesModal] = useState<boolean>(false);
+
 
   return (
     <div className=" w-[30%] h-[85vh] sticky top-0 border  border-border_clr rounded-[10px] overflow-y-scroll scrollbar-hide">
@@ -74,7 +46,9 @@ function DetailSidebar({ data }: any) {
             </div>
             <div className="flex flex-col">
               <Paragraph
-                text={`Created by ${data?.createdBy?.username}`}
+                text={`Created by ${
+                  data?.isAdmin ? "you" : data?.createdBy?.username
+                }`}
                 size="16px"
                 className="font-[500]"
               />
@@ -91,7 +65,13 @@ function DetailSidebar({ data }: any) {
                 <Paragraph text={capitalize(data?.visibility)} />
               </div>
             </div>
-            <button>Change</button>
+            {data?.isAdmin && data?.memberShipStatus == "joined" && (
+              <CustomButton
+                text="Change"
+                className="bg-btn_primary text-primary_clr hover:bg-secondary_clr hover:text-white transition-all "
+                onClick={() => setOpenVisibilityModal(true)}
+              />
+            )}
           </section>
           <section className="flex items-center gap-4  w-full px-4 py-2">
             <div className="w-[48px] h-[48px] rounded-[8px] bg-[#E8EDF5] flex items-center justify-center">
@@ -110,10 +90,16 @@ function DetailSidebar({ data }: any) {
                 <img src="/mods.svg" width={15} height={15} />
               </div>
               <div className="flex flex-col">
-                <Paragraph text="Moderators (3)" />
+                <Paragraph text={`Moderators ${data?.moderators?.length}`} />
               </div>
             </div>
-            <button>Change</button>
+            {/*todo redirect to dashboard */}
+            {data?.isAdmin && data?.memberShipStatus == "joined" && (
+              <CustomButton
+                text="Manage"
+                className="bg-[#8ef6e4] text-primary_clr hover:bg-secondary_clr hover:text-white transition-all "
+              />
+            )}
           </section>
           <section className="flex items-center gap-4 justify-between  w-full px-4 py-2">
             <div className="flex items-center gap-4 ">
@@ -126,35 +112,30 @@ function DetailSidebar({ data }: any) {
                 <Paragraph text="Rules" />
               </div>
             </div>
-            <button>Add</button>
+            {data?.isAdmin && data?.memberShipStatus == "joined" && (
+              <CustomButton
+                text="Add"
+                className="bg-btn_primary text-primary_clr hover:bg-secondary_clr hover:text-white transition-all "
+                onClick={() => setOpenRulesModal(true)}                                  
+              />                                                                                   
+            )}
           </section>
-          <Rules items={faqData} />
+          {data?.rules?.map((data: { rule: string }, index: number) => (
+            <Paragraph text={`${index + 1}. ${data.rule}`} key={index} />
+          ))}
         </div>
-        {/*
-       
-      
-        <section
-          className="py-4 w-full"
-          style={{
-            borderBottom: "1px solid #E5E5E5",
-          }}
-        >
-          <Heading text="Rules" size="16px" className="" />
-          <Rules items={faqData} />
-        </section>
-        <section className="w-full">
-          <div className="w-full h-[3rem] bg-slate-200  rounded-md flex items-center gap-2 p-2">
-            <img
-              src="/food.jpg"
-              className="rounded-[50%] object-cover w-[35px] h-[35px]"
-              alt="Profile Image"
-            />
-            <Link href={"#"}>
-              <Heading text="Usman ali" size="16px" />
-            </Link>
-          </div>
-        </section> */}
       </div>
+      <ChangeVisibilityModal
+        openModal={openVisibilityModal}
+        setOpenModal={setOpenVisibilityModal}
+        data={data}
+        id={id}
+      />
+      <RulesModal
+        openModal={openRulesModal}
+        setOpenModal={setOpenRulesModal}
+        id={id}
+      />
     </div>
   );
 }

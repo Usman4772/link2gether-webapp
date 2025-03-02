@@ -13,6 +13,8 @@ export async function JoinCommunity(userId: any, community: any) {
   if (alreadyMember) return community;
 
   if (user.communityMemberships.includes(community._id)) return community;
+  if (community.createdBy.toString() === userId.toString())
+    community.moderators.push(userId);
   community?.members.push(userId);
   community.memberCount = community?.members?.length;
   if (!user) throw new apiErrors([], "Unauthorized", 401);
@@ -74,8 +76,15 @@ export async function handleLeaveCommunity(community: any, user: any) {
   const isMember = community.members.includes(user?._id);
   if (!isMember) throw new apiErrors([], "Unauthorized action", 401);
 
-  if (community?.createdBy.toString() === user?._id.toString())
-    throw new apiErrors([], "You cannot leave a community you created", 404);
+  if (community?.createdBy.toString() === user?._id.toString()) {
+    if (community.visibility === "private") {
+      throw new apiErrors(
+        [],
+        "You cannot leave private community being an admin.",
+        400
+      );
+    }
+  }
   const members = community.members.filter(
     (id: any) => id.toString() !== user?._id.toString()
   );
@@ -149,11 +158,24 @@ export async function removeModerator(communityId: string, modId: string) {
   );
 }
 
-export type RulesPayload = Array<{
-  title: string;
-  description: string;
-}>;
-export async function addRules(rules: RulesPayload, community: any) {
-  community.rules = rules;
-  await community.save();
+export interface RulesPayload {
+  rules: Array<{
+    rule: string;
+  }>;
+  merge?: boolean;
+}
+
+export async function addRules(data: RulesPayload, community: any) {
+  if (data.merge) {
+    await Community.updateOne(
+      { _id: community._id },
+      { $push: { rules: { $each: data.rules } } }
+    );
+  } else {
+    await Community.updateOne(
+      { _id: community._id },
+      { $set: { rules: data.rules } }
+    );
+  }
+  return await Community.findById(community._id);
 }
