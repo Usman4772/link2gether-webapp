@@ -9,10 +9,10 @@ export async function validateToken(req: NextRequest) {
   const headers = req.headers;
 
   const token = headers.get("Authorization")?.split(" ")[1];
-  if (!token) throw new apiErrors([], "Unauthorized", 401);
+  if (!token) throw new apiErrors([], "Unauthenticated", 401);
 
   const userToken = await Tokens.findOne({ token: token });
-  if (!userToken) throw new apiErrors([], "Unauthorized", 401);
+  if (!userToken) throw new apiErrors([], "Unauthenticated", 401);
 
   const tokenDetails = await jwtVerify(
     token,

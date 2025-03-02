@@ -31,15 +31,17 @@ export function ThreeDCard({
         >
           {data.description}
         </CardItem>
-        <CardItem translateZ="100" className="w-full mt-4">
-          <Image
-            src={data?.icon}
-            height="1000"
-            width="1000"
-            className="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl"
-            alt="thumbnail"
-          />
-        </CardItem>
+        {data?.icon && (
+          <CardItem translateZ="100" className="w-full mt-4">
+            <Image
+              src={data?.icon}
+              height="1000"
+              width="1000"
+              className="h-60 w-full object-cover rounded-xl group-hover/card:shadow-xl"
+              alt="thumbnail"
+            />
+          </CardItem>
+        )}
         <div className="flex justify-between items-center mt-20">
           <CardItem
             translateZ={20}

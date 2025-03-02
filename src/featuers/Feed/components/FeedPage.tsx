@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
-import Post from "./Post";
 import useFetchPosts from "../hooks/useFetchPosts";
 import Loading from "@/components/Global/Loading";
 import NotFound from "@/components/Global/NotFound";
+import Post from "./Post";
 
 export interface PostProps {
   id: string;

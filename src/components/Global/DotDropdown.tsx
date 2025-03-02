@@ -1,40 +1,29 @@
-"use client"
+"use client";
+import { Dropdown } from "antd";
+import React from "react";
 import { PiDotsThreeBold } from "react-icons/pi";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import React from "react";
 
-interface ItemProps {
-  id: string;
-  label: string;
-  onClick: (id: string) => void;
+interface DotDropdownProps {
+  items?: {label:string,key:string|number,onClick?:()=>void}[];
   icon?: React.ReactNode;
+  trigger?: "hover" | "click";
 }
 
-export function DotDropdown({ items = [] }: { items: ItemProps[] }) {
+export default function DotDropdown({ items = [], icon, trigger = "hover" }: DotDropdownProps) {
   return (
-    <DropdownMenu >
-      <DropdownMenuTrigger asChild>
-        <PiDotsThreeBold />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-auto">
-        <DropdownMenuGroup>
-          {items.map((item: ItemProps) => {
-            return (
-              <DropdownMenuItem onClick={()=>item.onClick(item.id)} key={item.id}>
-                <div>{item.icon}</div>
-                {item.label}
-              </DropdownMenuItem>
-            );
-          })}
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="flex " onClick={(e) => e.stopPropagation()}>
+      <Dropdown menu={{ items }} placement="bottomRight" trigger={[trigger]}>
+        <a
+          onClick={(e) => {
+            e.preventDefault();
+          }}
+        >
+          <div className="text-xl text-black  justify-center items-center h-10 w-10 flex rounded-md font-bold hover:border hover:shadow-md">
+            <div className="">{icon ? icon : <PiDotsThreeBold />}</div>
+          </div>
+        </a>
+      </Dropdown>
+    </div>
   );
 }

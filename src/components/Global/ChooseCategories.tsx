@@ -26,8 +26,10 @@ function ChooseCategories() {
     setSelectedCategories,
     selectedCategories,
   } = useHandleChooseCategories();
+
+  
   const { categories, pageLoading } = useFetchCategories();
-  // const categories:any=[]
+
   //TODO: in future we can fetch categories which are created already from backend
   if (pageLoading) return <Loading />;
   if (!categories || categories.length === 0)
@@ -50,27 +52,35 @@ function ChooseCategories() {
           {categories &&
             categories.length > 0 &&
             categories?.map((category: CategoryType) => {
-              return (
-                <ThreeDCard
-                  key={category.name}
-                  data={category}
-                  okText={
-                    selectedCategories.includes(category.value)
-                      ? "Remove"
-                      : "Add"
-                  }
-                  onClick={() =>
-                    selectedCategories.includes(category.value)
-                      ? setSelectedCategories((prev) =>
-                          prev.filter((item) => item !== category.value)
-                        )
-                      : setSelectedCategories((prev) => [
-                          ...prev,
-                          category.value,
-                        ])
-                  }
-                />
-              );
+                return (
+                  <ThreeDCard
+                    key={category.name}
+                    data={category}
+                    okText={
+                      selectedCategories
+                        .map((item: any) => item.name)
+                        .includes(category.name)
+                        ? "Remove"
+                        : "Add"
+                    }
+                    onClick={() =>
+                      selectedCategories
+                        .map((item: any) => item.name)
+                        .includes(category.name)
+                        ? setSelectedCategories((prev) =>
+                            prev.filter(
+                              (item:any) =>
+                                item.name !== category.name &&
+                                item.value !== category.value
+                            )
+                          )
+                        : setSelectedCategories((prev:any) => [
+                            ...prev,
+                            { name: category.name, value: category.value },
+                          ])
+                    }
+                  />
+                );
             })}
         </div>
       </div>

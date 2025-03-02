@@ -4,7 +4,6 @@ import { PostProps } from "./FeedPage";
 import Link from "next/link";
 import Image from "next/image";
 import Paragraph from "@/components/Global/Paragraph";
-import { DotDropdown } from "@/components/Global/DotDropdown";
 import ReactTimeAgo from "react-time-ago";
 import ShowMore from "@/components/Global/ShowMore";
 
@@ -38,7 +37,8 @@ function Post({ data }: { data: PostProps }) {
           </div>
         </div>: <UserHeader author={data.author} created_at={data.created_at}/>}
         <div>
-          <DotDropdown
+          {/*todo add this dropdown to save the post*/}
+          {/* <DotDropdown
             items={[
               {
                 id: "1",
@@ -48,7 +48,7 @@ function Post({ data }: { data: PostProps }) {
                 },
               },
             ]}
-          />
+          /> */}
         </div>
       </div>
       <div className="flex flex-col justify-center px-2">

@@ -14,6 +14,7 @@ import Image from "next/image";
 import Link from "next/link";
 import useFormConfigration from "../hooks/useFormConfigration";
 import useLogin from "../hooks/useLogin";
+import CustomButton from "@/components/Global/CustomButton";
 
 function LoginForm() {
   const { form, setError } = useFormConfigration();
@@ -63,14 +64,13 @@ function LoginForm() {
             )}
           />
 
-          <Button
+          <CustomButton
+            text="Login"
             type="submit"
-            variant={"blue"}
-            className="w-[448px] h-[56px]  mx-[16px] py-[12px] hover:bg-blue-500"
-          >
-            {btnLoading && <Loader2 className="animate-spin" />}
-            Login
-          </Button>
+            loading={btnLoading}
+            size={"xl"}
+            variant={"secondary"}
+          />
           <h2 className="px-[16px] py-4 text-[#706F6F]">
             New to Link2Gether?{" "}
             <Link href={"/register"} className="text-btn">

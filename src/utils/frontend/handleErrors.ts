@@ -1,25 +1,31 @@
 import toast from "react-hot-toast";
 
-export function transformErrors(errors:any) {
-  const transformedErrors = Object.entries(errors).map(([key, value]) => ({
-    name: key.split("."),
-    errors: value,
-  }));
+export function transformErrors(errors: any) {
+  const transformedErrors: any = [];
+  errors.forEach((err: any) => {
+    Object.entries(err).forEach(([key, value]) => {
+      transformedErrors.push({
+        name: key,
+        value: value,
+      });
+    });
+  });
   return transformedErrors;
 }
 
-export async function displayErrors(errors:any[]) {
+export async function displayErrors(errors: any[]) {
   const transformedErrors = transformErrors(errors);
-  transformedErrors.forEach(({ name, errors }:{name:any,errors:any}) => {
-    errors.forEach((errMsg:string) => {
-      toast.error(errMsg); // Display error message for each field
-    });
+  transformedErrors.forEach(({ name, value }: { name: any; value: any }) => {
+    toast.error(value);
   });
 }
-export function handleAPIErrors(error:any, customMessage = "Something went wrong") {
-  const errors = error?.response?.data?.data?.errors;
+export function handleAPIErrors(
+  error: any,
+  customMessage = "Something went wrong"
+) {
+  const errors = error?.response?.data?.errors;
   const errorMessage = error?.response?.data?.message;
-  if (errors) {
+  if (errors && errors.length > 0) {
     displayErrors(errors);
   } else if (errorMessage) {
     toast.error(errorMessage);
@@ -28,8 +34,8 @@ export function handleAPIErrors(error:any, customMessage = "Something went wrong
   }
 }
 
-export function transformFormErrors(errors:any, setError:any) {
-  errors.forEach((err:any) => {
+export function transformShadCnFormErrors(errors: any, setError: any) {
+  errors.forEach((err: any) => {
     const [field, message] = Object.entries(err)[0];
     setError(field, {
       type: "server",
@@ -38,10 +44,24 @@ export function transformFormErrors(errors:any, setError:any) {
   });
 }
 
-export function handleFormErrors(error:any, setError:any) {
+export function handleFormErrors(error: any, setError: any) {
   const errors = error?.response?.data?.errors;
   if (errors) {
-    transformFormErrors(error?.response?.data?.errors, setError);
+    transformShadCnFormErrors(error?.response?.data?.errors, setError);
+  } else {
+    toast.error(error?.response?.data?.message);
   }
-  toast.error(error?.response?.data?.message);
+}
+
+export function handleAntDFormErrors(error: any, form: any) {
+  if (!form || !error) return null;
+  const errorMessage = error?.response?.data?.message;
+  const errors = error?.response?.data?.errors;
+
+  if (errors) {
+    const transformedErrors = transformErrors(error?.response?.data?.errors);
+    console.log('transformedErrors', transformedErrors)
+    form.setFields(transformedErrors);
+  } 
+  toast.error(errorMessage || "Something went wrong. Please try again");
 }

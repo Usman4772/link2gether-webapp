@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { ConfigProvider, Switch } from "antd";
 
 export function CustomTextArea({
   placeholder,
@@ -87,4 +88,20 @@ export function CustomSelectBox({
       </Select>
     </div>
   );
+}
+
+
+
+export function CustomCheckbox({onChange, value}: {onChange: (e: any) => void, value: boolean}) {
+    return (
+      <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: "#7bf1a8",
+          },
+        }}
+      >
+        <Switch onChange={onChange} value={value} />
+      </ConfigProvider>
+    );
 }

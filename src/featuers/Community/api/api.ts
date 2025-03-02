@@ -1,9 +1,13 @@
 import axios from "@/utils/config/axios";
 
-export async function createCommunityAPI(payload: any) {
+export  function createCommunityAPI(payload: any) {
   return axios.post("/community/create", payload);
 }
 
+
+export function updateCommunityAPI(payload: any, id: string | number) { 
+  return axios.patch(`/community/${id}/admin/update`, payload);
+}
 export function createPostAPI(payload: FormData, id: string | number) {
   return axios.post(`/post/create/in-community/${id}`, payload);
 }
@@ -23,4 +27,9 @@ export function leaveCommunityAPI(id: string | number) {
 
 export function cancelJoinRequestAPI(id: string | number) {
   return axios.get(`/community/${id}/cancel-join-request`);
+}
+
+
+export function addRulesAPI(payload: any, id: string | number) {
+  return axios.post(`/community/${id}/admin/rules/add`, payload);
 }

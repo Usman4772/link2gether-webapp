@@ -30,8 +30,11 @@ export interface ButtonProps {
   text: string;
   className?: string;
   onClick?: () => void;
+  variant?: "primary" | "secondary";
   loading?: boolean;
+  type?: "button" | "submit" | "reset";
   icon?: React.ReactNode;
+  disabled?: boolean;
 }
 
 

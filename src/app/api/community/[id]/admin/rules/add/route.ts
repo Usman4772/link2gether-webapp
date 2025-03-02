@@ -16,8 +16,8 @@ export async function POST(req: NextRequest) {
     const communityId = req.nextUrl.pathname.split("/")[3];
     const community = await checkCommunityExistence(communityId);
     checkAdmin(userId, community);
-    const {rules} = await validateRulesPayload(req);
-    await addRules(rules, community);
+    const data = await validateRulesPayload(req);
+    await addRules(data, community);
     return SUCCESS_RESPONSE([], 200, "Rules added successfully");
   } catch (error) {
     return errorHandler(error);
