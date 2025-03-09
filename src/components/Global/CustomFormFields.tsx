@@ -9,7 +9,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { ConfigProvider, Switch } from "antd";
+import { ConfigProvider, Input, Switch } from "antd";
+import { twMerge } from "tailwind-merge";
 
 export function CustomTextArea({
   placeholder,
@@ -72,7 +73,7 @@ export function CustomSelectBox({
             overflowY: "auto",
           }}
         >
-          <SelectGroup >
+          <SelectGroup>
             <SelectLabel className={` ${labelClassName}`}>{label}</SelectLabel>
             {items.map((item) => (
               <SelectItem
@@ -90,18 +91,47 @@ export function CustomSelectBox({
   );
 }
 
+export function CustomCheckbox({
+  onChange,
+  value,
+}: {
+  onChange: (e: any) => void;
+  value: boolean;
+}) {
+  return (
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#7bf1a8",
+        },
+      }}
+    >
+      <Switch onChange={onChange} value={value} />
+    </ConfigProvider>
+  );
+}
 
+interface CustomInputProps {
+  placeholder: string;
+  className?: string;
+  value?: string;
+  onChange?: (e: any) => void;
+}
 
-export function CustomCheckbox({onChange, value}: {onChange: (e: any) => void, value: boolean}) {
-    return (
-      <ConfigProvider
-        theme={{
-          token: {
-            colorPrimary: "#7bf1a8",
-          },
-        }}
-      >
-        <Switch onChange={onChange} value={value} />
-      </ConfigProvider>
-    );
+export function CustomInput({
+  placeholder,
+  className,
+  value,
+  onChange,
+  ...props
+}: CustomInputProps) {
+  return (
+    <Input
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      {...props}
+      className={twMerge("py-3", className)}
+    />
+  );
 }

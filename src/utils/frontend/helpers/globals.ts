@@ -1,5 +1,6 @@
 import clsx, { ClassValue } from "clsx";
 import dayjs from "dayjs";
+import millify from "millify";
 import { twMerge } from "tailwind-merge";
 
 export function getFormattedDate(date: string): string {
@@ -15,4 +16,12 @@ export function capitalize(text: string): string {
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+export function convertNumberToK(
+  number: number,
+  precision = 2,
+  space = true
+): string {
+  return millify(number, { precision: precision, space: space });
 }

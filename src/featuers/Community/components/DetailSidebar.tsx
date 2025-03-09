@@ -1,21 +1,13 @@
 import Heading from "@/components/Global/Heading";
 import Paragraph from "@/components/Global/Paragraph";
-import { PiTimerDuotone } from "react-icons/pi";
-import { PiGlobeSimpleLight } from "react-icons/pi";
-import { RiChatPrivateLine } from "react-icons/ri";
 import { CiTimer } from "react-icons/ci";
 import { FiCheckCircle } from "react-icons/fi";
+import { PiGlobeSimpleLight } from "react-icons/pi";
 
-import React, { useState } from "react";
-import Rules from "./Rules";
-import Link from "next/link";
-import { capitalize, getFormattedDate } from "@/utils/frontend/helpers/globals";
-import useUpdateCommunity from "../hooks/useUpdateCommunity";
-import { Button } from "@/components/Global/Button";
 import CustomButton from "@/components/Global/CustomButton";
-import ActionModal from "@/components/Global/ActionModal";
+import { capitalize, getFormattedDate } from "@/utils/frontend/helpers/globals";
+import { useState } from "react";
 import ChangeVisibilityModal from "./ChangeVisibilityModal";
-import DotDropdown from "@/components/Global/DotDropdown";
 import RulesModal from "./RulesModal";
 export interface FAQItem {
   id: string;
@@ -68,7 +60,7 @@ function DetailSidebar({ data, id }: any) {
             {data?.isAdmin && data?.memberShipStatus == "joined" && (
               <CustomButton
                 text="Change"
-                className="bg-btn_primary text-primary_clr hover:bg-secondary_clr hover:text-white transition-all "
+                variant={"primary"}
                 onClick={() => setOpenVisibilityModal(true)}
               />
             )}
@@ -97,7 +89,7 @@ function DetailSidebar({ data, id }: any) {
             {data?.isAdmin && data?.memberShipStatus == "joined" && (
               <CustomButton
                 text="Manage"
-                className="bg-[#8ef6e4] text-primary_clr hover:bg-secondary_clr hover:text-white transition-all "
+                variant={"primary"}
               />
             )}
           </section>
@@ -115,7 +107,7 @@ function DetailSidebar({ data, id }: any) {
             {data?.isAdmin && data?.memberShipStatus == "joined" && (
               <CustomButton
                 text="Add"
-                className="bg-btn_primary text-primary_clr hover:bg-secondary_clr hover:text-white transition-all "
+                variant={"primary"}
                 onClick={() => setOpenRulesModal(true)}                                  
               />                                                                                   
             )}

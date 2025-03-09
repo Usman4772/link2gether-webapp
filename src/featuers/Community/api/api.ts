@@ -4,6 +4,9 @@ export  function createCommunityAPI(payload: any) {
   return axios.post("/community/create", payload);
 }
 
+export function getCommunityPostsAPI(id: string | number) {
+  return axios.get(`/post/by-community/${id}`);
+}
 
 export function updateCommunityAPI(payload: any, id: string | number) { 
   return axios.patch(`/community/${id}/admin/update`, payload);

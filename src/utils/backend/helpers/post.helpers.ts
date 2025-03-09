@@ -1,7 +1,6 @@
 import { NextRequest } from "next/server";
 import { postSchema } from "../validation-schema/post.schema";
 import apiErrors from "./apiErrors";
-import { comment } from "postcss";
 
 export async function validatePostSchema(req: NextRequest) {
   const formData = await req.formData();
@@ -42,6 +41,7 @@ export function createPayload(posts: any[], userId: any) {
       type: post.type,
       likes: post.likes.length,
       comments: post.comments.length,
+      isLiked: post.likes.includes(userId.toString()),
       created_at: post.created_at,
       community: {
         id: post.community._id,
@@ -55,4 +55,28 @@ export function createPayload(posts: any[], userId: any) {
       },
     };
   });
+}
+
+
+export function createPostPayload(post: any, userId: any) {
+  return {
+    id: post._id,
+    description: post.description,
+    media: post.media,
+    type: post.type,
+    likes: post.likes.length,
+    comments: post.comments.length,
+    isLiked: post.likes.includes(userId.toString()),
+    created_at: post.created_at,
+    community: {
+      id: post.community._id,
+      community_name: post.community.community_name,
+      avatar: post.community.avatar,
+    },
+    author: {
+      id: post.author._id,
+      username: post.author.username,
+      profileImage: post.author.profileImage,
+    },
+  };
 }

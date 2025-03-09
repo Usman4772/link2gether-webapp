@@ -33,6 +33,7 @@ function useUpdateCommunity({
         toast.success(response?.data?.message);
         reset();
         queryClient.invalidateQueries({ queryKey: ["community-details"] });
+        queryClient.invalidateQueries({ queryKey: ["community-posts"] });
         setOpenModal(false);
       }
     },
@@ -49,6 +50,7 @@ function useUpdateCommunity({
         toast.success(response?.data?.message);
         reset();
         queryClient.invalidateQueries({ queryKey: ["community-details"] });
+        queryClient.invalidateQueries({ queryKey: ["community-posts"] });
         setOpenModal(false);
       }
     },

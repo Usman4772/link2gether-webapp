@@ -13,6 +13,7 @@ function useLeaveCommunity(id: string | number) {
     mutationFn: () => leaveCommunity(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["community-details"] });
+      queryClient.invalidateQueries({ queryKey: ["community-posts"] });
       toast.success("Left community successfully");
     },
       onError: (error) => {

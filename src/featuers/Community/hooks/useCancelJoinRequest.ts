@@ -10,7 +10,8 @@ function useCancelJoinRequest(id:string|number) {
   const { mutateAsync ,isPending,error} = useMutation({
       mutationFn: () => cancelJoinRequest(id),
         onSuccess: (response) => {
-            queryClient.invalidateQueries({queryKey: ['community-details']})
+          queryClient.invalidateQueries({ queryKey: ['community-details'] })
+          queryClient.invalidateQueries({ queryKey: ['community-posts'] })
             toast.success(response?.message)
       },
       onError: (error) => {

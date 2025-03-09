@@ -1,14 +1,16 @@
 import Community from "@/models/community";
-import { Types } from "mongoose";
+import { ObjectId, Types } from "mongoose";
 import { NextRequest } from "next/server";
 import apiErrors from "./apiErrors";
 import Post from "@/models/posts";
 import User from "@/models/user";
 import {
+  banUserSchema,
   moderatorsSchema,
   rulesSchema,
 } from "../validation-schema/community.schema";
 import { RulesPayload } from "../modules/auth/services/community.services";
+import dayjs from "dayjs";
 
 export async function checkCommunityExistence(communityId: string) {
   if (!Types.ObjectId.isValid(communityId)) {
@@ -73,6 +75,15 @@ export function getCommunityMembershipStatus(community: any, userId: any) {
 
 export function checkAdmin(userId: any, community: any) {
   if (community.createdBy.toString() !== userId) {
+    throw new apiErrors([], "Unauthorized action", 400);
+  }
+}
+
+export function checkModerator(community: any, userId: any) {
+  if (
+    !community.moderators.toString().includes(userId.toString()) &&
+    community.createdBy.toString() !== userId.toString()
+  ) {
     throw new apiErrors([], "Unauthorized action", 400);
   }
 }
@@ -172,7 +183,119 @@ export async function validateRulesPayload(
     throw new apiErrors(errors, "Validation errors found!", 400);
   }
 
+  return data;
+}
+
+
+
+
+export async function validateBanPayload(
+  req: NextRequest,
+  bannedUserId: string,
+  community: any,
+  modId: any
+): Promise<{ reason: string; duration: string }> {
+  const data = await req.json();
+  if (!data) {
+    throw new apiErrors([], "Data is required", 400);
+  }
+
+  const result = banUserSchema.safeParse(data);
+  if (!result.success) {
+    const errors = result.error.errors.map((error) => {
+      return {
+        [error.path.join(".")]: error.message,
+      };
+    });
+    throw new apiErrors(errors, "Validation errors found!", 400);
+  }
 
   
+  if (!bannedUserId || !Types.ObjectId.isValid(bannedUserId)) {
+    throw new apiErrors([], "Invalid user id", 400);
+  }
+
+  const bannedUserIsAdmin =
+    community.createdBy.toString() === bannedUserId.toString();
+
+  if (bannedUserIsAdmin) {
+    throw new apiErrors([], "You can't ban the community creator", 400);
+  }
+
+  const bannedUserIsModerator = community.moderators.some(
+    (mod: ObjectId) => mod.toString() === bannedUserId.toString()
+  );
+
+  const bannerIsAdmin = modId.toString() === community.createdBy.toString();
+
+  if (bannedUserIsModerator && !bannerIsAdmin) {
+    throw new apiErrors(
+      [],
+      "Only the community creator can ban moderators",
+      400
+    );
+  }
+
   return data;
+}
+
+export function calculateBanExpiresAt(duration: string): Date | null {
+  const now = new Date();
+  if (duration == "one_day") {
+    return dayjs(now).add(1, "day").toDate();
+  } else if (duration == "one_week") {
+    return dayjs(now).add(1, "week").toDate();
+  } else if (duration == "one_month") {
+    return dayjs(now).add(1, "month").toDate();
+  } else if (duration == "forever") {
+    return null;
+  }
+  return null;
+}
+
+
+
+export function communityDetailPagePayload(community: any, userId: any) {
+  return {
+    id: community._id,
+    community_name: community.community_name,
+    description: community.description,
+    visibility: community.visibility,
+    rules: community.rules,
+    category: community.category,
+    cover: community.cover,
+    avatar: community.avatar,
+    isMode: community.moderators.includes(userId),
+    isMember: community.members.includes(userId),
+    memberCount: community.members.length,
+    isBanned: community.bannedUsers.includes(userId),
+    created_at: community.created_at,
+    createdBy: {
+      id: community.createdBy._id,
+      username: community.createdBy.username,
+    },
+    memberShipStatus: getCommunityMembershipStatus(community, userId),
+    isAdmin: community.createdBy._id.toString() === userId.toString(),
+}
+  
+}
+
+export function getCommunityPostsPayload(posts: any, userId: any) {
+  return posts.map((post: any) => {
+    return {
+      id: post._id,
+      description: post.description,
+      media: post.media,
+      type: post.type,
+      created_at: post.created_at,
+      author: {
+        id: post.author._id,
+        username: post.author.username,
+        profileImage: post.author.profileImage,
+      },
+      likes: post.likes.length,
+      comments: post.comments.length,
+      isLiked: post.likes.includes(userId),
+    };
+  });
 }

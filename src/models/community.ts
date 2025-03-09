@@ -1,5 +1,5 @@
 import { GeneralCommunityTypes } from "@/utils/enums/enums";
-import mongoose from "mongoose";
+import mongoose, { mongo } from "mongoose";
 const communitySchema = new mongoose.Schema({
   community_name: {
     type: String,
@@ -47,6 +47,7 @@ const communitySchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  bannedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "BannedUser" }],
   posts: [
     {
       type: mongoose.Schema.Types.ObjectId,

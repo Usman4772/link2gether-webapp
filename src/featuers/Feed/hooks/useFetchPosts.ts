@@ -15,7 +15,6 @@ const [loading,setLoading]=useState(true)
       setLoading(true)
       console.log("fetching posts");
       const response = await fetchAllPostsAPI();
-      console.log(response, "response");
       if (response.data?.success) {
         return response?.data?.data;
       }

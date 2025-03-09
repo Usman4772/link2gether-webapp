@@ -7,12 +7,12 @@ import Post from "./Post";
 
 export interface PostProps {
   id: string;
-  title: string;
   created_at: string;
   description: string;
   media: string;
   type: string;
-  likes: number;
+  likes:number;
+  isLiked: boolean;
   comments: number;
   community?: {
     id: string;
@@ -20,7 +20,7 @@ export interface PostProps {
     avatar: string;
   };
   author: {
-    _id: string;
+    id: string;
     username: string;
     profileImage: string;
   };
@@ -31,9 +31,9 @@ export interface PostProps {
 function FeedPage() {
   const { data, isLoading, error } = useFetchPosts();
   if (isLoading) return <Loading />;
-  if(!data || data.length === 0) return <NotFound text="No posts yet" />;
+  if (!data || data.length === 0) return <NotFound text="No posts yet" />;
   return (
-    <div className="w-full flex flex-col gap-16 px-14">
+    <div className="w-full flex flex-col gap-16 ">
       {data && data.length > 0 && 
         data.map((post: PostProps) => <Post data={post} key={post.id}/>)
       }
