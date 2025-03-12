@@ -155,7 +155,33 @@ export const rulesSchema = z
         )
       )
       .nonempty({ message: "Rules are required" }),
-    merge: z.boolean({message:"Merge must be either true or false"}).optional(),
+    merge: z
+      .boolean({ message: "Merge must be either true or false" })
+      .optional(),
   })
 
+  .required();
+
+export const banUserSchema = z
+  .object({
+    reason: z
+      .string({ message: "Reason must be of type string" })
+      .trim()
+      .min(1, { message: "Reason is required" })
+      .max(100, { message: "Reason must not be longer than 100 characters" }),
+    duration: z.string({ message: "Duration must be of type string" }).refine(
+      (value) => {
+        if (!value) return false;
+        return (
+          value === "one_day" ||
+          value === "one_week" ||
+          value === "one_month" ||
+          value === "forever"
+        );
+      },
+      {
+        message: "Duration must be one of: one_day, one_week, one_month, or forever"
+      }
+    ),
+  })
   .required();

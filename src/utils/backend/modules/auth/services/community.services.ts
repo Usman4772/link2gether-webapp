@@ -1,9 +1,16 @@
+import BannedUser from "@/models/bannedUsers";
 import Comment from "@/models/comments";
 import Community from "@/models/community";
 import Post from "@/models/posts";
 import User from "@/models/user";
 import apiErrors from "@/utils/backend/helpers/apiErrors";
-import { getCommunityMembershipStatus } from "@/utils/backend/helpers/community.helper";
+import {
+  calculateBanExpiresAt,
+  communityDetailPagePayload,
+  getCommunityMembershipStatus,
+} from "@/utils/backend/helpers/community.helper";
+import dayjs from "dayjs";
+import { ObjectId, Types } from "mongoose";
 
 export async function JoinCommunity(userId: any, community: any) {
   const user = await User.findById(userId);
@@ -52,24 +59,15 @@ export async function joinMultipleCommunities(data: string[], userId: any) {
 
 export async function getCommunityDetails(id: any, userId: any) {
   const community = await Community.findById(id)
-    // .populate("posts")
-    .populate({
-      path: "posts",
-      model: Post,
-      select: "-community -__v",
-      populate: {
-        path: "author",
-        select: "_id username profileImage",
-        model: User,
-      },
-    })
     .populate({ path: "createdBy", select: "_id username" })
-    .select("-__v"); //this will populate only _id and username of username form author.and if we want to have anything else except _id and username we can add -_id and -username to exclude these two fields
-  return {
-    ...community?.toObject(),
-    memberShipStatus: getCommunityMembershipStatus(community, userId),
-    isAdmin: community?.createdBy._id.toString() === userId.toString(),
-  };
+    .populate({
+      path: "bannedUsers",
+      model: BannedUser,
+      match: { community: id,user:userId},
+    })
+    .select("-__v");
+  const payload = communityDetailPagePayload(community, userId);
+  return payload;
 }
 
 export async function handleLeaveCommunity(community: any, user: any) {
@@ -178,4 +176,28 @@ export async function addRules(data: RulesPayload, community: any) {
     );
   }
   return await Community.findById(community._id);
+}
+
+export async function banUser(
+  bannedUserId: any,
+  community: any,
+  modId: any,
+  data: { reason: string; duration: string }
+) {
+
+ const isAlreadyBanned=await BannedUser.findOne({user:bannedUserId,community:community._id});
+ if(isAlreadyBanned) throw new apiErrors([], "User is already banned", 400);
+
+  const expires_at = calculateBanExpiresAt(data.duration);
+  const bannedUser = await BannedUser.create({
+    user: bannedUserId,
+    reason: data.reason,
+    community: community._id,
+    banned_by: modId,
+    ban_duration: data.duration,
+    expires_at,
+  });
+  community.bannedUsers.push(bannedUser._id);
+  await community.save();
+  return bannedUser;
 }

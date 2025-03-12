@@ -6,20 +6,22 @@ import { UseFormSetError } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import { createCommunityAPI, createPostAPI } from "../api/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 function useCreatePost({
-    setError,
-    id,
-    form,
-  setOpenModal=()=>{},
+  setError,
+  id,
+  form,
+  setOpenModal = () => {},
 }: {
   setError: UseFormSetError<any>;
-        form: any;
-        id:string | number,
+  form: any;
+  id: string | number;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [btnLoading, setBtnLoading] = useState(false);
+  const queryClient = useQueryClient();
 
   async function createPost(values: z.infer<typeof postSchema>) {
     {
@@ -30,10 +32,15 @@ function useCreatePost({
         formData.append("description", values?.description);
         formData.append("media", media || "");
 
-        const response = await createPostAPI(formData,id);
+        const response = await createPostAPI(formData, id);
         if (response?.data?.success) {
-            toast.success(response?.data?.message);
-            setOpenModal(false)
+          toast.success(response?.data?.message);
+          setOpenModal(false);
+          queryClient.invalidateQueries({ queryKey: ["community-details"] });
+          queryClient.invalidateQueries({
+            queryKey: ["community-posts"],
+          });
+
           form.reset();
           setFileList([]);
         }

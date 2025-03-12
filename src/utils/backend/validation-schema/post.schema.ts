@@ -4,8 +4,10 @@ export const postSchema = z.object({
   description: z
     .string({ message: "Community description is required" })
     .trim()
-    .min(5, { message: "Post description must be at least 5 characters long" }).
-  max(2000,{message:"Post description must not be longer than 2000 characters"}),
+    .min(5, { message: "Post description must be at least 5 characters long" })
+    .max(2000, {
+      message: "Post description must not be longer than 2000 characters",
+    }),
   media: z
     .union([
       z.instanceof(Blob, { message: "Media must be a file" }),
@@ -29,3 +31,5 @@ export const postSchema = z.object({
     )
     .optional(),
 });
+
+

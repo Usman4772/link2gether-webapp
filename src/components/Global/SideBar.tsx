@@ -126,7 +126,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
           >
             <IconMenu2 className="h-5 w-5 " />
           </Button>
-          <div className="p-2 md:py-10 md:px-4 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full overflow-y-auto">
+          <div className="p-2 md:py-10  dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full overflow-y-auto md:px-[80px]">
             {children}
           </div>
         </div>

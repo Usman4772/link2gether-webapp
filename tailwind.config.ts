@@ -13,6 +13,7 @@ export default {
       colors: {
         primary_clr: "#01352c",
         secondary_clr: " #61b390",
+        gray_clr: "#E8EDF5",
         bg_clr: "#bad8b6",
         btn_primary_clr: "#7bf1a8",
         btn_primary_hover: "#60ff9d",
@@ -20,6 +21,7 @@ export default {
         btn_secondary_hover: "#00b07c",
         btn_default_clr: "#E8EDF5",
         btn_default_hover: "#e5e5e5",
+        text_secondary: "#4F7A96",
         bg: "#F7FAFC",
         text: "#4A709C",
         border_clr: "#E5E5E5",

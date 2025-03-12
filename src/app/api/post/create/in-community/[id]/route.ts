@@ -1,4 +1,4 @@
-import Community from "@/models/community";
+import BannedUser from "@/models/bannedUsers";
 import Post from "@/models/posts";
 import apiErrors from "@/utils/backend/helpers/apiErrors";
 import { checkCommunityExistence } from "@/utils/backend/helpers/community.helper";
@@ -9,8 +9,6 @@ import {
   connectToDatabase,
   handleMediaUpload,
 } from "@/utils/backend/modules/auth/services/authServices";
-import { postSchema } from "@/utils/backend/validation-schema/post.schema";
-import { Types } from "mongoose";
 import { NextRequest } from "next/server";
 
 interface CreatePostProps {
@@ -25,10 +23,11 @@ export async function POST(req: NextRequest) {
     
     const communityId = req.nextUrl.pathname.split("/")[5];
     const community = await checkCommunityExistence(communityId);
-    if(!community.members.includes(userId)) throw new apiErrors([], "You can't create post in this community", 403);
+    if (!community.members.includes(userId)) throw new apiErrors([], "You can't create post in this community", 403);
+    const isUserBanned = await BannedUser.findOne({ user: userId, community: communityId });
+    if (isUserBanned) throw new apiErrors([], "You are banned from this community", 403);
     const data = await validatePostSchema(req);
     const post = await createPost(data, user, community);
-
     return SUCCESS_RESPONSE(post, 200, "Post created successfully!");
   } catch (error) {
     return errorHandler(error);

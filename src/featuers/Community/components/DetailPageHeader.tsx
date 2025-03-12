@@ -1,22 +1,20 @@
 "use client";
-import { Button } from "@/components/Global/Button";
-import Heading from "@/components/Global/Heading";
-import Link from "next/link";
-import React, { useState } from "react";
-import CreatePostModal from "./CreatePostModal";
-import useJoinCommunity from "../hooks/useJoinCommunity";
-import { IoExitOutline } from "react-icons/io5";
-import useLeaveCommunity from "../hooks/useLeaveCommunity";
-import useCancelJoinRequest from "../hooks/useCancelJoinRequest";
-import { Tooltip } from "antd";
-import { Pencil } from "lucide-react";
-import EditCommunityModal from "./EditCommunityModal";
-import Uploader from "@/components/Global/Uploader";
-import ProfilePicture from "@/components/Global/ProfilePicture";
-import { PiPencilSimpleLineFill as EditIcon } from "react-icons/pi";
-import useUpdateCommunity from "../hooks/useUpdateCommunity";
 import CoverImage from "@/components/Global/CoverImage";
 import CustomButton from "@/components/Global/CustomButton";
+import Heading from "@/components/Global/Heading";
+import ProfilePicture from "@/components/Global/ProfilePicture";
+import { Tooltip } from "antd";
+import Link from "next/link";
+import { useState } from "react";
+import { IoExitOutline } from "react-icons/io5";
+import { PiPencilSimpleLineFill as EditIcon } from "react-icons/pi";
+import useCancelJoinRequest from "../hooks/useCancelJoinRequest";
+import useJoinCommunity from "../hooks/useJoinCommunity";
+import useLeaveCommunity from "../hooks/useLeaveCommunity";
+import useUpdateCommunity from "../hooks/useUpdateCommunity";
+import CreatePostModal from "./CreatePostModal";
+import EditCommunityModal from "./EditCommunityModal";
+import { CommunityDetailPageProps } from "@/utils/backend/modules/auth/types/community.types";
 
 function DetailPageHeader({ id, data }: { id: string | number; data: any }) {
   const [openPostModal, setOpenPostModal] = useState(false);
@@ -29,6 +27,13 @@ function DetailPageHeader({ id, data }: { id: string | number; data: any }) {
     useUpdateCommunity({ id, setOpenModal: setOpenEditModal });
 
   const privateAndAdmin = data?.isAdmin && data?.visibility == "private";
+
+
+  function getCreatePostTooltipTitle(data:any) {
+  if(data?.memberShipStatus !== "joined")  return "You need to join the community to create a post";
+    if (data.isBanned) return "You can not create post as you are banned from this community";
+    return ""
+}
 
   return (
     <div className="flex flex-col gap-1 w-full relative">
@@ -81,7 +86,7 @@ function DetailPageHeader({ id, data }: { id: string | number; data: any }) {
             </div>
             <Link
               className="text-[#4F7A96] font-[13px] p-0"
-              href={`/profile/${data?.createdBy?._id}`}
+              href={`/profile/${data?.createdBy?.id}`}
             >
               created by {data?.isAdmin ? "you" : data?.createdBy?.username}
             </Link>
@@ -95,16 +100,20 @@ function DetailPageHeader({ id, data }: { id: string | number; data: any }) {
                 : ""
             }
           >
-            <div>
-              <CustomButton
-                text="Create Post"
-                variant={"secondary"}
-                disabled={data?.memberShipStatus !== "joined"}
-                onClick={() => {
-                  setOpenPostModal(true);
-                }}
-              />
-            </div>
+            <Tooltip
+              title={getCreatePostTooltipTitle(data)}
+            >
+              <span>
+                <CustomButton
+                  text="Create Post"
+                  variant={"secondary"}
+                  disabled={data?.memberShipStatus !== "joined" || data.isBanned}
+                  onClick={() => {
+                    setOpenPostModal(true);
+                  }}
+                />
+              </span>
+            </Tooltip>
           </Tooltip>
 
           {data?.memberShipStatus == "joined" ? (

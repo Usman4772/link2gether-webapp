@@ -1,6 +1,7 @@
 import { cva, VariantProps } from "class-variance-authority";
 import { Loader2 } from "lucide-react";
 import React, { ButtonHTMLAttributes } from "react";
+import { twMerge } from "tailwind-merge";
 
 
 const buttonVariants = cva(
@@ -11,7 +12,7 @@ const buttonVariants = cva(
         default: "bg-btn_default_clr text-black hover:bg-btn_default_hover",
         primary:
           "bg-btn_primary_clr text-primary_clr hover:bg-btn_primary_hover",
-        secondary: "bg-btn_secondary_clr text-white hover:bg-btn_secondary_hover",
+        secondary: "!bg-btn_secondary_clr !text-white hover:bg-btn_secondary_hover",
       },
       size: {
         sm: "",
@@ -34,9 +35,9 @@ interface ButtonProps
   icon?: React.ReactNode;
   text: string;
 }
-export default function CustomButton({ variant, size, loading, icon, text, ...props }: ButtonProps) {
+export default function CustomButton({ variant, size, loading, icon, text,className, ...props }: ButtonProps) {
   return (
-    <button {...props} className={buttonVariants({ variant, size })}>
+    <button {...props} className={twMerge(buttonVariants({ variant, size }),className)}>
       {loading && <Loader2 className="animate-spin " />}
       {icon && <div>{icon}</div>}
       {text}

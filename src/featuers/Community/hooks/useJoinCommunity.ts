@@ -14,6 +14,7 @@ function useJoinCommunity(id: string | number) {
     mutationFn: () => joinCommunity(id),
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["community-details"] });
+      queryClient.invalidateQueries({ queryKey: ["community-posts"] });
       toast.success(response?.message);
     },
     onError: (error: any) => {
