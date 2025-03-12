@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchAllPostsAPI } from "../api/api";
-import { PostProps } from "../components/FeedPage";
 import {useState} from "react"
 import { handleAPIErrors } from "@/utils/frontend/handleErrors";
+import { CommunityPostsProps } from "@/utils/backend/modules/auth/types/community.types";
 function useFetchPosts() {
-  const { data, error, isLoading, refetch } = useQuery<PostProps[] | []>({
+  const { data, error, isLoading, refetch } = useQuery<CommunityPostsProps[] | []>({
     queryKey: ["all-posts"],
     queryFn: getAllPosts,
     initialData: [],

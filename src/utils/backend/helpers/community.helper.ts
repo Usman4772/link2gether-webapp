@@ -266,9 +266,10 @@ export function communityDetailPagePayload(community: any, userId: any) {
     cover: community.cover,
     avatar: community.avatar,
     isMode: community.moderators.includes(userId),
+    moderators:community.moderators.length,
     isMember: community.members.includes(userId),
     memberCount: community.members.length,
-    isBanned: community.bannedUsers.includes(userId),
+    isBanned:community?.bannedUsers && community?.bannedUsers?.length > 0 ? true : false,
     created_at: community.created_at,
     createdBy: {
       id: community.createdBy._id,

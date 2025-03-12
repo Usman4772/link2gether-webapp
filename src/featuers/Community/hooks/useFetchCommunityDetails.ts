@@ -2,10 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchCommunityDetailsAPI, getCommunityPostsAPI } from "../api/api";
 import { handleAPIErrors } from "@/utils/frontend/handleErrors";
 import { useState } from "react";
+import { CommunityDetailPageProps } from "@/utils/backend/modules/auth/types/community.types";
 
 function useFetchCommunityDetails(id: string | number) {
   const [notFound, setNotFound] = useState(null);
-  const { data, error, isLoading, refetch } = useQuery({
+  const { data, error, isLoading, refetch } = useQuery<CommunityDetailPageProps>({
     queryKey: ["community-details"],
     queryFn: () => fetchCommunityDetails(id),
   });

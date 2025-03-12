@@ -5,9 +5,11 @@ import DetailPageHeader from "./DetailPageHeader";
 import DetailSidebar from "./DetailSidebar";
 import Loading from "@/components/Global/Loading";
 import NotFound from "@/components/Global/NotFound";
+import { CommunityPostsProps } from "@/utils/backend/modules/auth/types/community.types";
 
 function DetailPage({ id }: { id: number | string }) {
-  const { posts, data, isLoading, notFound,postsLoading } = useFetchCommunityDetails(id);
+  const { posts, data, isLoading, notFound, postsLoading } =
+    useFetchCommunityDetails(id);
   if (isLoading) return <Loading />;
   if (notFound) return <NotFound text={notFound} />;
   return (
@@ -17,7 +19,15 @@ function DetailPage({ id }: { id: number | string }) {
         <div className="flex justify-between w-full  relative py-4">
           <div className="w-[65%] h-auto flex flex-col gap-8">
             {posts && posts?.length > 0 ? (
-              posts?.map((post:any) => <Post data={post} />)
+              posts?.map((post: CommunityPostsProps) => (
+                <Post
+                  data={post}
+                  isAdmin={data?.isAdmin}
+                  isMode={data?.isMode}
+                  communityDetails={data}
+                  communityId={id}
+                />
+              ))
             ) : (
               <NotFound text="No Posts Found for this community" />
             )}

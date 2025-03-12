@@ -82,7 +82,7 @@ function DetailSidebar({ data, id }: any) {
                 <img src="/mods.svg" width={15} height={15} />
               </div>
               <div className="flex flex-col">
-                <Paragraph text={`Moderators ${data?.moderators?.length}`} />
+                <Paragraph text={`Moderators ${data?.moderators}`} />
               </div>
             </div>
             {/*todo redirect to dashboard */}

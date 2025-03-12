@@ -17,14 +17,14 @@ export async function POST(req: NextRequest) {
     const postId = req.nextUrl.pathname.split("/")[6];
     const community = await checkCommunityExistence(communityId);
     checkModerator(community, userId);
-    await banPost(postId, community);
+    await hidePost(postId, community);
     return SUCCESS_RESPONSE([], 200, "Post has been hidden successfully");
   } catch (error) {
     return errorHandler(error);
   }
 }
 
-async function banPost(postId: string, community: any) {
+async function hidePost(postId: string, community: any) {
   if (!Types.ObjectId.isValid(postId)) {
     throw new apiErrors([], "Invalid post id", 400);
   }

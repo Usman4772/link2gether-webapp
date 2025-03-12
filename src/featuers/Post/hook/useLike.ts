@@ -1,9 +1,9 @@
 import React, { useOptimistic, useState } from "react";
 import { likePostAPI } from "../api/api";
 import { handleAPIErrors } from "@/utils/frontend/handleErrors";
-import { PostProps } from "@/featuers/Feed/components/FeedPage";
+import { CommunityPostsProps } from "@/utils/backend/modules/auth/types/community.types";
 
-function useLike(data: PostProps) {
+function useLike(data: CommunityPostsProps) {
   const [likes, setLikes] = useState(data?.likes || 0);
   const [isLiked, setIsLiked] = useState(data.isLiked || false);
   const [optimisticIsLiked, setOptimisticIsLiked] = useOptimistic(

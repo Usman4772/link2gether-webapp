@@ -12,7 +12,7 @@ const buttonVariants = cva(
         default: "bg-btn_default_clr text-black hover:bg-btn_default_hover",
         primary:
           "bg-btn_primary_clr text-primary_clr hover:bg-btn_primary_hover",
-        secondary: "bg-btn_secondary_clr text-white hover:bg-btn_secondary_hover",
+        secondary: "!bg-btn_secondary_clr !text-white hover:bg-btn_secondary_hover",
       },
       size: {
         sm: "",

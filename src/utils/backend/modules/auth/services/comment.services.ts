@@ -28,7 +28,6 @@ export async function handlePostComment(
   return comment;
 }
 
-
 export async function getPostComments(postId: string, userId: any) {
   if (!postId || !Types.ObjectId.isValid(postId)) {
     throw new apiErrors([], "Invalid post id", 400);
@@ -37,6 +36,7 @@ export async function getPostComments(postId: string, userId: any) {
     .populate({
       path: "comments",
       model: Comment,
+      options: { sort: { created_at: -1 } },
       select: "-post -__v",
       populate: { path: "author", select: "id username profileImage " },
     })
@@ -46,14 +46,9 @@ export async function getPostComments(postId: string, userId: any) {
     throw new apiErrors([], "Post not found", 404);
   }
 
-  
-  const payload=createCommentPayload(post.comments, userId);
+  const payload = createCommentPayload(post.comments, userId);
   return payload;
-};
-  
-
-
-
+}
 
 export async function handleLikeComment(commentId: string, userId: any) {
   if (!commentId || !Types.ObjectId.isValid(commentId)) {
@@ -81,19 +76,17 @@ export async function handleLikeComment(commentId: string, userId: any) {
   };
 }
 
-
 export async function getCommunityPosts(communityId: any, userId: any) {
-  const community = await Community.findById(communityId)
-    .populate({
-      path: "posts",
-      model: Post,
-      select: "-community -__v",
-      populate: {
-        path: "author",
-        select: "_id username profileImage",
-        model: User,
-      },
-    })
-    .sort({ created_at: -1 });
+  const community = await Community.findById(communityId).populate({
+    path: "posts",
+    model: Post,
+    options: { sort: { created_at: -1 } },
+    select: "-community -__v",
+    populate: {
+      path: "author",
+      select: "_id username profileImage",
+      model: User,
+    },
+  });
   return getCommunityPostsPayload(community.posts, userId);
 }

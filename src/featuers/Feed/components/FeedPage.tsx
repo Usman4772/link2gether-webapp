@@ -4,27 +4,8 @@ import useFetchPosts from "../hooks/useFetchPosts";
 import Loading from "@/components/Global/Loading";
 import NotFound from "@/components/Global/NotFound";
 import Post from "./Post";
+import { CommunityPostsProps } from "@/utils/backend/modules/auth/types/community.types";
 
-export interface PostProps {
-  id: string;
-  created_at: string;
-  description: string;
-  media: string;
-  type: string;
-  likes:number;
-  isLiked: boolean;
-  comments: number;
-  community?: {
-    id: string;
-    community_name: string;
-    avatar: string;
-  };
-  author: {
-    id: string;
-    username: string;
-    profileImage: string;
-  };
-}
 
 
 
@@ -35,7 +16,7 @@ function FeedPage() {
   return (
     <div className="w-full flex flex-col gap-16 ">
       {data && data.length > 0 && 
-        data.map((post: PostProps) => <Post data={post} key={post.id}/>)
+        data.map((post: CommunityPostsProps) => <Post data={post} key={post.id}/>)
       }
     </div>
   );

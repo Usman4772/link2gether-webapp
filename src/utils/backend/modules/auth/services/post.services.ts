@@ -8,14 +8,20 @@ import {
 } from "@/utils/backend/helpers/post.helpers";
 import { Types } from "mongoose";
 import { ObjectId } from "mongodb";
-import Comment from "@/models/comments";
 
 export async function getAllPosts(userId: any) {
-  const allPosts = await Post.find({})
+  const userCommunities = await Community.find({ members: userId }).select(
+    "_id"
+  );
+
+  const communityIds = userCommunities.map((c) => c._id);
+  const allPosts = await Post.find({ community: { $in: communityIds } })
     .populate({ path: "community", model: Community })
     .populate({ path: "author", model: User })
     .sort({ created_at: -1 })
     .exec();
+  
+
   const payload = createPayload(allPosts, userId);
   return payload;
 }

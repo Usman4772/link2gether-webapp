@@ -1,4 +1,3 @@
-import Community from "@/models/community";
 import apiErrors from "@/utils/backend/helpers/apiErrors";
 import {
   checkAdmin,

@@ -60,13 +60,15 @@ export async function joinMultipleCommunities(data: string[], userId: any) {
 export async function getCommunityDetails(id: any, userId: any) {
   const community = await Community.findById(id)
     .populate({ path: "createdBy", select: "_id username" })
-    .select("-__v"); 
-const payload=communityDetailPagePayload(community,userId)
-return payload;
+    .populate({
+      path: "bannedUsers",
+      model: BannedUser,
+      match: { community: id,user:userId},
+    })
+    .select("-__v");
+  const payload = communityDetailPagePayload(community, userId);
+  return payload;
 }
-
-
-
 
 export async function handleLeaveCommunity(community: any, user: any) {
   const isMember = community.members.includes(user?._id);
@@ -182,6 +184,10 @@ export async function banUser(
   modId: any,
   data: { reason: string; duration: string }
 ) {
+
+ const isAlreadyBanned=await BannedUser.findOne({user:bannedUserId,community:community._id});
+ if(isAlreadyBanned) throw new apiErrors([], "User is already banned", 400);
+
   const expires_at = calculateBanExpiresAt(data.duration);
   const bannedUser = await BannedUser.create({
     user: bannedUserId,

@@ -45,6 +45,28 @@ body {
   box-shadow: none !important;
 }
 
+
+.ant-image{
+width: 100% !important;
+}
+
+.custom-select-box .ant-select-selector {
+  border-radius: 6px !important;
+  /* padding: 12px !important; */
+  height: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.custom-select-box.ant-select {
+  min-height: 48px !important;
+  height: auto !important;
+}
+
+.custom-select-box .ant-select-selection-item {
+  line-height: normal !important;
+}
 @layer base {
   :root {
     --background: 0 0% 100%;
