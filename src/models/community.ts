@@ -48,6 +48,12 @@ const communitySchema = new mongoose.Schema({
     default: 0,
   },
   bannedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "BannedUser" }],
+  reportedPosts: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ReportedPosts",
+    }
+  ],
   posts: [
     {
       type: mongoose.Schema.Types.ObjectId,

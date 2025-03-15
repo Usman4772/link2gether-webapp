@@ -8,6 +8,8 @@ import {
 } from "@/utils/backend/helpers/post.helpers";
 import { Types } from "mongoose";
 import { ObjectId } from "mongodb";
+import ReportedPosts from "@/models/reported.posts";
+import { ReportPostProps } from "../types/community.types";
 
 export async function getAllPosts(userId: any) {
   const userCommunities = await Community.find({ members: userId }).select(
@@ -22,7 +24,7 @@ export async function getAllPosts(userId: any) {
     .exec();
   
 
-  const payload = createPayload(allPosts, userId);
+  const payload = await createPayload(allPosts, userId);
   return payload;
 }
 
@@ -46,7 +48,7 @@ export async function getPostDetails(id: string | number, userId: any) {
   if (!post) {
     throw new apiErrors([], "Post not found", 404);
   }
-  const payload = createPostPayload(post, userId);
+  const payload = await createPostPayload(post, userId);
   return payload;
 }
 
@@ -72,3 +74,54 @@ export async function likePost(postId: string, userId: any) {
     isLiked: true,
   };
 }
+
+
+export async function reportPost({ data, postId, userId }: ReportPostProps) {
+  const report = await ReportedPosts.create({
+    post_id: postId,
+    reported_by: userId,
+    community_id: data.community_id,
+    reason: data.reason,
+  });
+
+  const community = await Community.findById(data.community_id);
+  community.reportedPosts.push(report._id);
+  await community.save();
+
+  return report;
+}
+
+
+
+
+//might be usefull in future
+// export async function getReportedPosts(req, res) {
+//   try {
+//     const { communityId } = req.params;
+
+//     const reports = await ReportedPosts.aggregate([
+//       { $match: { communityId, status: "pending" } },
+//       {
+//         $group: {
+//           _id: "$postId",
+//           reportCount: { $sum: 1 },
+//           latestReason: { $last: "$reason" }, // Shows the latest report reason
+//           reportedByUsers: { $push: "$reportedBy" }, // List of users who reported
+//         },
+//       },
+//       {
+//         $lookup: {
+//           from: "posts",
+//           localField: "_id",
+//           foreignField: "_id",
+//           as: "postDetails",
+//         },
+//       },
+//       { $unwind: "$postDetails" },
+//     ]);
+
+//     res.json(reports);
+//   } catch (error) {
+//     res.status(500).json({ message: "Failed to fetch reported posts" });
+//   }
+// }

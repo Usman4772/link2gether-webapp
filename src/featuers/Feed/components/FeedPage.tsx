@@ -16,7 +16,7 @@ function FeedPage() {
   return (
     <div className="w-full flex flex-col gap-16 ">
       {data && data.length > 0 && 
-        data.map((post: CommunityPostsProps) => <Post data={post} key={post.id}/>)
+        data.map((post: CommunityPostsProps) => <Post data={post} key={post.id} communityDetails={post?.community} communityId={post.community?.id}/>)
       }
     </div>
   );

@@ -37,17 +37,32 @@ export interface CommunityPostsProps {
     profileImage: string | null;
   };
   community?: {
-    id: string | number;
-    community_name: string;
-    avatar: string | null;
+    id: string | number | undefined;
+    community_name: string | undefined;
+    avatar: string | null | undefined;
+    createdBy?: string | number | null | undefined;
   };
   likes: number;
   comments: number;
   isLiked: boolean;
+  isSaved: boolean;
 }
 
 
 export interface BanUserProps{
   reason: string;
   duration: string;
+}
+
+
+
+export interface ReportPostPayload {
+  community_id: string;
+  reason: string;
+}
+
+export interface ReportPostProps {
+  data: ReportPostPayload;
+  postId: string;
+  userId: any;
 }
