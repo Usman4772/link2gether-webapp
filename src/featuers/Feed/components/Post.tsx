@@ -7,44 +7,46 @@ import { Ban, Hide, Report, Save } from "@/components/icons/icons";
 import BanUserModal from "@/featuers/Community/components/BanUserModal";
 import HidePostModal from "@/featuers/Community/components/HidePostModal";
 import ReportPostModal from "@/featuers/Community/components/ReportPostModal";
-import useBanUser from "@/featuers/Community/hooks/useBanUser";
 import useHidePost from "@/featuers/Community/hooks/useHidePost";
 import ShareModal from "@/featuers/Post/components/ShareModal";
 import useLike from "@/featuers/Post/hook/useLike";
+import useSavePost from "@/featuers/Post/hook/useSavePost";
 import { PostProps } from "@/utils/backend/modules/auth/types/post.types";
 import { convertNumberToK } from "@/utils/frontend/helpers/globals";
 import Image from "next/image";
 import Link from "next/link";
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import { RiHeart3Line as Like, RiHeart3Fill as LikeFill } from "react-icons/ri";
 import ReactTimeAgo from "react-time-ago";
+import { RemoveFromSaved } from "@/components/icons/icons";
 
 function Post({
   data,
   isAdmin = false,
   isMode = false,
-  communityId,
-  communityDetails=null
+  communityDetails,
 }: PostProps) {
-
-
   const { optimisticIsLiked, optimisticLikes, like } = useLike(data);
 
   const [openShareModal, setOpenShareModal] = useState(false);
   const formRef = React.useRef<HTMLFormElement>(null);
 
   const [openReportPostModal, setOpenReportPostModal] = useState(false);
-  const [openBanUserModal,setOpenBanUserModal]=useState(false);
+  const [openBanUserModal, setOpenBanUserModal] = useState(false);
   const { openHidePostModal, setOpenHidePostModal, hidePost, hideBtnLoading } =
-    useHidePost(data.id, communityId);
- 
+    useHidePost(data.id, communityDetails?.id);
+  const { savePost } = useSavePost();
 
   const userDropdownItems = [
     {
       key: "save_post",
-      label: "Save Post",
-      icon: <Save className="w-4 h-4" />,
-      onClick: () => console.log("Save Post"),
+      label: `${data.isSaved ? "Remove from saved" : "Save"}`,
+      icon: data?.isSaved ? (
+        <RemoveFromSaved className="w-4 h-4" />
+      ) : (
+        <Save className="w-4 h-4" />
+      ),
+      onClick: () => savePost(data?.id),
     },
     {
       //todo disable this button if the user is the author of the post once implemented userDetails api.
@@ -59,9 +61,13 @@ function Post({
   const adminDropdownItems = [
     {
       key: "save_post",
-      label: "Save Post",
-      icon: <Save className="w-4 h-4" />,
-      onClick: () => console.log("Save Post"),
+      label: `${data.isSaved ? "Remove from saved" : "Save"}`,
+      icon: data?.isSaved ? (
+        <RemoveFromSaved className="w-4 h-4" />
+      ) : (
+        <Save className="w-4 h-4" />
+      ),
+      onClick: () => savePost(data?.id),
     },
 
     {
@@ -73,10 +79,10 @@ function Post({
     {
       key: "ban_user",
       label: "Ban User",
-      disabled: data.author.id == communityDetails?.createdBy?.id,
+      disabled: data.author.id == communityDetails?.createdBy,
       icon: <Ban className="w-4 h-4" />,
       danger: true,
-      onClick: () =>setOpenBanUserModal(true), 
+      onClick: () => setOpenBanUserModal(true),
     },
   ];
 
@@ -182,12 +188,14 @@ function Post({
         openModal={openBanUserModal}
         setOpenModal={setOpenBanUserModal}
         userId={data?.author?.id}
-        communityId={communityId}
-        
+        communityId={communityDetails?.id}
       />
+
       <ReportPostModal
         openModal={openReportPostModal}
         setOpenModal={setOpenReportPostModal}
+        postId={data?.id}
+        communityId={communityDetails?.id}
       />
     </div>
   );

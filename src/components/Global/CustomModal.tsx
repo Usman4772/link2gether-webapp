@@ -66,6 +66,12 @@ function CustomModal({
         cancelText={cancelText}
         closable={closeable}
         className={className}
+        styles={{
+          mask: {
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }
+        }
+        }
         footer={footer}
         okButtonProps={{ className: okBtnStyles }}
         cancelButtonProps={{

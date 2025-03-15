@@ -29,3 +29,9 @@ export function hidePostAPI(
 ) {
   return axios.post(`/community/${communityId}/admin/hide-post/${postId}`);
 }
+
+
+
+export function savePostAPI(postId: string | number) {
+  return axios.post(`/post/${postId}/save`);
+}

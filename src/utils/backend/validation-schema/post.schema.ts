@@ -32,4 +32,12 @@ export const postSchema = z.object({
     .optional(),
 });
 
-
+export const reportPostSchema = z
+  .object({
+    community_id: z.string({ message: "Community ID is required" }),
+    reason: z
+      .string({ message: "Reason is required" })
+      .min(2, { message: "Reason must be at least 2 characters long" })
+      .max(50, { message: "Reason must not be longer than 50 characters" }),
+  })
+  .required();

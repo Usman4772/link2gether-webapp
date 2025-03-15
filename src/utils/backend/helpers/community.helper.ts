@@ -1,16 +1,15 @@
 import Community from "@/models/community";
-import { ObjectId, Types } from "mongoose";
-import { NextRequest } from "next/server";
-import apiErrors from "./apiErrors";
 import Post from "@/models/posts";
 import User from "@/models/user";
+import dayjs from "dayjs";
+import { ObjectId, Types } from "mongoose";
+import { NextRequest } from "next/server";
 import {
   banUserSchema,
   moderatorsSchema,
   rulesSchema,
 } from "../validation-schema/community.schema";
-import { RulesPayload } from "../modules/auth/services/community.services";
-import dayjs from "dayjs";
+import apiErrors from "./apiErrors";
 
 export async function checkCommunityExistence(communityId: string) {
   if (!Types.ObjectId.isValid(communityId)) {
@@ -281,7 +280,8 @@ export function communityDetailPagePayload(community: any, userId: any) {
   
 }
 
-export function getCommunityPostsPayload(posts: any, userId: any) {
+export async function getCommunityPostsPayload(posts: any, userId: any) {
+  const user=await User.findById(userId)
   return posts.map((post: any) => {
     return {
       id: post._id,
@@ -294,9 +294,17 @@ export function getCommunityPostsPayload(posts: any, userId: any) {
         username: post.author.username,
         profileImage: post.author.profileImage,
       },
+      community: {
+        id: post.community._id,
+        community_name: post.community.community_name,
+        avatar: post.community.avatar,
+      },
       likes: post.likes.length,
       comments: post.comments.length,
       isLiked: post.likes.includes(userId),
+      isSaved: user.savedPosts.includes(post._id),
     };
   });
 }
+
+

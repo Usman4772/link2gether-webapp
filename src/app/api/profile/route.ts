@@ -16,6 +16,9 @@ export async function GET(req: NextRequest) {
 
 function getUserProfileDetails(userId:any) {
   if (!userId || !Types.ObjectId.isValid(userId)) throw new apiErrors([], "Invalid user id", 400);
+
+
+  
   
     
 }

@@ -81,12 +81,19 @@ export async function getCommunityPosts(communityId: any, userId: any) {
     path: "posts",
     model: Post,
     options: { sort: { created_at: -1 } },
-    select: "-community -__v",
-    populate: {
-      path: "author",
-      select: "_id username profileImage",
-      model: User,
-    },
+    select: "-__v",
+    populate: [
+      {
+        path: "author",
+        select: "_id username profileImage",
+        model: User,
+      },
+      {
+        path: "community",
+        select: "_id community_name avatar",
+        model: Community,
+      }
+    ],
   });
-  return getCommunityPostsPayload(community.posts, userId);
+  return await getCommunityPostsPayload(community.posts, userId);
 }

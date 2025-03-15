@@ -24,7 +24,14 @@ function DetailPage({ id }: { id: number | string }) {
                   data={post}
                   isAdmin={data?.isAdmin}
                   isMode={data?.isMode}
-                  communityDetails={data}
+                  communityDetails={
+                    {
+                      id: data?.id,
+                      community_name: data?.community_name,
+                      avatar: data?.avatar,
+                      createdBy: data?.createdBy?.id,
+                    }
+                  }
                   communityId={id}
                 />
               ))

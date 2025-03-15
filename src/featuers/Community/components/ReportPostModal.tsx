@@ -1,111 +1,151 @@
-import React, { useState } from "react";
-import { Modal, Button } from "antd";
+"use client";
 
-const ReportPostModal = ({
-  openModal,
-  setOpenModal,
-}: {
+import { useState } from "react";
+import { Modal, Button, Typography, Space, Tag } from "antd";
+import { CloseOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import CustomModal from "@/components/Global/CustomModal";
+import CustomButton from "@/components/Global/CustomButton";
+import useReportPost from "../hooks/useReportPost";
+
+const { Title, Paragraph, Text } = Typography;
+
+interface ReportModalProps {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
-  const handleOk = () => {
-    setOpenModal(false);
-  };
+  postId: string | number;
+  communityId: string | number | undefined;
+}
 
-  const handleCancel = () => {
-    setOpenModal(false);
+export default function ReportModal({
+  openModal,
+  setOpenModal,
+  postId,
+  communityId,
+}: ReportModalProps) {
+  const { reportPost, reportBtnLoading,reason,setReason } = useReportPost({
+    postId,
+    communityId,
+    setOpenModal,
+  });
+
+  return (
+    <>
+      <CustomModal
+        title={<Header handleCancel={() => {
+          setOpenModal(false);
+          setReason(null)
+        }} />}
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+        closeable={false}
+        width={600}
+        body={
+          <ReportModalBody
+            reportPost={reportPost}
+            btnLoading={reportBtnLoading}
+            reason={reason}
+            setReason={setReason}
+          />
+        }
+      />
+    </>
+  );
+}
+
+function Header({ handleCancel }: any) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <Title level={4} style={{ margin: 0 }}>
+        Submit a report
+      </Title>
+      <Button
+        type="text"
+        icon={<CloseOutlined />}
+        onClick={handleCancel}
+        style={{ marginRight: -12 }}
+      />
+    </div>
+  );
+}
+
+function ReportModalBody({ reportPost, btnLoading,reason,setReason }: any) {
+
+  const reportCategories = [
+    "Harassment",
+    "Threatening violence",
+    "Hate",
+    "Minor abuse",
+    "Sharing personal information",
+    "Non-consensual intimate media",
+    "Prohibited transaction",
+    "Impersonation",
+    "Copyright violation",
+    "Trademark violation",
+    "Self-harm or suicide",
+    "Spam",
+    "Contributor Program violation",
+  ];
+
+  const handleSetReason = (category: string) => {
+    setReason(category);
   };
 
   return (
     <>
-      <Modal
-        title="Submit a report"
-        open={openModal}
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={null} // Remove default footer to customize
-        className="custom-modal"
-       
-      >
-        <div className="p-4">
-          <p className="text-gray-700 mb-4">
-            Thanks for looking out for yourself and your fellow redditors by
-            reporting things that break the rules. Let us know what’s happening,
-            and we’ll look into it.
-          </p>
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            <Button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded">
-              Breaks r/pkmigrate rules
-            </Button>
-            <Button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded">
-              Harassment
-            </Button>
-            <Button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded">
-              Threatening violence
-            </Button>
-            <Button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded">
-              Hate
-            </Button>
-            <Button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded">
-              Minor abuse or sexualization
-            </Button>
-            <Button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded">
-              Sharing personal information
-            </Button>
-            <Button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded">
-              Non-consensual intimate media
-            </Button>
-            <Button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded">
-              Prohibited transaction
-            </Button>
-            <Button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded">
-              Impersonation
-            </Button>
-            <Button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded">
-              Copyright violation
-            </Button>
-            <Button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded">
-              Trademark violation
-            </Button>
-            <Button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded">
-              Self-harm or suicide
-            </Button>
-            <Button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded">
-              Spam
-            </Button>
-            <Button className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 rounded">
-              Contributor Program violation
-            </Button>
-          </div>
-          <p className="text-sm text-gray-500 mb-2">
-            <span className="text-blue-500">i</span> Not sure if something is
-            breaking the rules? Review the{" "}
-            <a href="#" className="text-blue-600 hover:underline">
-              Reddit Rules & r/pkmigrate rules
-            </a>
-          </p>
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <h3 className="font-semibold text-gray-800 mb-2">
-              Sharing personal information
-            </h3>
-            <p className="text-gray-700">
-              Sharing or threatening to share private, personal, or confidential
-              information about someone.
-            </p>
-          </div>
-          <div className="mt-4 flex justify-end">
-            <Button
-              type="primary"
-              onClick={handleOk}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded"
-            >
-              Next
-            </Button>
-          </div>
-        </div>
-      </Modal>
+      <Paragraph style={{ marginBottom: 24 }}>
+        Thanks for looking out for yourself and your fellow community members by
+        reporting things that break the rules. Let us know what&apos;s
+        happening, and we&apos;ll look into it.
+      </Paragraph>
+
+      <Space size={[8, 16]} wrap>
+        {reportCategories.map((category) => (
+          <Tag
+            key={category}
+            color={reason === category ? "blue" : "default"}
+            style={{
+              padding: "8px 16px",
+              borderRadius: "20px",
+              fontSize: "14px",
+              cursor: "pointer",
+              backgroundColor:
+                reason === category ? "#e6f7ff" : "#f0f2f5",
+              border:
+                reason === category
+                  ? "1px solid #91caff"
+                  : "1px solid #d9d9d9",
+            }}
+            onClick={() => handleSetReason(category)}
+          >
+            {category}
+          </Tag>
+        ))}
+      </Space>
+
+      <div style={{ marginTop: 24, display: "flex", alignItems: "center" }}>
+        <InfoCircleOutlined style={{ color: "#8c8c8c", marginRight: 8 }} />
+        <Text type="secondary">
+          Not sure if something is breaking the rules?{" "}
+          <a href="#" style={{ color: "#1677ff" }}>
+            Review the Community Rules
+          </a>
+        </Text>
+      </div>
+      <div className="w-full flex items-center justify-end">
+        <CustomButton
+          text="Submit"
+          variant={"secondary"}
+          loading={btnLoading}
+          disabled={!reason}
+          onClick={() => reportPost(reason)}
+        />
+      </div>
     </>
   );
-};
-
-export default ReportPostModal;
+}
