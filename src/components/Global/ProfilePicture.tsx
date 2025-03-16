@@ -4,6 +4,7 @@ import { UploadChangeParam } from "antd/es/upload";
 import { PiNotePencilFill } from "react-icons/pi";
 import Loading from "./Loading";
 import { Loader2 } from "lucide-react";
+import { twMerge } from "tailwind-merge";
 
 interface ProfilePictureProps {
   isAdmin: boolean;
@@ -11,6 +12,8 @@ interface ProfilePictureProps {
   onUpload: (info: UploadChangeParam<UploadFile<any>>) => void;
   defaultImage: string;
   loading?: boolean;
+  tooltipTitle?: string;
+  className?: string;
 }
 
 function ProfilePicture({
@@ -18,10 +21,16 @@ function ProfilePicture({
   avatar,
   onUpload,
   defaultImage,
+  tooltipTitle="Change Avatar",
   loading,
+  className=""
 }: ProfilePictureProps) {
   return (
-    <div className="relative group w-[70px] h-[70px] rounded-[50%] overflow-hidden flex items-center justify-center">
+    <div
+      className={twMerge(
+        "relative group w-[70px] h-[70px] rounded-[50%] overflow-hidden flex items-center justify-center"
+      ,className)}
+    >
       {loading ? (
         <Loader2 className="animate-spin" />
       ) : (
@@ -31,7 +40,7 @@ function ProfilePicture({
             className="rounded-[50%] object-cover w-full h-full "
           />
           {isAdmin && (
-            <Tooltip title="Change Avatar">
+            <Tooltip title={tooltipTitle}>
               <Upload
                 onChange={onUpload}
                 className="absolute top-1 right-2"

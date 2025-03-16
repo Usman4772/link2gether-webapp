@@ -2,7 +2,7 @@
   "name": "link2gether",
   "version": "0.1.0",
   "private": true,
-   "scripts": {
+  "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -28,6 +28,7 @@
     "@types/jsonwebtoken": "^9.0.7",
     "antd": "^5.22.2",
     "antd-img-crop": "^4.24.0",
+    "apexcharts": "^4.5.0",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
@@ -59,6 +60,7 @@
     "react-spinners": "^0.15.0",
     "react-text-more-less": "^0.4.2",
     "react-time-ago": "^7.3.3",
+    "recharts": "^2.15.1",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "tailwind-merge": "^2.6.0",

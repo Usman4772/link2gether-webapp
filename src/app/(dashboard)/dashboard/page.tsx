@@ -1,7 +1,8 @@
+import Dashboard from "@/featuers/Dashboard/components/Dashboard";
 import React from "react";
 
-function Dashboard() {
-  return <div>This is dashboard content</div>;
+function Page() {
+  return <Dashboard/>
 }
 
-export default Dashboard;
+export default Page;
