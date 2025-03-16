@@ -13,6 +13,7 @@ const buttonVariants = cva(
         primary:
           "bg-btn_primary_clr text-primary_clr hover:bg-btn_primary_hover",
         secondary: "!bg-btn_secondary_clr !text-white hover:bg-btn_secondary_hover",
+        danger:"bg-danger text-white hover:bg-danger_hover"
       },
       size: {
         sm: "",
