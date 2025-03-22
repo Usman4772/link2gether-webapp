@@ -1,4 +1,6 @@
+import { NextRequest } from "next/server";
 import { communitySchema } from "../validation-schema/community.schema";
+import { updateProfileSchema } from "../validation-schema/user.schema";
 import apiErrors from "./apiErrors";
 
 export async function parseCommunityFormData(formData: FormData) {
@@ -46,4 +48,36 @@ export function validatePreferencesPayload(data: { categories: string[] }) {
   }
   if (data.categories.length < 5)
     throw new apiErrors([], "Choose at least 5 categories", 400);
+}
+
+
+
+export async function validateUpdateProfilePayload(req: NextRequest) {
+  const formData = await req.formData();
+  let data: any = {};
+  if (formData.has("username")) {
+    data.username = formData.get("username") as string;
+  }
+  if (formData.has("email")) {
+    data.email = formData.get("email") as string;
+  }
+  if (formData.has("profileImage")) {
+    const image = formData.get("profileImage") as any;
+    if (image?.name == "" || image?.size == 0) {
+      data.profileImage = null;
+    } else {
+      data.profileImage = image;
+    }
+  }
+
+  const result = updateProfileSchema.safeParse(data);
+  if (!result.success) {
+    const errors = result.error?.errors?.map((err) => {
+      return {
+        [err?.path.toString()]: err?.message,
+      };
+    });
+    throw new apiErrors(errors, "Validation errors found!", 400);
+  }
+  return data;
 }
