@@ -228,3 +228,17 @@ export function getTokenExpiration(remember: boolean | undefined) {
     .toDate();
   return expires_at;
 }
+export async function changePassword(data: any, user: any) {
+  const decryptedPass = await decryptPassword(data?.old_password, user);
+  if (!decryptedPass) {
+    throw new apiErrors(
+      [{ old_password: "Old password is incorrect" }],
+      "Old password is incorrect",
+      400
+    );
+  }
+
+  const hashedPassword = await hashPassword(data.new_password);
+  user.password = hashedPassword;
+  await user.save();
+}

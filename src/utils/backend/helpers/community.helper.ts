@@ -294,11 +294,11 @@ export async function getCommunityPostsPayload(posts: any, userId: any) {
         username: post.author.username,
         profileImage: post.author.profileImage,
       },
-      community: {
-        id: post.community._id,
-        community_name: post.community.community_name,
-        avatar: post.community.avatar,
-      },
+      // community: {
+      //   id: post.community._id,
+      //   community_name: post.community.community_name,
+      //   avatar: post.community.avatar,
+      // },
       likes: post.likes.length,
       comments: post.comments.length,
       isLiked: post.likes.includes(userId),

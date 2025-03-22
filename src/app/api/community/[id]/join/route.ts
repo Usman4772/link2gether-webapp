@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
       community.visibility == "private" &&
       !community.members.includes(userId)
     ) {
+      //todo create a separate joinRequest table and modify admin request table accordingly.
       if (!community.joinRequests.includes(userId)) {
         community.joinRequests.push(userId);
       }

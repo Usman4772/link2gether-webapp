@@ -5,6 +5,7 @@ import {
 } from "@/utils/backend/helpers/community.helper";
 import { errorHandler, validateToken } from "@/utils/backend/helpers/globals";
 import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";
+import { discardReportedPost } from "@/utils/backend/modules/auth/services/admin.community.services";
 import { connectToDatabase } from "@/utils/backend/modules/auth/services/authServices";
 import { Types } from "mongoose";
 import { NextRequest } from "next/server";
@@ -34,6 +35,7 @@ async function hidePost(postId: string, community: any) {
   community.posts = community.posts.filter((post: any) => {
     return post._id.toString() !== postId.toString();
   });
+  await discardReportedPost(community._id, postId);
   //todo send notification to user.
   // const io = getIO();
   // io.emit("send-notification", {

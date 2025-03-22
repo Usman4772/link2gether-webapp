@@ -75,7 +75,6 @@ async function updateCommunity(data: any, community: any) {
 async function validateUpdatePayload(req: NextRequest) {
   const formData = await req.formData();
   const data: any = {};
-  console.log(formData,'formData')
 
   if (formData.has("community_name")) {
     data.community_name = formData.get("community_name");
