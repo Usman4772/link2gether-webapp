@@ -25,7 +25,7 @@ function BanUserModal({
           form={form}
           onConfirmAction={onConfirmAction}
           loading={btnLoading}
-        />
+        /> 
       }
       onCancel={() => form.resetFields()}
     />
