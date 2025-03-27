@@ -22,7 +22,6 @@ export async function getAllPosts(userId: any) {
     .populate({ path: "author", model: User })
     .sort({ created_at: -1 })
     .exec();
-  
 
   const payload = await createPayload(allPosts, userId);
   return payload;
@@ -75,13 +74,30 @@ export async function likePost(postId: string, userId: any) {
   };
 }
 
-
 export async function reportPost({ data, postId, userId }: ReportPostProps) {
+  //if post is already reported then just increase it's count.
+  const reported_post = await ReportedPosts.findOne({
+    post_id: postId,
+    community_id: data.community_id,
+  });
+
+  if (reported_post && reported_post.reported_by.includes(userId)) {
+    throw new apiErrors([], "You have already reported this post", 400);
+  }
+
+  if (reported_post) {
+    reported_post.report_count += 1;
+    reported_post.reported_by.push(userId);
+    await reported_post.save();
+    return reported_post;
+  }
+
   const report = await ReportedPosts.create({
     post_id: postId,
     reported_by: userId,
     community_id: data.community_id,
     reason: data.reason,
+    report_count: 1,
   });
 
   const community = await Community.findById(data.community_id);
@@ -90,9 +106,6 @@ export async function reportPost({ data, postId, userId }: ReportPostProps) {
 
   return report;
 }
-
-
-
 
 //might be usefull in future
 // export async function getReportedPosts(req, res) {

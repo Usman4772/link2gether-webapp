@@ -152,8 +152,10 @@ export async function validateCommunityAndPost(
     );
   }
 
-  // 🔹 Ensure the post belongs to the given community
-  if (post.community.toString() !== communityId) {
+
+
+  // Ensure the post belongs to the given community
+  if (!community.posts.toString().includes(postId)) {
     throw new apiErrors(
       [{ post_id: "This post does not belong to the specified community" }],
       "Validation errors found",

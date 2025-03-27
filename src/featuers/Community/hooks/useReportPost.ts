@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { reportPostAPI } from '../api/api';
 
 export interface ReportPostProps {
-    postId: string | number;
+    postId: string | number |null;
     communityId: string | number | undefined;
     reason?: string;
     setOpenModal?: React.Dispatch<React.SetStateAction<boolean>>;

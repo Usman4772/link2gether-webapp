@@ -27,9 +27,9 @@ function useCreateCommunity({
       const avatar = fileList[0]?.originFileObj;
       formData.append("community_name", values?.community_name);
       formData.append("category", values?.category);
-      formData.append("avatar", avatar || "");
+     if(avatar) formData.append("avatar", avatar);
       formData.append("visibility", values?.visibility);
-
+ 
       const response = await createCommunityAPI(formData);
       if (response?.data?.success) {
         toast.success(response?.data?.message);

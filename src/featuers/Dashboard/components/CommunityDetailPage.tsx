@@ -12,6 +12,8 @@ import MembersTable from "./MembersTable";
 import ReportedPosts from "@/models/reported.posts";
 import ReportedPostsTable from "./ReportedPostsTable";
 import JoinRequestsTable from "./JoinRequestsTable";
+import useFetchAdminCommunityDetails from "../hooks/useFetchAdminCommunityDetails";
+import Loading from "@/components/Global/Loading";
 
 interface CommunityDetailProps {
   params: {
@@ -20,21 +22,15 @@ interface CommunityDetailProps {
 }
 
 export default function CommunityDetailPage({ params }: CommunityDetailProps) {
-  const [community, setCommunity] = useState({
-    id: params.id,
-    name: "Programming Enthusiasts",
-    createdAt: "March 15, 2023",
-    visibility: "Public",
-    description: "A community for sharing programming tips and tricks",
-  });
+  const { data, isLoading } = useFetchAdminCommunityDetails(params.id);
 
-
+  if (isLoading) return <Loading />;
   return (
     <div className="container mx-auto py-8 px-4 ">
-      <CommunityHeader data={community} />
-      <MembersTable />
-      <ReportedPostsTable />
-      <JoinRequestsTable />
+      <CommunityHeader data={data} id={params.id} />
+      <MembersTable id={params.id} />
+      <ReportedPostsTable id={params.id} />
+      {data?.visibility == "private" && <JoinRequestsTable id={params.id} />}
     </div>
   );
 }

@@ -35,11 +35,11 @@ async function hidePost(postId: string, community: any) {
   community.posts = community.posts.filter((post: any) => {
     return post._id.toString() !== postId.toString();
   });
-  await discardReportedPost(community._id, postId);
+  await discardReportedPost(community, postId);
   //todo send notification to user.
   // const io = getIO();
   // io.emit("send-notification", {
-  //   message: `Your post has been hidden in ${community.community_name}`,
-  // });
-  await community.save();
+    //   message: `Your post has been hidden in ${community.community_name}`,
+    // });
+    await community.save();
 }

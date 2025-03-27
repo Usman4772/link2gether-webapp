@@ -5,6 +5,11 @@ import apiErrors from "@/utils/backend/helpers/apiErrors";
 import { Types } from "mongoose";
 import { NextRequest } from "next/server";
 import { ObjectId } from "mongodb";
+import Post from "@/models/posts";
+import {
+  getCommunityMembersPayload,
+  getReportedPostsPayload,
+} from "@/utils/backend/helpers/admin.community.helpers";
 
 export async function getReportedPosts(communityId: any) {
   const community = await Community.findById(communityId)
@@ -12,9 +17,23 @@ export async function getReportedPosts(communityId: any) {
       path: "reportedPosts",
       model: ReportedPosts,
       select: "-__v",
+      populate: [
+        {
+          path: "reported_by",
+          model: User,
+          select: "_id username",
+        },
+        {
+          path: "post_id",
+          model: Post,
+          populate: { path: "author", model: User, select: "_id username" },
+          select: "_id author",
+        },
+      ],
     })
     .select("-_id reportedPosts");
-  return community.reportedPosts;
+  const payload = getReportedPostsPayload(community.reportedPosts);
+  return payload;
 }
 
 export async function getJoinRequests(communityId: any) {
@@ -22,7 +41,7 @@ export async function getJoinRequests(communityId: any) {
     .populate({
       path: "joinRequests",
       model: User,
-      select: "_id username email",
+      select: "_id username email profileImage created_at",
     })
     .select("-_id joinRequests");
   return (community.joinRequests = community.joinRequests.map((req: any) => {
@@ -30,12 +49,11 @@ export async function getJoinRequests(communityId: any) {
       id: req._id,
       username: req.username,
       email: req.email,
+      profileImage: req?.profileImage,
+      created_at: req.created_at,
     };
   }));
 }
-
-
-
 
 export async function rejectJoinRequest(community: any, req: NextRequest) {
   const { userId } = await req.json();
@@ -54,8 +72,6 @@ export async function rejectJoinRequest(community: any, req: NextRequest) {
   await community.save();
 }
 
-
-
 export async function approveJoinRequest(community: any, req: NextRequest) {
   const { userId } = await req.json();
   if (!userId || !Types.ObjectId.isValid(userId)) {
@@ -73,25 +89,33 @@ export async function approveJoinRequest(community: any, req: NextRequest) {
   await community.save();
 }
 
+export async function discardReportedPost(community: any, postId: string) {
 
 
-export async function discardReportedPost(communityId: string, postId: string) {
-  console.log('idr to aya ha ')
-  const community = await Community.findById(communityId);
   if (!postId || !Types.ObjectId.isValid(postId)) {
     throw new apiErrors([], "Invalid post id", 400);
   }
 
   const post = await ReportedPosts.findOneAndDelete({
     post_id: postId,
-    community_id: communityId,
+    community_id: community?._id.toString(),
   });
+
   if (post) {
- 
     community.reportedPosts = community.reportedPosts.filter(
       (id: ObjectId) => id.toString() !== post._id.toString()
     );
-
-    await community.save();
   }
+}
+
+export async function getCommunityMembers(communityId: string) {
+  const members = await Community.findById(communityId)
+    .populate({
+      path: "members",
+      model: User,
+      select: "_id username profileImage email created_at",
+    })
+    .select("moderators members createdBy");
+  const payload = getCommunityMembersPayload(members);
+  return payload;
 }

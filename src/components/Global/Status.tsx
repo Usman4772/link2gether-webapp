@@ -2,7 +2,6 @@
 import { capitalize } from "@/utils/frontend/helpers/globals";
 import { useEffect, useState } from "react";
 import { IoMdCheckmark } from "react-icons/io";
-import { RxCross2 } from "react-icons/rx";
 
 
 
@@ -56,7 +55,9 @@ function Status({ text, rounded = "sm",  }: StatusProps) {
   };
   const styleMaps:any = {
       "public": "green",
-        "private": "yellow",
+    "private": "yellow",
+    pending: "blue",
+    reviewed: "live_green",
   };
 
 

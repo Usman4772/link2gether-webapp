@@ -34,7 +34,7 @@ function Post({
   const [openReportPostModal, setOpenReportPostModal] = useState(false);
   const [openBanUserModal, setOpenBanUserModal] = useState(false);
   const { openHidePostModal, setOpenHidePostModal, hidePost, hideBtnLoading } =
-    useHidePost(data.id, communityDetails?.id);
+    useHidePost(data?.id, communityDetails?.id);
   const { savePost } = useSavePost();
 
   const userDropdownItems = [

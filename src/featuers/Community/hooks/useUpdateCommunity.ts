@@ -34,6 +34,7 @@ function useUpdateCommunity({
         reset();
         queryClient.invalidateQueries({ queryKey: ["community-details"] });
         queryClient.invalidateQueries({ queryKey: ["community-posts"] });
+        queryClient.invalidateQueries({ queryKey: ["adminCommunityDetails", id] });
         setOpenModal(false);
       }
     },

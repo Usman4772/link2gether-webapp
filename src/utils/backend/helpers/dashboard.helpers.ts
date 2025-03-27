@@ -130,12 +130,14 @@ export function calculateYAxisTicksWithInterval(chartData: any[], interval: numb
 
 
 export function allCommunitiesPayload(communities: any[]) {
+
   return communities.map((community) => {
     return {
       id: community._id,
-      community_name: community.name,
+      community_name: community.community_name,
       members: community.members.length,
       reported_posts: community.reportedPosts.length,
+      visibility:community.visibility,
       join_requests: community.joinRequests.length,
       created_at: community.created_at,
     };

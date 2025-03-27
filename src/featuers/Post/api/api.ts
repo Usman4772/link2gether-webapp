@@ -25,7 +25,7 @@ export function likeCommentAPI(
 
 export function hidePostAPI(
   communityId: any,
-  postId: string | number
+  postId: string | number |null
 ) {
   return axios.post(`/community/${communityId}/admin/hide-post/${postId}`);
 }

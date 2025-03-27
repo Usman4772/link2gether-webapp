@@ -131,7 +131,7 @@ export function CustomInput({
       value={value}
       onChange={onChange}
       {...props}
-      className={twMerge("py-3", className)}
+      className={twMerge("!py-3", className)}
     />
   );
 }

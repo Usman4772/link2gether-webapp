@@ -11,7 +11,7 @@ function PostDetails({ id }: { id: number | string }) {
   if (isLoading) return <Loading />;
   return (
     <div className="flex flex-col gap-4">
-      <Post data={data} />
+      <Post data={data} communityDetails={data?.community}/>
       <CommentSection postId={id} />
     </div>
   );

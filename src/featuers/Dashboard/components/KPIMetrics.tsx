@@ -1,48 +1,71 @@
-import { CommunityIcon, MembersIcon, ReportIcon, RequestIcon } from '@/components/icons/icons';
-import { Card } from '@/components/ui/card';
-import React from 'react'
-
+import {
+  CommunityIcon,
+  MembersIcon,
+  ReportIcon,
+  RequestIcon,
+} from "@/components/icons/icons";
+import { Card } from "@/components/ui/card";
+import React from "react";
+import useGetKPIs from "../hooks/useGetKPIs";
+import Loading from "@/components/Global/Loading";
 function KPIMetrics() {
+  const { data, isLoading } = useGetKPIs();
+  const kpi_metrics = [
+    {
+      key: "1",
+      icon: <CommunityIcon className="w-5 h-5" />,
+      title: "Total Communities Created",
+      value: data?.total_communities,
+      bg_color: "bg-kpi_gray_light",
+      icon_bg: "bg-kpi_gray_dark",
+      icon_text: "text-kpi_gray_light",
+    },
+    {
+      key: "2",
+      icon: <MembersIcon className="w-5 h-5" />,
+      title: "Total Members Across Communities",
+      value: data?.total_members,
+      bg_color: "bg-kpi_green_light",
+      icon_bg: "bg-kpi_green_dark",
+      icon_text: "text-kpi_green_light",
+    },
+    {
+      key: "1",
+      icon: <ReportIcon className="w-5 h-5" />,
+      title: "Total Reported Posts",
+      value: data?.total_reported_posts,
+      bg_color: "bg-kpi_orange_light",
+      icon_bg: "bg-kpi_orange_dark",
+      icon_text: "text-kpi_orange_light",
+    },
 
-      const kpi_metrics = [
-        {
-          key: "1",
-          icon: <CommunityIcon className="w-5 h-5" />,
-          title: "Total Communities Created",
-          value: "18",
-          bg_color: "bg-kpi_gray_light",
-          icon_bg: "bg-kpi_gray_dark",
-          icon_text: "text-kpi_gray_light",
-        },
-        {
-          key: "2",
-          icon: <MembersIcon className="w-5 h-5" />,
-          title: "Total Members Across Communities",
-          value: "18",
-          bg_color: "bg-kpi_green_light",
-          icon_bg: "bg-kpi_green_dark",
-          icon_text: "text-kpi_green_light",
-        },
-        {
-          key: "1",
-          icon: <ReportIcon className="w-5 h-5" />,
-          title: "Total Reported Posts",
-          value: "18",
-          bg_color: "bg-kpi_orange_light",
-          icon_bg: "bg-kpi_orange_dark",
-          icon_text: "text-kpi_orange_light",
-        },
+    {
+      key: "1",
+      icon: <RequestIcon className="w-5 h-5" />,
+      title: "Pending Join Requests",
+      value: data?.total_join_requests,
+      bg_color: "bg-kpi_beige_light",
+      icon_bg: "bg-kpi_beige_dark",
+      icon_text: "text-kpi_beige_light",
+    },
+  ];
 
-        {
-          key: "1",
-          icon: <RequestIcon className="w-5 h-5" />,
-          title: "Pending Join Requests",
-          value: "18",
-          bg_color: "bg-kpi_beige_light",
-          icon_bg: "bg-kpi_beige_dark",
-          icon_text: "text-kpi_beige_light",
-        },
-      ];
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {kpi_metrics.map((data) => {
+          return (
+            <Card
+              className={`py-11 px-5  ${data?.bg_color} border-none outline-none h-[211px]`}
+            >
+              <Loading />
+            </Card>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {kpi_metrics && kpi_metrics.length > 0
@@ -68,4 +91,4 @@ function KPIMetrics() {
   );
 }
 
-export default KPIMetrics
+export default KPIMetrics;

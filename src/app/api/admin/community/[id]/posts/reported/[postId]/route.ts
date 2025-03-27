@@ -14,12 +14,10 @@ export async function DELETE(req: NextRequest) {
     const communityId = req.nextUrl.pathname.split("/")[4];
     const postId = req.nextUrl.pathname.split("/")[7];
     const community = await checkCommunityExistence(communityId);
-      checkAdmin(userId, community);
-    await discardReportedPost(communityId, postId);
+    checkAdmin(userId, community);
+    await discardReportedPost(community, postId);
     return SUCCESS_RESPONSE([], 200, "Reported post dismissed successfully");
   } catch (error) {
     return errorHandler(error);
   }
 }
-
-

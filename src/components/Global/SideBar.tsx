@@ -1,165 +1,218 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GoPlus } from "react-icons/go";
-import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
-
-import { Button } from "@/components/ui/button";
-import { useAppDispatch } from "@/hooks/useAppSelector";
-import { cn } from "@/lib/utils";
-import { setOpenCreateCommunityModal } from "@/redux/Slices/create.community.slice";
 import {
-  IconArrowLeft,
   IconBrandTabler,
   IconMenu2,
   IconSettings,
+  IconArrowLeft,
+  IconChevronRight,
 } from "@tabler/icons-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { useAppDispatch } from "@/hooks/useAppSelector";
+import { setOpenCreateCommunityModal } from "@/redux/Slices/create.community.slice";
+import { cn } from "@/lib/utils";
 import Header from "./Header";
+import { usePathname } from "next/navigation";
 
 export function AppSidebar({ children }: { children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
-  const dispatch=useAppDispatch()
-  
+  const [open, setOpen] = useState(true);
+  const pathname = usePathname();
+  const [activeLink, setActiveLink] = useState(pathname);
+  const dispatch = useAppDispatch();
 
   const links = [
     {
       label: "Dashboard",
       href: "/dashboard",
-      icon: (
-        <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+      icon: (props: any) => (
+        <IconBrandTabler
+          className={cn("h-5 w-5 flex-shrink-0", props.className)}
+        />
       ),
     },
     {
       label: "Feed",
       href: "/feed",
-      icon: (
-        <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+      icon: (props: any) => (
+        <IconBrandTabler
+          className={cn("h-5 w-5 flex-shrink-0", props.className)}
+        />
       ),
     },
     {
-      label:"Create a community",
+      label: "Create a community",
       href: "#",
       onClick: () => {
-        console.log('clicked')
-        dispatch(setOpenCreateCommunityModal(true))
+        dispatch(setOpenCreateCommunityModal(true));
       },
-      icon: (
-        <GoPlus  className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+      icon: (props: any) => (
+        <GoPlus className={cn("h-5 w-5 flex-shrink-0", props.className)} />
       ),
     },
     {
       label: "Settings",
       href: "#",
-      icon: (
-        <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+      icon: (props: any) => (
+        <IconSettings
+          className={cn("h-5 w-5 flex-shrink-0", props.className)}
+        />
       ),
     },
     {
       label: "Logout",
       href: "#",
-      icon: (
-        <IconArrowLeft className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+      icon: (props: any) => (
+        <IconArrowLeft
+          className={cn("h-5 w-5 flex-shrink-0", props.className)}
+        />
       ),
     },
   ];
 
-  const toggleSidebar = () => {
-    setOpen(!open);
-  };
+  useEffect(() => {
+    console.log('pathname', pathname);
+    setActiveLink(pathname);
+  }, [pathname]);
 
   return (
-    <div
-      className={cn(
-        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden",
-        "h-screen"
-      )}
-    >
-      <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            <div className="flex items-center justify-between p-4">
-              {open ? <Logo /> : <LogoIcon />}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleSidebar}
-                className="md:hidden"
+    <div className="flex h-screen overflow-hidden">
+      {/* Sidebar */}
+      <motion.div
+        initial={{ width: open ? "250px" : "80px" }}
+        animate={{ width: open ? "250px" : "80px" }}
+        transition={{ type: "tween", duration: 0.3 }}
+        className={cn(
+          "bg-white dark:bg-neutral-900 border-r border-neutral-200 dark:border-neutral-700",
+          "flex flex-col py-6 transition-all duration-300 relative"
+        )}
+      >
+        {/* Logo */}
+        <div className="px-5 mb-8 flex items-center justify-between">
+          <AnimatePresence>
+            {open && (
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="flex items-center space-x-2"
               >
-                <IconMenu2 className="h-5 w-5" />
-              </Button>
-            </div>
-            <div className="mt-8 flex flex-col gap-2">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} onClick={link.onClick} />
-              ))}
-            </div>
-          </div>
-          <div>
-            <SidebarLink
-              link={{
-                label: "Manu Arora",
-                href: "#",
-                icon: (
-                  <Image
-                    src="/art.jpg"
-                    className="h-7 w-7 flex-shrink-0 rounded-full"
-                    width={50}
-                    height={50}
-                    alt="Avatar"
-                  />
-                ),
-              }}
-            />
-          </div>
-        </SidebarBody>
-        <div className="flex flex-1 flex-col relative">
-          <Header/>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleSidebar}
-            className="hidden md:inline-flex w-[50px] absolute top-14 -left-1 bg-neutral-100"
+                <div className="h-6 w-7 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm" />
+                <span className="text-lg font-semibold dark:text-white">
+                 Link To Gether
+                </span>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <button
+            onClick={() => setOpen(!open)}
+            className="hover:bg-neutral-100 dark:hover:bg-neutral-800 p-2 rounded-full transition-colors"
           >
-            <IconMenu2 className="h-5 w-5 " />
-          </Button>
-          <div className="p-2 md:py-10  dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full overflow-y-auto md:px-[80px]">
-            {children}
-          </div>
+            <IconChevronRight
+              className={cn(
+                "h-5 w-5 transition-transform",
+                open ? "rotate-180" : "rotate-0"
+              )}
+            />
+          </button>
         </div>
-      </Sidebar>
+
+        {/* Navigation Links */}
+        <div className="flex-grow overflow-y-auto px-3">
+          {links.map((link, idx) => {
+            const isActive = link.href !== "#" && activeLink.startsWith(link.href);
+            return (
+              <motion.div
+                key={idx}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href={link.href}
+                  onClick={link.onClick}
+                  className={cn(
+                    "flex items-center p-3 rounded-lg mb-2 group",
+                    "transition-all duration-300 ease-in-out",
+                    "hover:bg-neutral-100 dark:hover:bg-neutral-800",
+                    "text-neutral-600 dark:text-neutral-300 hover:text-black dark:hover:text-white",
+                    // Active link styles
+                    isActive && "bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400",
+                    isActive && "font-semibold"
+                  )}
+                >
+                  <link.icon
+                    className={cn(
+                      "mr-3 transition-colors group-hover:text-black dark:group-hover:text-white",
+                      open ? "" : "mx-auto",
+                      // Active link icon color
+                      isActive && "text-green-600 dark:text-green-400"
+                    )}
+                  />
+                  <AnimatePresence>
+                    {open && (
+                      <motion.span
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -10 }}
+                        className="text-sm font-medium whitespace-nowrap"
+                      >
+                        {link.label}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </Link>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* User Profile */}
+        <div className="px-3 mt-4">
+          <Link
+            href="#"
+            className={cn(
+              "flex items-center p-3 rounded-lg",
+              "hover:bg-neutral-100 dark:hover:bg-neutral-800",
+              "transition-all duration-300 ease-in-out"
+            )}
+          >
+            <Image
+              src="/art.jpg"
+              className="h-8 w-8 rounded-full mr-3"
+              width={50}
+              height={50}
+              alt="Avatar"
+            />
+            <AnimatePresence>
+              {open && (
+                <motion.div
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -10 }}
+                >
+                  <p className="text-sm font-medium dark:text-white">
+                    Manu Arora
+                  </p>
+                  <p className="text-xs text-neutral-500">Administrator</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </Link>
+        </div>
+      </motion.div>
+
+      {/* Main Content Area */}
+      <div className="flex-grow flex flex-col overflow-hidden">
+        <Header />
+        <div className="flex-grow overflow-y-auto bg-neutral-50 dark:bg-neutral-900 p-6">
+          {children}
+        </div>
+      </div>
     </div>
   );
 }
-
-export const Logo = () => {
-  return (
-    <Link
-      href="#"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
-    >
-      <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-medium text-black dark:text-white whitespace-pre"
-      >
-        Acet Labs
-      </motion.span>
-    </Link>
-  );
-};
-
-export const LogoIcon = () => {
-  return (
-    <Link
-      href="#"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
-    >
-      <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
-    </Link>
-  );
-};

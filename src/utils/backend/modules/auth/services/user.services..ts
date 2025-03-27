@@ -64,13 +64,14 @@ export async function getRecommendedCommunities(userId: any) {
 
 export async function getUserProfileDetails(userId: any) {
   const user = await User.findById(userId).select(
-    "_id username email profilePicture "
+    "_id username email profileImage created_at"
   );
   return {
     id: user._id,
     username: user.username,
     email: user.email,
-    profilePicture: user.profilePicture,
+    profileImage: user.profileImage,
+    created_at:user?.created_at
   };
 }
 

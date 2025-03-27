@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/chart";
 import Heading from "@/components/Global/Heading";
 import Paragraph from "@/components/Global/Paragraph";
+import useGetActiveCommunities from "../hooks/useGetActiveCommunities";
+import Loading from "@/components/Global/Loading";
 
 const chartData = [
   { month: "January", members: 186, community_name: "Test Community" },
@@ -29,14 +31,19 @@ const chartConfig = {
 const colors = ["#3D8D7A", "#5DEBD7", "#3F4F44", "#27667B", "#16C47F"];
 
 export default function TopActiveCommunities() {
+
+const {data,isLoading}=useGetActiveCommunities()
+
+
   return (
-    <div className="flex w-full items-start justify-between ">
+    <div className="flex w-full items-start justify-between min-h-[200px]">
       <div className="w-1/2 flex flex-col justify-start ">
         <Heading text="Top Active Communities" size="20px" />
         <Paragraph text="Explore the most engaging communities with the highest posts, comments, and interactions. Active communities drive discussions, encourage participation, and keep the platform lively. Stay updated with trending topics and discover where the most activity is happening!" />
       </div>
-      <ChartContainer config={chartConfig} className="min-h-[200px] w-1/2">
-        <BarChart accessibilityLayer data={chartData}>
+      {
+       !isLoading &&  data?.chartData?.length>0 ?<ChartContainer config={chartConfig} className="min-h-[200px] w-1/2">
+        <BarChart accessibilityLayer data={data?.chartData}>
           <CartesianGrid vertical={false} />
           <XAxis
             dataKey="month"
@@ -73,7 +80,8 @@ export default function TopActiveCommunities() {
             cursor={false}
           />
         </BarChart>
-      </ChartContainer>
+        </ChartContainer> : <div className="w-1/2 bg-green-50 rounded-md h-[200px] flex items-center justify-center">{ isLoading ? <Loading/>:"No Data"}</div>
+}
     </div>
   );
 }

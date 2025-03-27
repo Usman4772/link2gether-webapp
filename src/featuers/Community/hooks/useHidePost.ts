@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 
 function useHidePost(
-  postId: string | number,
+  postId: string | number |null,
   communityId: string | number | undefined
 ) {
   const [openHidePostModal, setOpenHidePostModal] = useState(false);
@@ -31,6 +31,7 @@ function useHidePost(
       queryClient.invalidateQueries({
         queryKey: ["community-posts"],
       });
+      queryClient.invalidateQueries({queryKey:["reported-posts",communityId]})
     },
     onError: (error) => {
       handleAPIErrors(error);

@@ -11,6 +11,8 @@ import type { Moment } from "moment";
 import Image from "next/image";
 import type React from "react";
 
+import { RiArrowDownWideFill as ArrowDown } from "react-icons/ri";
+
 interface CustomInputProps {
   placeholder?: string;
   value?: string;
@@ -88,9 +90,6 @@ function CustomNumberInput({
   );
 }
 
-
-
-
 interface SelectOption {
   value: string | number;
   label: React.ReactNode;
@@ -114,14 +113,7 @@ const CustomSelect = ({
 }: CustomSelectProps) => {
   return (
     <Select
-      suffixIcon={
-        <Image
-          src="/Icons/arrow-down.svg"
-          width={16}
-          height={16}
-          alt="arrow down"
-        />
-      }
+      suffixIcon={<ArrowDown className="w-5 h-5"/>}
       className={`custom-select-box`}
       placeholder={placeholder}
       value={value}
@@ -136,7 +128,7 @@ const CustomSelect = ({
   );
 };
 
-interface CustomTextAreaProps  {
+interface CustomTextAreaProps {
   placeholder?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
