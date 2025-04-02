@@ -1,6 +1,8 @@
 import ActionModal from "@/components/Global/ActionModal";
 import ModalFooter from "@/components/Global/ModalFooter";
 import React from "react";
+import ApproveRequestIcon from "./ApproveIcon";
+import RejectRequestIcon from "./RejectIcon";
 
 interface RequestActionModalProps {
   openModal: boolean;
@@ -29,7 +31,7 @@ function RequestActionModal({
           ? "Are you sure you want to approve this request?"
           : "Are you sure you want to reject this request?"
       }
-      icon={isApprovalModal ? "/approve.jpg" : "/reject-vector.jpg"}
+      IconComponent={isApprovalModal ? <ApproveRequestIcon/>: <RejectRequestIcon/>}
       btnLoading={btnLoading}
       okText={isApprovalModal ? "Approve" : "Reject"}
       footer={

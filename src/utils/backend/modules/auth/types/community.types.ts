@@ -30,6 +30,8 @@ export interface CommunityPostsProps {
   description: string | null;
   media: null | string;
   type: "text" | "image" | "video";
+  url: string,
+  allow_actions:boolean,
   created_at: string;
   author: {
     id: string | number;

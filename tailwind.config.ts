@@ -13,7 +13,7 @@ export default {
       colors: {
         primary_clr: "#01352c",
         secondary_clr: " #61b390",
-        gray_clr: "#E8EDF5",
+        gray_clr: "#4F7A96",
         bg_clr: "#bad8b6",
         btn_primary_clr: "#7bf1a8",
         danger_hover: "#FF2929",

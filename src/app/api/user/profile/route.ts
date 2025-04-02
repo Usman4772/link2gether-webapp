@@ -1,10 +1,7 @@
-import User from "@/models/user";
-import apiErrors from "@/utils/backend/helpers/apiErrors";
 import { errorHandler, validateToken } from "@/utils/backend/helpers/globals";
 import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";
 import { connectToDatabase } from "@/utils/backend/modules/auth/services/authServices";
 import { getUserProfileDetails } from "@/utils/backend/modules/auth/services/user.services.";
-import { Types } from "mongoose";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
@@ -18,8 +15,5 @@ export async function GET(req: NextRequest) {
   }
 }
 
-
-  
-  
     
 

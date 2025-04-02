@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-import { PlusOutlined } from "@ant-design/icons";
+"use client";
+
+import { useState } from "react";
+import { CameraOutlined } from "@ant-design/icons";
 import { Image, Upload } from "antd";
 import type { GetProp, UploadFile, UploadProps } from "antd";
 
@@ -13,7 +15,11 @@ const getBase64 = (file: FileType): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 
-function Uploader({ fileList, setFileList,placeholder="Profile Picture" }: any) {
+function Uploader({
+  fileList,
+  setFileList,
+  placeholder = "Profile Picture",
+}: any) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
 
@@ -30,20 +36,21 @@ function Uploader({ fileList, setFileList,placeholder="Profile Picture" }: any) 
     setFileList(newFileList);
 
   const uploadButton = (
-    <button style={{ border: 0, background: "none" }} type="button">
-      <div style={{ marginTop: 8 }} className="!text-[#706F6F]">
-        {placeholder}
-      </div>
-    </button>
+    <div className="flex flex-col items-center justify-center h-full">
+      <CameraOutlined className="text-lg text-neutral-500 mb-1" />
+      <div className="text-xs text-neutral-500">{placeholder}</div>
+    </div>
   );
+
   return (
-    <>
+    <div className="uploader-container">
       <Upload
         listType="picture-circle"
         fileList={fileList}
         accept="image/*"
         onPreview={handlePreview}
         onChange={handleChange}
+        className="community-avatar-uploader"
       >
         {fileList.length >= 1 ? null : uploadButton}
       </Upload>
@@ -55,10 +62,42 @@ function Uploader({ fileList, setFileList,placeholder="Profile Picture" }: any) 
             onVisibleChange: (visible) => setPreviewOpen(visible),
             afterOpenChange: (visible) => !visible && setPreviewImage(""),
           }}
-          src={previewImage}
+          src={previewImage || "/placeholder.svg"}
         />
       )}
-    </>
+
+      <style jsx global>{`
+        .community-avatar-uploader .ant-upload-select {
+          border: 1px dashed #d9d9d9;
+          border-radius: 100%;
+          cursor: pointer;
+          transition: all 0.3s;
+          width: 100px !important;
+          height: 100px !important;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .community-avatar-uploader .ant-upload-select:hover {
+          border-color: #999;
+        }
+
+        .dark .community-avatar-uploader .ant-upload-select {
+          border-color: #555;
+          background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .dark .community-avatar-uploader .ant-upload-select:hover {
+          border-color: #777;
+        }
+
+        .community-avatar-uploader .ant-upload-list-item-container {
+          width: 100px !important;
+          height: 100px !important;
+        }
+      `}</style>
+    </div>
   );
 }
 

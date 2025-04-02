@@ -1,5 +1,8 @@
 import { postSchema } from "@/utils/backend/validation-schema/post.schema";
-import { handleFormErrors } from "@/utils/frontend/handleErrors";
+import {
+  handleAPIErrors,
+  handleFormErrors,
+} from "@/utils/frontend/handleErrors";
 import { UploadFile } from "antd";
 import React, { useState } from "react";
 import { UseFormSetError } from "react-hook-form";
@@ -9,12 +12,10 @@ import { createCommunityAPI, createPostAPI } from "../api/api";
 import { useQueryClient } from "@tanstack/react-query";
 
 function useCreatePost({
-  setError,
   id,
   form,
   setOpenModal = () => {},
 }: {
-  setError: UseFormSetError<any>;
   form: any;
   id: string | number;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -41,11 +42,12 @@ function useCreatePost({
             queryKey: ["community-posts"],
           });
 
-          form.reset();
+          form.resetFields();
           setFileList([]);
         }
       } catch (error: any) {
-        handleFormErrors(error, setError);
+        handleAPIErrors(error);
+        //todo change this to form errors.
       } finally {
         setBtnLoading(false);
       }

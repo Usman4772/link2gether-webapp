@@ -1,3 +1,5 @@
+"use client";
+
 import Heading from "@/components/Global/Heading";
 import Paragraph from "@/components/Global/Paragraph";
 import TimeAgo from "@/components/Global/TimeAgo";
@@ -6,10 +8,13 @@ import React from "react";
 import { RiHeart3Line as Like } from "react-icons/ri";
 import { RiHeart3Fill as LikeFill } from "react-icons/ri";
 import useLikeComment from "../hook/useLikeComment";
+import { useAppDispatch } from "@/hooks/useAppSelector";
+import { setOpenLoginModal } from "@/redux/Slices/user.slice";
 
 export interface CommentProps {
   id: string | number;
   content: string;
+  allow_actions: boolean;
   author: {
     id: string | number;
     username: string;
@@ -23,52 +28,85 @@ export interface CommentProps {
 function Comment({
   comment,
   postId,
+  isPublicPage = false,
 }: {
   comment: CommentProps;
   postId: string | number;
+  isPublicPage?: boolean;
 }) {
   const { likeComment, optimisticIsLiked, optimisticLikes } = useLikeComment(
     comment,
     postId
   );
+  const dispatch = useAppDispatch();
   const formRef = React.useRef<HTMLFormElement>(null);
+
   return (
-    <div className="flex justify-between bg-gray_clr rounded-md w-full min-h-24 max-h-max p-2 items-center">
-      <div className="flex flex-col gap-2  p-2 items-start">
-        <div className="flex gap-2 items-center">
-          <img
-            src={comment?.author?.profileImage || "/default-avatar.jpeg"}
-            className="w-10 h-10 rounded-full object-cover"
-          />
+    <div className="group flex justify-between bg-gray-100 rounded-xl border border-gray-100 hover:border-gray-200 w-full p-4 transition-all duration-200">
+      <div className="flex flex-col gap-3 w-full">
+        {/* Author info */}
+        <div className="flex gap-3 items-center">
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-[1px] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <img
+              src={comment?.author?.profileImage || "/default-avatar.jpeg"}
+              className="relative w-10 h-10 rounded-full object-cover border-2 border-white"
+              alt={comment?.author?.username}
+            />
+          </div>
           <div className="flex flex-col">
-            <Heading text={comment?.author?.username} />
-            <TimeAgo date={comment?.created_at} />
+            <Heading
+              text={comment?.author?.username}
+              className="text-[15px] font-semibold text-gray-800"
+            />
+            <TimeAgo
+              date={comment?.created_at}
+              className="text-xs text-gray-500"
+            />
           </div>
         </div>
-        <Paragraph text={comment.content || "N/A"} />
+
+        {/* Comment content */}
+        <Paragraph
+          text={comment.content || "N/A"}
+          className="text-gray-700 text-[15px] leading-relaxed pl-[52px]"
+        />
+
+        {/* Like button */}
+        <div className="flex justify-end">
+          <form
+            className="flex items-center"
+            action={() => {
+              !comment?.allow_actions && isPublicPage
+                ? dispatch(setOpenLoginModal(true))
+                : likeComment();
+            }}
+            ref={formRef}
+          >
+            <button
+              type="button"
+              onClick={() => formRef.current?.requestSubmit()}
+              className="flex items-center gap-1.5 bg-gray-50 hover:bg-gray-100 rounded-full px-3 py-1.5 transition-colors"
+            >
+              {optimisticIsLiked ? (
+                <>
+                  <LikeFill className="text-[18px] text-btn_primary_clr" />
+                  <span className="text-blue-500 text-xs font-medium">
+                    {convertNumberToK(optimisticLikes)}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Like className="text-[18px] text-gray-500" />
+                  <span className="text-gray-500 text-xs">
+                    {convertNumberToK(optimisticLikes)}
+                  </span>
+                </>
+              )}
+            </button>
+          </form>
+        </div>
       </div>
-      <form className="flex items-center gap-2" action={()=>likeComment()} ref={formRef}>
-        <span
-          onClick={() => formRef.current?.requestSubmit()}
-          className="cursor-pointer flex items-start gap-2"
-        >
-          {optimisticIsLiked ? (
-            <div className="flex items-center justify-center  flex-col ">
-              <LikeFill className="text-[21px] text-btn_primary_clr " />
-              <div className="text-text_secondary text-[12px]">
-                {convertNumberToK(optimisticLikes)}
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center  flex-col ">
-              <Like className="text-[21px] text-text_secondary" />
-              <div className="text-text_secondary text-[12px]">
-                {convertNumberToK(optimisticLikes)}
-              </div>
-            </div>
-          )}
-        </span>
-      </form>
     </div>
   );
 }

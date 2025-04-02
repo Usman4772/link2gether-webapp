@@ -4,18 +4,16 @@ import { UseFormSetError } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
 import { createCommunityAPI } from "../api/api";
-import { handleAPIErrors, handleFormErrors } from "@/utils/frontend/handleErrors";
+import {
+  handleAntDFormErrors,
+  handleAPIErrors,
+  handleFormErrors,
+} from "@/utils/frontend/handleErrors";
 import { communitySchema } from "@/utils/backend/validation-schema/community.schema";
 import { useAppDispatch } from "@/hooks/useAppSelector";
 import { setOpenCreateCommunityModal } from "@/redux/Slices/create.community.slice";
 
-function useCreateCommunity({
-  setError,
-  form,
-}: {
-  setError: UseFormSetError<any>;
-  form: any;
-}) {
+function useCreateCommunity({ form }: { form: any }) {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [btnLoading, setBtnLoading] = useState(false);
   const dispatch = useAppDispatch();
@@ -27,18 +25,19 @@ function useCreateCommunity({
       const avatar = fileList[0]?.originFileObj;
       formData.append("community_name", values?.community_name);
       formData.append("category", values?.category);
-     if(avatar) formData.append("avatar", avatar);
+      if (avatar) formData.append("avatar", avatar);
       formData.append("visibility", values?.visibility);
- 
+
       const response = await createCommunityAPI(formData);
       if (response?.data?.success) {
         toast.success(response?.data?.message);
         dispatch(setOpenCreateCommunityModal(false));
-        form.reset();
+        form.resetFields();
         setFileList([]);
       }
     } catch (error: any) {
-      handleFormErrors(error, setError);
+      handleAPIErrors(error);
+      //todo change this to form errors.
     } finally {
       setBtnLoading(false);
     }

@@ -1,10 +1,11 @@
+"use client";
+
 import CustomButton from "@/components/Global/CustomButton";
 import CustomTable from "@/components/Global/CustomTable";
 import Heading from "@/components/Global/Heading";
 import { CheckOutlined } from "@ant-design/icons";
-import { Card } from "antd";
-import { Cross, Key, X } from "lucide-react";
-import React from "react";
+import { Card, Badge } from "antd";
+import { X } from "lucide-react";
 import useFetchJoinRequests from "../hooks/useFetchJoinRequests";
 import DotDropdown from "@/components/Global/DotDropdown";
 import { getFormattedDate } from "@/utils/frontend/helpers/globals";
@@ -39,12 +40,21 @@ function JoinRequestsTable({ id }: { id: string }) {
       key: "username",
       render: (data: any) => (
         <div className="flex items-center gap-3">
-          <img
-            src={data?.profileImage || "/default-user.jpeg"}
-            alt={data?.username}
-            className="w-8 h-8 rounded-full object-cover"
-          />
-          <span>{data?.username}</span>
+          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white shadow-sm">
+            <img
+              src={data?.profileImage || "/default-user.jpeg"}
+              alt={data?.username}
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div>
+            <div className="font-medium text-gray-800">{data?.username}</div>
+            {data?.bio && (
+              <div className="text-xs text-gray-500 truncate max-w-[200px]">
+                {data?.bio}
+              </div>
+            )}
+          </div>
         </div>
       ),
     },
@@ -52,12 +62,15 @@ function JoinRequestsTable({ id }: { id: string }) {
       title: "Email",
       dataIndex: "email",
       key: "email",
+      render: (email: string) => <div className="text-gray-600">{email}</div>,
     },
     {
       title: "Created At",
       dataIndex: "created_at",
       key: "created_at",
-      render: (data: any) => <div>{getFormattedDate(data)}</div>,
+      render: (data: any) => (
+        <div className="text-gray-600">{getFormattedDate(data)}</div>
+      ),
     },
     {
       title: "Actions",
@@ -87,30 +100,72 @@ function JoinRequestsTable({ id }: { id: string }) {
             },
           },
         ];
-        return <DotDropdown items={items} />;
+        return (
+          <div className="flex items-center gap-2">
+            <DotDropdown items={items} />
+          </div>
+        );
       },
     },
   ];
 
   return (
-    <Card className="shadow-sm p-2">
-      <div className="flex justify-between items-center mb-4">
-        <Heading text="Pending Join Requests" />
+    <Card className="rounded-xl shadow-sm overflow-hidden border border-gray-100 p-0">
+      <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b border-gray-100 p-5">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-white rounded-lg shadow-sm">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-purple-500"
+              >
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M19 8v6"></path>
+                <path d="M22 11h-6"></path>
+              </svg>
+            </div>
+            <div>
+              <Heading text="Pending Join Requests" />
+              <div className="text-sm text-gray-500">
+                {data?.length || 0} {data?.length === 1 ? "user" : "users"}{" "}
+                waiting for approval
+              </div>
+            </div>
+          </div>
+          <Badge
+            count={data?.length || 0}
+            className="bg-purple-500"
+            style={{ fontWeight: "500" }}
+          />
+        </div>
       </div>
-      <CustomTable
-        columns={joinRequestsColumns}
-        data={data}
-        className="mb-4"
-        loading={isLoading}
-      />
+
+      <div className="p-0">
+        <CustomTable
+          columns={joinRequestsColumns}
+          data={data}
+          loading={isLoading}
+          className="mb-0"
+          NoDataMessage="No pending join requests for this community"
+        />
+      </div>
+
       <RequestActionModal
         openModal={openApproveModal}
         setOpenModal={setOpenApproveModal}
         isApprovalModal={true}
         btnLoading={approveBtnLoading}
         onConfirmAction={async () => await approveRequest(id, userId)}
-        onCancel={() => setUserId(null)} 
-        
+        onCancel={() => setUserId(null)}
       />
       <RequestActionModal
         openModal={openRejectModal}

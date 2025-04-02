@@ -1,6 +1,7 @@
 import ActionModal from "@/components/Global/ActionModal";
 import CustomButton from "@/components/Global/CustomButton";
 import React from "react";
+import DismissReportIcon from "./DismissIcon";
 
 interface DismissReportModalProps {
   openModal: boolean;
@@ -21,7 +22,7 @@ function DismissReportModal({
       setOpenModal={setOpenModal}
       heading={"Dismiss Report Request"}
       subheading="Are you sure you want to dismiss this report request?"
-      icon={"/hide-post.jpg"}
+      IconComponent={<DismissReportIcon />}
       footer={
         <div className="flex items-center gap-4 w-full justify-end ">
           <CustomButton

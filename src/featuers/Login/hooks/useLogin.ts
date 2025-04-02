@@ -17,15 +17,15 @@ function useLogin(setError: UseFormSetError<any>) {
       if (response?.data?.success) {
         toast.success(response?.data?.message);
         setCookie("token", response?.data?.data?.token);
+        setCookie("onboardingStatus", response?.data?.data?.onboardingStatus);
         router.push("/");
       }
     } catch (error: any) {
-    handleAPIErrors(error)
+      handleAPIErrors(error);
     } finally {
       setBtnLoading(false);
     }
   }
-
 
   return {
     handleLogin,

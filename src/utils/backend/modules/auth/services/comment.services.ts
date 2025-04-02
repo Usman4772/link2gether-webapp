@@ -14,25 +14,33 @@ export async function handlePostComment(
   userId: any,
   content: string | number
 ) {
-  const post = await Post.findById(postId);
+  const queryCondition = Types.ObjectId.isValid(postId)
+    ? { _id: postId }
+    : { publicId: postId };
+  const post = await Post.findOne(queryCondition);
   if (!post) {
     throw new apiErrors([], "Post not found", 404);
   }
+
   const comment = await Comment.create({
     content,
     author: userId,
-    post: postId,
+    post: post?._id,
   });
   post.comments.push(comment._id);
   await post.save();
   return comment;
 }
 
-export async function getPostComments(postId: string, userId: any) {
-  if (!postId || !Types.ObjectId.isValid(postId)) {
+export async function getPostComments(postId: string, userId?: any) {
+  if (!postId) {
     throw new apiErrors([], "Invalid post id", 400);
   }
-  const post = await Post.findById(postId)
+  const queryCondition = Types.ObjectId.isValid(postId)
+    ? { _id: postId }
+    : { publicId: postId };
+
+  const post = await Post.findOne(queryCondition)
     .populate({
       path: "comments",
       model: Comment,
@@ -92,7 +100,7 @@ export async function getCommunityPosts(communityId: any, userId: any) {
         path: "community",
         select: "_id community_name avatar",
         model: Community,
-      }
+      },
     ],
   });
   return await getCommunityPostsPayload(community.posts, userId);

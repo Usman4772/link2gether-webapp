@@ -1,4 +1,6 @@
-export const categories = [
+import { CategoryType } from "@/components/Global/ChooseCategories";
+
+export const categories: CategoryType[] = [
   {
     name: "Technology",
     value: "TECHNOLOGY",

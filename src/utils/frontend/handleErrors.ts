@@ -60,7 +60,6 @@ export function handleAntDFormErrors(error: any, form: any) {
 
   if (errors) {
     const transformedErrors = transformErrors(error?.response?.data?.errors);
-    console.log('transformedErrors', transformedErrors)
     form.setFields(transformedErrors);
   } 
   toast.error(errorMessage || "Something went wrong. Please try again");

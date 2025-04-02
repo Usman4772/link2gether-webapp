@@ -16,10 +16,10 @@ interface ModalProps {
   height?: number;
   okText?: string;
   cancelText?: string;
-    okBtnStyles?: string;
-    dispatchEvent?: boolean;
+  okBtnStyles?: string;
+  dispatchEvent?: boolean;
   cancelBtnStyles?: string;
-  footer?: boolean | null;
+  footer?: React.ReactNode | null;
 }
 
 function CustomModal({

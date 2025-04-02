@@ -5,6 +5,7 @@ import User from "@/models/user";
 import Community from "@/models/community";
 import Post from "@/models/posts";
 import { Types } from "mongoose";
+import { generateShareableLink } from "../modules/auth/services/post.services";
 
 export async function validatePostSchema(req: NextRequest) {
   const formData = await req.formData();
@@ -27,19 +28,21 @@ export async function validatePostSchema(req: NextRequest) {
       };
     });
     throw new apiErrors(errors, "Validation errors found", 400);
-    }
-    
-    return data
+  }
+
+  return data;
 }
 
-
-export async function createPayload(posts: any[], userId: any) {
+export async function createPayload(
+  posts: any[],
+  userId: any,
+  req: NextRequest
+) {
   const filteredPosts = posts.filter((post) =>
     post.community.members.includes(userId)
   );
 
-
-  const user=await User.findById(userId)
+  const user = await User.findById(userId);
   return filteredPosts.map((post) => {
     return {
       id: post._id,
@@ -47,6 +50,7 @@ export async function createPayload(posts: any[], userId: any) {
       media: post.media,
       type: post.type,
       likes: post.likes.length,
+      url: generateShareableLink(req, post),
       comments: post.comments.length,
       isLiked: post.likes.includes(userId.toString()),
       isSaved: user.savedPosts.includes(post._id),
@@ -65,9 +69,15 @@ export async function createPayload(posts: any[], userId: any) {
   });
 }
 
-
-export async function createPostPayload(post: any, userId: any) {
-  const user=await User.findById(userId)
+export async function createPostPayload(
+  post: any,
+  shareableLink: string,
+  userId?: any
+) {
+  let user = null;
+  if (userId) {
+    user = await User.findById(userId);
+  }
   return {
     id: post._id,
     description: post.description,
@@ -75,8 +85,10 @@ export async function createPostPayload(post: any, userId: any) {
     type: post.type,
     likes: post.likes.length,
     comments: post.comments.length,
-    isLiked: post.likes.includes(userId.toString()),
-    isSaved: user.savedPosts.includes(post._id),
+    url: shareableLink,
+    allow_actions: userId ? true : false,
+    isLiked: userId ? post.likes.includes(userId.toString()) : false,
+    isSaved: userId ? user.savedPosts.includes(post._id) : false,
     created_at: post.created_at,
     community: {
       id: post.community._id,
@@ -91,12 +103,9 @@ export async function createPostPayload(post: any, userId: any) {
   };
 }
 
-
-
 export async function validateReportPostPayload(req: NextRequest) {
   const data = await req.json();
   const result = reportPostSchema.safeParse(data);
-
 
   if (!result.success) {
     throw new apiErrors(
@@ -151,8 +160,6 @@ export async function validateCommunityAndPost(
       400
     );
   }
-
-
 
   // Ensure the post belongs to the given community
   if (!community.posts.toString().includes(postId)) {

@@ -10,13 +10,12 @@ export default function Dashboard() {
   const { data } = useFetchUser();
   return (
     <div className="min-h-screen flex justify-between items-start w-full pb-8">
-      <div className="w-3/4 space-y-8 border-r-[1px] border-gray-200 pr-4 pb-12">
+      <div className="w-full space-y-8  pb-12">
         <Header data={data} />
         <KPIMetrics />
         <TopActiveCommunities />
         <DashboardCommunities />
       </div>
-      <Profile data={data} />
     </div>
   );
 }

@@ -7,7 +7,6 @@ import User from "@/models/user";
 
 export async function validateToken(req: NextRequest) {
   const headers = req.headers;
-
   const token = headers.get("Authorization")?.split(" ")[1];
   if (!token) throw new apiErrors([], "Unauthenticated", 401);
 
@@ -21,6 +20,21 @@ export async function validateToken(req: NextRequest) {
   const userId = tokenDetails?.payload?.id;
   const user = await User.findById(userId);
   return { userId, user };
+}
+
+export async function validatePublicToken(req: NextRequest) {
+  const headers = req.headers;
+  const token = headers.get("Authorization")?.split(" ")[1];
+  if (!token) return null;
+  const userToken = await Tokens.findOne({ token: token });
+  if (!userToken) return null;
+
+  const tokenDetails = await jwtVerify(
+    token,
+    new TextEncoder().encode("u$man2309")
+  );
+  const userId = tokenDetails?.payload?.id;
+  return userId;
 }
 
 export const errorHandler = (error: any) => {

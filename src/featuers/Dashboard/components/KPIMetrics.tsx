@@ -5,9 +5,9 @@ import {
   RequestIcon,
 } from "@/components/icons/icons";
 import { Card } from "@/components/ui/card";
-import React from "react";
 import useGetKPIs from "../hooks/useGetKPIs";
-import Loading from "@/components/Global/Loading";
+import { Skeleton } from "antd";
+
 function KPIMetrics() {
   const { data, isLoading } = useGetKPIs();
   const kpi_metrics = [
@@ -30,7 +30,7 @@ function KPIMetrics() {
       icon_text: "text-kpi_green_light",
     },
     {
-      key: "1",
+      key: "3",
       icon: <ReportIcon className="w-5 h-5" />,
       title: "Total Reported Posts",
       value: data?.total_reported_posts,
@@ -38,9 +38,8 @@ function KPIMetrics() {
       icon_bg: "bg-kpi_orange_dark",
       icon_text: "text-kpi_orange_light",
     },
-
     {
-      key: "1",
+      key: "4",
       icon: <RequestIcon className="w-5 h-5" />,
       title: "Pending Join Requests",
       value: data?.total_join_requests,
@@ -53,15 +52,24 @@ function KPIMetrics() {
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {kpi_metrics.map((data) => {
-          return (
-            <Card
-              className={`py-11 px-5  ${data?.bg_color} border-none outline-none h-[211px]`}
-            >
-              <Loading />
-            </Card>
-          );
-        })}
+        {[1, 2, 3, 4].map((index) => (
+          <Card key={index} className="border shadow-sm overflow-hidden">
+            <div className="p-5">
+              <div className="flex items-start">
+                <Skeleton.Avatar
+                  active
+                  size="large"
+                  shape="circle"
+                  className="flex-shrink-0"
+                />
+                <div className="ml-4 flex flex-col gap-2">
+                  <Skeleton.Input active size="small" className="w-3/4 " />
+                  <Skeleton.Input active size="large" className="w-1/2" />
+                </div>
+              </div>
+            </div>
+          </Card>
+        ))}
       </div>
     );
   }
@@ -69,23 +77,41 @@ function KPIMetrics() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {kpi_metrics && kpi_metrics.length > 0
-        ? kpi_metrics.map((metric) => {
-            return (
-              <Card
-                className={`py-11 px-5  ${metric.bg_color} border-none outline-none`}
-              >
-                <div className="flex justify-start  flex-col gap-4">
+        ? kpi_metrics.map((metric) => (
+            <Card
+              key={metric.key}
+              className={`overflow-hidden border-none shadow-md transition-all duration-300 hover:shadow-md`}
+            >
+              <div className={`${metric.bg_color} p-5 h-full`}>
+                <div className="flex items-start">
                   <div
-                    className={`p-3 ${metric.icon_bg} rounded-full w-11 h-11 flex items-center justify-center`}
+                    className={`${metric.icon_bg} rounded-full w-12 h-12 flex items-center justify-center shadow-sm`}
                   >
-                    {metric.icon}
+                    <div className={metric.icon_text}>{metric.icon}</div>
                   </div>
-                  <div className="text-sm text-gray-500">{metric.title}</div>
-                  <div className="text-2xl font-bold">{metric.value}</div>
+
+                  <div className="ml-4">
+                    <h3 className="text-sm font-medium text-neutral-600 mb-1">
+                      {metric.title}
+                    </h3>
+                    <div className="text-3xl font-bold text-neutral-800">
+                      {metric.value || 0}
+                    </div>
+                  </div>
                 </div>
-              </Card>
-            );
-          })
+
+                {/* Progress indicator - visual element */}
+                <div className="mt-4 w-full bg-white/30 rounded-full h-1.5">
+                  <div
+                    className={`h-1.5 rounded-full ${metric.icon_bg}`}
+                    style={{
+                      width: `${Math.min(100, (metric.value || 0) % 100)}%`,
+                    }}
+                  ></div>
+                </div>
+              </div>
+            </Card>
+          ))
         : null}
     </div>
   );

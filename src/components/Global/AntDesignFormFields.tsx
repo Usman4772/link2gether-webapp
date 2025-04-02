@@ -12,6 +12,7 @@ import Image from "next/image";
 import type React from "react";
 
 import { RiArrowDownWideFill as ArrowDown } from "react-icons/ri";
+import { twMerge } from "tailwind-merge";
 
 interface CustomInputProps {
   placeholder?: string;
@@ -37,7 +38,7 @@ function CustomInput({
       }}
       type={type || undefined}
       value={value}
-      className={`text-slate-300 font-light ${className}`}
+      className={`!text-gray_clr font-normal ${className}`}
       onChange={onChange}
       placeholder={placeholder}
       {...props}
@@ -80,7 +81,7 @@ function CustomNumberInput({
           ? Number.parseFloat(value) || undefined
           : value
       }
-      className={className}
+      className={twMerge("text-gray_clr font-normal", className)}
       onChange={onChange}
       placeholder={placeholder}
       min={min}
@@ -109,12 +110,13 @@ const CustomSelect = ({
   defaultValue,
   onChange,
   options = [],
+  className,
   ...props
 }: CustomSelectProps) => {
   return (
     <Select
       suffixIcon={<ArrowDown className="w-5 h-5"/>}
-      className={`custom-select-box`}
+      className={twMerge(`custom-select-box font-normal text-gray_clr`,className)}
       placeholder={placeholder}
       value={value}
       defaultValue={defaultValue}
@@ -130,12 +132,14 @@ const CustomSelect = ({
 
 interface CustomTextAreaProps {
   placeholder?: string;
+  className?:string,
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 export function CustomTextArea({
   placeholder = "Value",
+  className,
   ...props
 }: CustomTextAreaProps) {
   return (
@@ -146,6 +150,7 @@ export function CustomTextArea({
         padding: "12px",
         borderRadius: "6px",
       }}
+      className={twMerge("!font-normal !text-gray_clr", className)}
       placeholder={placeholder}
     />
   );

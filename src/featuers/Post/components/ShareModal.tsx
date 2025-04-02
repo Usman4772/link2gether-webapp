@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button";
 export default function ShareModal({
   openModal,
   setOpenModal,
+  url,
 }: {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  url: string;
 }) {
   const [copied, setCopied] = useState(false);
-  const url = "https://example.com/shared-content";
 
   const handleCancel = () => {
     setOpenModal(false);

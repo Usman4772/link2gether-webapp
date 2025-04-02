@@ -4,7 +4,7 @@ import toast from 'react-hot-toast'
 import { handleAPIErrors } from '@/utils/frontend/handleErrors'
 import { useQueryClient } from '@tanstack/react-query'
 
-function useSavePost() {
+function useSavePost(refetch=()=>{}) {
     const queryClient=useQueryClient()
 
     async function savePost(id:string|number){
@@ -16,6 +16,7 @@ function useSavePost() {
             queryClient.invalidateQueries({ queryKey: ["community-posts"] })
             queryClient.invalidateQueries({ queryKey: ["all-posts"] })
             queryClient.invalidateQueries({ queryKey: ["post", id] })
+            refetch()
 
         }
     } catch (error) {

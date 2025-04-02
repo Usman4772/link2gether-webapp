@@ -17,14 +17,15 @@ function ModalFooter({
   setOpenModal,
   onOk = () => {},
   onCancel = () => {},
-  okText = "Cancel",
-  cancelText = "Ok",
+  okText = "Ok",
+  cancelText = "Cancel",
   cancelVariant = "default",
   okVariant = "secondary",
 }: ModalFooterProps) {
   return (
     <div className="flex items-center gap-4 w-full justify-end ">
       <CustomButton
+        type="button"
         text={cancelText}
         onClick={() => {
           setOpenModal(false);
@@ -33,6 +34,7 @@ function ModalFooter({
         variant={cancelVariant}
       />
       <CustomButton
+        type="submit"
         loading={okBtnLoading}
         text={okText}
         variant={okVariant}
