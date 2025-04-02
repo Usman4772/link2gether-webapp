@@ -6,7 +6,7 @@ export async function getKPIsData(userId: any) {
   const total_join_requests = getTotalJoinRequests(all_communities);
   const total_reported_posts = getTotalReportedPosts(all_communities);
   return {
-    all_communities: all_communities.length,
+    total_communities: all_communities.length,
     total_members,
     total_join_requests,
     total_reported_posts,

@@ -10,8 +10,9 @@ import { Types } from "mongoose";
 import { ObjectId } from "mongodb";
 import ReportedPosts from "@/models/reported.posts";
 import { ReportPostProps } from "../types/community.types";
+import { NextRequest } from "next/server";
 
-export async function getAllPosts(userId: any) {
+export async function getAllPosts(userId: any, req: NextRequest) {
   const userCommunities = await Community.find({ members: userId }).select(
     "_id"
   );
@@ -22,17 +23,24 @@ export async function getAllPosts(userId: any) {
     .populate({ path: "author", model: User })
     .sort({ created_at: -1 })
     .exec();
-  
 
-  const payload = await createPayload(allPosts, userId);
+  const payload = await createPayload(allPosts, userId, req);
   return payload;
 }
 
-export async function getPostDetails(id: string | number, userId: any) {
-  if (!id || !Types.ObjectId.isValid(id)) {
+export async function getPostDetails(
+  req: NextRequest,
+  id: string | number,
+  userId: any = null
+) {
+  if (!id) {
     throw new apiErrors([], "Post not found", 404);
   }
-  const post = await Post.findById(id)
+
+  const queryCondition = Types.ObjectId.isValid(id)
+    ? { _id: id }
+    : { publicId: id };
+  const post = await Post.findOne(queryCondition)
     .populate({
       path: "community",
       model: Community,
@@ -48,7 +56,8 @@ export async function getPostDetails(id: string | number, userId: any) {
   if (!post) {
     throw new apiErrors([], "Post not found", 404);
   }
-  const payload = await createPostPayload(post, userId);
+  const shareableLink = generateShareableLink(req, post);
+  const payload = await createPostPayload(post, shareableLink, userId);
   return payload;
 }
 
@@ -75,13 +84,30 @@ export async function likePost(postId: string, userId: any) {
   };
 }
 
-
 export async function reportPost({ data, postId, userId }: ReportPostProps) {
+  //if post is already reported then just increase it's count.
+  const reported_post = await ReportedPosts.findOne({
+    post_id: postId,
+    community_id: data.community_id,
+  });
+
+  if (reported_post && reported_post.reported_by.includes(userId)) {
+    throw new apiErrors([], "You have already reported this post", 400);
+  }
+
+  if (reported_post) {
+    reported_post.report_count += 1;
+    reported_post.reported_by.push(userId);
+    await reported_post.save();
+    return reported_post;
+  }
+
   const report = await ReportedPosts.create({
     post_id: postId,
     reported_by: userId,
     community_id: data.community_id,
     reason: data.reason,
+    report_count: 1,
   });
 
   const community = await Community.findById(data.community_id);
@@ -91,37 +117,9 @@ export async function reportPost({ data, postId, userId }: ReportPostProps) {
   return report;
 }
 
-
-
-
-//might be usefull in future
-// export async function getReportedPosts(req, res) {
-//   try {
-//     const { communityId } = req.params;
-
-//     const reports = await ReportedPosts.aggregate([
-//       { $match: { communityId, status: "pending" } },
-//       {
-//         $group: {
-//           _id: "$postId",
-//           reportCount: { $sum: 1 },
-//           latestReason: { $last: "$reason" }, // Shows the latest report reason
-//           reportedByUsers: { $push: "$reportedBy" }, // List of users who reported
-//         },
-//       },
-//       {
-//         $lookup: {
-//           from: "posts",
-//           localField: "_id",
-//           foreignField: "_id",
-//           as: "postDetails",
-//         },
-//       },
-//       { $unwind: "$postDetails" },
-//     ]);
-
-//     res.json(reports);
-//   } catch (error) {
-//     res.status(500).json({ message: "Failed to fetch reported posts" });
-//   }
-// }
+export function generateShareableLink(req: NextRequest, post: any) {
+  const baseUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+  const publicId = post.publicId;
+  const URL = `${baseUrl}/public/post/${publicId}`;
+  return URL;
+}

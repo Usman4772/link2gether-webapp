@@ -28,7 +28,7 @@ export async function validateMultipleCommunitiesData(req: NextRequest) {
   if (!data || !data.joined)
     throw new apiErrors(
       [{ joined: "Joined field is required" }],
-      "Please Join at least 3 communities",
+      "Please Join at least 1 community to complete onboarding",
       400
     );
   if (!Array.isArray(data.joined)) {
@@ -36,10 +36,10 @@ export async function validateMultipleCommunitiesData(req: NextRequest) {
   }
   data.joined = [...new Set(data.joined)];
 
-  if (data.joined.length < 3) {
+  if (data.joined.length < 1) {
     throw new apiErrors(
-      [{ joined: "Please Join at least 3 communities" }],
-      "Please Join at least 3 communities",
+      [{ joined: "Please Join at least 1 community to complete onboarding" }],
+      "Please Join at least 1 community to complete onboarding",
       400
     );
   }
@@ -185,9 +185,6 @@ export async function validateRulesPayload(
   return data;
 }
 
-
-
-
 export async function validateBanPayload(
   req: NextRequest,
   bannedUserId: string,
@@ -209,7 +206,6 @@ export async function validateBanPayload(
     throw new apiErrors(errors, "Validation errors found!", 400);
   }
 
-  
   if (!bannedUserId || !Types.ObjectId.isValid(bannedUserId)) {
     throw new apiErrors([], "Invalid user id", 400);
   }
@@ -252,8 +248,6 @@ export function calculateBanExpiresAt(duration: string): Date | null {
   return null;
 }
 
-
-
 export function communityDetailPagePayload(community: any, userId: any) {
   return {
     id: community._id,
@@ -265,10 +259,13 @@ export function communityDetailPagePayload(community: any, userId: any) {
     cover: community.cover,
     avatar: community.avatar,
     isMode: community.moderators.includes(userId),
-    moderators:community.moderators.length,
+    moderators: community.moderators.length,
     isMember: community.members.includes(userId),
     memberCount: community.members.length,
-    isBanned:community?.bannedUsers && community?.bannedUsers?.length > 0 ? true : false,
+    isBanned:
+      community?.bannedUsers && community?.bannedUsers?.length > 0
+        ? true
+        : false,
     created_at: community.created_at,
     createdBy: {
       id: community.createdBy._id,
@@ -276,12 +273,11 @@ export function communityDetailPagePayload(community: any, userId: any) {
     },
     memberShipStatus: getCommunityMembershipStatus(community, userId),
     isAdmin: community.createdBy._id.toString() === userId.toString(),
-}
-  
+  };
 }
 
 export async function getCommunityPostsPayload(posts: any, userId: any) {
-  const user=await User.findById(userId)
+  const user = await User.findById(userId);
   return posts.map((post: any) => {
     return {
       id: post._id,
@@ -306,5 +302,3 @@ export async function getCommunityPostsPayload(posts: any, userId: any) {
     };
   });
 }
-
-

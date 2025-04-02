@@ -9,7 +9,6 @@ import {
 import { useState } from "react";
 
 function useUpdateCommunity({
-  setError=()=>{},
   id,
   setOpenModal = () => {},
   form,
@@ -34,12 +33,15 @@ function useUpdateCommunity({
         reset();
         queryClient.invalidateQueries({ queryKey: ["community-details"] });
         queryClient.invalidateQueries({ queryKey: ["community-posts"] });
+        queryClient.invalidateQueries({
+          queryKey: ["adminCommunityDetails", id],
+        });
         setOpenModal(false);
       }
     },
     onError: (error) => {
       handleAPIErrors(error);
-      handleFormErrors(error, setError);
+      //todo handleFormErrors here.
     },
   });
 
@@ -103,7 +105,6 @@ function useUpdateCommunity({
   }
 
   async function addRules(payload: any) {
-  
     const response = await addRulesAPI(payload, id);
     return response;
   }

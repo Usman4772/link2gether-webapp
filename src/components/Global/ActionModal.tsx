@@ -2,6 +2,7 @@ import { Modal } from "antd";
 import Image from "next/image";
 import Heading from "./Heading";
 import Paragraph from "./Paragraph";
+import React from "react";
 
 interface ModalProps {
   heading: string;
@@ -11,6 +12,7 @@ interface ModalProps {
   btnLoading?: boolean;
   setOpenModal: any;
   closeable?: boolean;
+  IconComponent?: React.ReactNode | null;
   className?: string;
   onConfirmAction?: () => void;
   onCancel?: () => void;
@@ -43,6 +45,7 @@ function ActionModal({
   cancelText = "Cancel",
   okBtnStyles = "",
   cancelBtnStyles = "",
+  IconComponent=null,
   footer = null,
 }: ModalProps) {
   const handleCancel = () => {
@@ -71,7 +74,8 @@ function ActionModal({
         width={width}
           >
               <div className="flex items-start justify-center flex-col gap-4">
-          {icon && <Image src={icon} alt="confirm" width={200} height={200} />}
+          {icon && !IconComponent && <Image src={icon} alt="confirm" width={200} height={200} />}
+          {IconComponent && <div>{IconComponent}</div>}
           <Heading text={heading} size="17px"/>
           <Paragraph text={ subheading} />
               </div>

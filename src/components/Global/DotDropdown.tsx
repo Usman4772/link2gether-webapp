@@ -5,7 +5,7 @@ import { PiDotsThreeBold } from "react-icons/pi";
 
 
 interface DotDropdownProps {
-  items?: {label:string,key:string|number,onClick?:()=>void}[];
+  items?: any[];
   icon?: React.ReactNode;
   trigger?: "hover" | "click";
 }

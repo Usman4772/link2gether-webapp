@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       );
     const data = await validateMultipleCommunitiesData(req);
     const res = await joinMultipleCommunities(data.joined, userId);
-    await User.findByIdAndUpdate(
+    const dbUser = await User.findByIdAndUpdate(
       userId,
       {
         $set: {
@@ -27,8 +27,9 @@ export async function POST(req: NextRequest) {
         },
       },
       { new: true, runValidators: true }
-    );
-    return SUCCESS_RESPONSE([], 200, "Communities Joined successfully!");
+    ).select("onboardingStatus");
+    await dbUser.save();
+    return SUCCESS_RESPONSE(dbUser, 200, "Communities Joined successfully!");
   } catch (error) {
     return errorHandler(error);
   }

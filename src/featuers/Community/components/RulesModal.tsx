@@ -1,17 +1,17 @@
+import CustomButton from "@/components/Global/CustomButton";
+import { CustomCheckbox } from "@/components/Global/CustomFormFields";
 import CustomModal from "@/components/Global/CustomModal";
+import Heading from "@/components/Global/Heading";
+import Paragraph from "@/components/Global/Paragraph";
+import { Form, Input } from "antd";
 import React, {
   forwardRef,
   useImperativeHandle,
   useRef,
   useState,
 } from "react";
-import { ConfigProvider, Form, Input, Switch } from "antd";
-import Heading from "@/components/Global/Heading";
-import CustomButton from "@/components/Global/CustomButton";
 import { AiOutlineDelete } from "react-icons/ai";
 import useUpdateCommunity from "../hooks/useUpdateCommunity";
-import Paragraph from "@/components/Global/Paragraph";
-import { CustomCheckbox } from "@/components/Global/CustomFormFields";
 
 interface RulesModalProps {
   openModal: boolean;
@@ -95,8 +95,9 @@ const RulesForm = forwardRef<any, RulesFormProps>(function RulesForm(
               >
                 <div className="flex items-center w-full justify-between">
                   <Input
-                    placeholder="Add new rules"
-                    className="p-2 rounded-none focus:border-b-black focus:shadow-none focus:ring-0 border border-b-black border-t-0 border-r-0 border-l-0"
+                    placeholder="Add new rule"
+                    className="p-2 !rounded-none !border !border-b-black !border-t-0 !border-r-0 !border-l-0 !shadow-none !outline-none !ring-0"
+                    style={{ boxShadow: 'none' }}
                   />
                   {fields.length > 1 && (
                     <AiOutlineDelete

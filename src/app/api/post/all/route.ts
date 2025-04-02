@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   try {
     await connectToDatabase();
     const { userId } = await validateToken(req);
-    const posts = await getAllPosts(userId);
+    const posts = await getAllPosts(userId, req);
     return SUCCESS_RESPONSE(posts, 200, "Posts fetched successfully!");
   } catch (error) {
     return errorHandler(error);

@@ -1,106 +1,97 @@
-import { CustomTextArea } from "@/components/Global/CustomFormFields";
-import FormInput from "@/components/Global/FormInput";
-import Uploader from "@/components/Global/Uploader";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { SparklesText } from "@/components/ui/sparkles-text";
-import { Loader2 } from "lucide-react";
-import useCreateCommunity from "../hooks/useCreateCommunity";
+import { Divider, Form } from "antd";
 import useEditFormConfig from "../hooks/useEditFormConfig";
 import useUpdateCommunity from "../hooks/useUpdateCommunity";
+import { motion } from "framer-motion";
+import Paragraph from "@/components/Global/Paragraph";
+import {
+  CustomInput,
+  CustomTextArea,
+} from "@/components/Global/AntDesignFormFields";
+import ModalFooter from "@/components/Global/ModalFooter";
+import Heading from "@/components/Global/Heading";
 
 function EditForm({
-    initialData,
-    setOpenModal,
+  initialData,
+  setOpenModal,
   id,
 }: {
-        initialData: any;
-    setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  initialData: any;
+  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
   id: string | number;
 }) {
-  const { form, setError } = useEditFormConfig(initialData);
+  const [form] = Form.useForm();
 
   const { updateCommunity, isPending, error } = useUpdateCommunity({
-    setError,
     form,
-      id: id,
+    id: id,
     setOpenModal,
   });
-    
-    
-    function handleOnFinish(data:{community_name:string,description:string}){ 
-        const formData = new FormData();
-        formData.append("community_name", data.community_name);
-        formData.append("description", data.description);
-        updateCommunity(formData);
-    }
-        
+
+  function handleOnFinish(data: {
+    community_name: string;
+    description: string;
+  }) {
+    const formData = new FormData();
+    formData.append("community_name", data.community_name);
+    formData.append("description", data.description);
+    updateCommunity(formData);
+  }
 
   return (
-    <div className="w-full overflow-x-hidden min-h-screen flex  items-center justify-center flex-col lg:flex-row md:justify-between  bg-white md:rounded-[1rem] shadow-sm lg:w-full lg:h-full">
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit((data) => handleOnFinish(data))}
-          className="flex w-full flex-col md:items-start   md:justify-start justify-center items-center h-full pt-9 pb-4 "
-        >
-          <div className="w-full items-center justify-center  pb-12">
-            <SparklesText
-              text={"Link To Gether"}
-              className="text-[25px]  text-center"
-            />
-          </div>
-          <FormField
-            name="community_name"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem className=" my-[12px] mx-0 lg:mx-[16px] w-full flex items-start justify-center flex-col">
-                <FormControl>
-                  <FormInput
-                    placeholder="Enter Community Name"
-                    {...field}
-                    parentStyles="flex items-center justify-center lg:justify-start"
-                    className="w-[95%] "
-                    name="community_name"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="description"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem className=" my-[12px] mx-0  w-full flex items-start justify-center flex-col ">
-                <FormControl>
-                  <CustomTextArea
-                    className="w-[95%]  mx-0 lg:mx-[16px]  h-[211px] max-h-[211px]  justify-center flex lg:justify-start"
-                    {...field}
-                    placeholder="Add community description"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button
-            type="submit"
-            variant={"blue"}
-            className="w-[95%] h-[56px]  mx-[16px] py-[12px] hover:bg-blue-500"
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="px-4 py-2 w-full "
+    >
+      <div className="text-start mb-6 flex flex-col items-start gap-2">
+        <Heading text="Update Community" size="23px" />
+        <Paragraph text="Update your community" />
+        <Divider className="my-4 border-neutral-200 dark:border-neutral-700" />
+      </div>
+      <Form
+        layout="vertical"
+        form={form}
+        onFinish={handleOnFinish}
+        initialValues={{
+          community_name: initialData?.community_name,
+          description: initialData?.description,
+        }}
+        className=""
+      >
+        <div className="space-y-4">
+          <Form.Item
+            name={"community_name"}
+            label={
+              <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                Community Name
+              </span>
+            }
           >
-            {isPending && <Loader2 className="animate-spin" />}
-            Update Community
-          </Button>
-        </form>
+            <CustomInput placeholder="Enter community name..." />
+          </Form.Item>
+          <Form.Item
+            name={"description"}
+            label={
+              <span className="font-medium text-neutral-800 dark:text-neutral-200">
+                Description
+              </span>
+            }
+         
+          >
+            <CustomTextArea placeholder="Add description..." />
+          </Form.Item>
+        </div>
+
+        <div className="mt-6">
+          <ModalFooter
+            setOpenModal={() => setOpenModal(false)}
+            okText="Update Community"
+            okBtnLoading={isPending}
+          />
+        </div>
       </Form>
-    </div>
+    </motion.div>
   );
 }
 export default EditForm;

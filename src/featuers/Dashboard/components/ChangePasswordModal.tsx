@@ -5,6 +5,7 @@ import { Modal, Form, Input, message } from "antd";
 import { LockOutlined } from "@ant-design/icons";
 import CustomModal from "@/components/Global/CustomModal";
 import CustomButton from "@/components/Global/CustomButton";
+import useUpdatePassword from "../hooks/useUpdatePassword";
 
 interface ChangePasswordModalProps {
   openModal: boolean;
@@ -23,20 +24,27 @@ export default function ChangePasswordModal({
 }: ChangePasswordModalProps) {
   const [form] = Form.useForm();
 
+  function resetForm() {
+    form.resetFields();
+    setOpenModal(false);
+  }
   return (
     <CustomModal
       title="Change Password"
       openModal={openModal}
       width={600}
       setOpenModal={setOpenModal}
-      onCancel={() => setOpenModal(false)}
+      onCancel={() =>resetForm()}
       okText="Change Password"
-      body={<ChangePasswordForm form={form} />}
+      body={<ChangePasswordForm form={form} reset={ resetForm} />}
     ></CustomModal>
   );
 }
 
-function ChangePasswordForm({ form }: { form: any }) {
+function ChangePasswordForm({ form ,reset}: { form: any,reset:()=>void }) {
+
+
+  const {updatePassword,passwordBtnLoading}=useUpdatePassword(reset)
   const validatePassword = (_: any, value: string) => {
     if (!value) {
       return Promise.reject(new Error("Please input your password!"));
@@ -80,39 +88,22 @@ function ChangePasswordForm({ form }: { form: any }) {
       return Promise.reject(new Error("Please confirm your password!"));
     }
 
-    if (form.getFieldValue("newPassword") !== value) {
+    if (form.getFieldValue("new_password") !== value) {
       return Promise.reject(new Error("The two passwords do not match!"));
     }
 
     return Promise.resolve();
   };
 
-  const handleSubmit = async (values: PasswordFormValues) => {
-    try {
-
-      // Here you would typically make an API call to change the password
-      console.log("Changing password:", values);
-
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      message.success("Password changed successfully");
-      form.resetFields();
-    } catch (error) {
-      message.error("Failed to change password");
-      console.error(error);
-    } finally {
-    }
-  };
   return (
     <Form
       form={form}
       layout="vertical"
-      onFinish={handleSubmit}
+      onFinish={updatePassword}
       autoComplete="off"
     >
       <Form.Item
-        name="oldPassword"
+        name="old_password"
         label="Current Password"
         rules={[
           { required: true, message: "Please input your current password!" },
@@ -129,7 +120,7 @@ function ChangePasswordForm({ form }: { form: any }) {
       </Form.Item>
 
       <Form.Item
-        name="newPassword"
+        name="new_password"
         label="New Password"
         rules={[
           { required: true, message: "Please input your new password!" },
@@ -147,9 +138,9 @@ function ChangePasswordForm({ form }: { form: any }) {
       </Form.Item>
 
       <Form.Item
-        name="confirmPassword"
+        name="confirm_password"
         label="Confirm New Password"
-        dependencies={["newPassword"]}
+        dependencies={["new_password"]}
         rules={[
           { required: true, message: "Please confirm your new password!" },
           { validator: validateConfirmPassword },
@@ -165,7 +156,7 @@ function ChangePasswordForm({ form }: { form: any }) {
         />
       </Form.Item>
       <div className="w-full flex items-center justify-end">
-        <CustomButton text="Change Password" variant={"secondary"} className="py-3"/>
+        <CustomButton text="Change Password" variant={"secondary"} className="py-3" loading={ passwordBtnLoading} />
       </div>
     </Form>
   );

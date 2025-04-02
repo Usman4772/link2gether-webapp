@@ -1,7 +1,7 @@
 import ActionModal from "@/components/Global/ActionModal";
 import CustomButton from "@/components/Global/CustomButton";
+import HidePostIcon from "@/featuers/Post/components/HidePostIcon";
 import React from "react";
-
 
 interface HidePostModalProps {
   openModal: boolean;
@@ -22,7 +22,7 @@ function HidePostModal({
       setOpenModal={setOpenModal}
       heading={"Hide Post"}
       subheading="Are you sure you want to hide this post?"
-      icon={"/hide-post.jpg"}
+      IconComponent={<HidePostIcon />}
       footer={
         <div className="flex items-center gap-4 w-full justify-end ">
           <CustomButton
@@ -44,4 +44,3 @@ function HidePostModal({
 }
 
 export default HidePostModal;
-

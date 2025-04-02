@@ -63,7 +63,7 @@ export async function getCommunityDetails(id: any, userId: any) {
     .populate({
       path: "bannedUsers",
       model: BannedUser,
-      match: { community: id,user:userId},
+      match: { community: id, user: userId },
     })
     .select("-__v");
   const payload = communityDetailPagePayload(community, userId);
@@ -184,9 +184,11 @@ export async function banUser(
   modId: any,
   data: { reason: string; duration: string }
 ) {
-
- const isAlreadyBanned=await BannedUser.findOne({user:bannedUserId,community:community._id});
- if(isAlreadyBanned) throw new apiErrors([], "User is already banned", 400);
+  const isAlreadyBanned = await BannedUser.findOne({
+    user: bannedUserId,
+    community: community._id,
+  });
+  if (isAlreadyBanned) throw new apiErrors([], "User is already banned", 400);
 
   const expires_at = calculateBanExpiresAt(data.duration);
   const bannedUser = await BannedUser.create({
@@ -200,4 +202,40 @@ export async function banUser(
   community.bannedUsers.push(bannedUser._id);
   await community.save();
   return bannedUser;
+}
+
+export async function fetchExploreCommunities(user: any, query: string | null) {
+  if (query) {
+    const communities = await Community.find({
+      community_name: { $regex: query, $options: "i" },
+    })
+      .select("_id community_name  avatar category members ")
+      .lean();
+    return {
+      recommended: [],
+      trending: [],
+      all_communities: communities,
+    };
+  }
+
+  const userPreferences = user?.preferences?.categories;
+  const recommended = await Community.find({
+    category: { $in: userPreferences },
+    members: { $ne: user._id },
+  })
+    .select("_id community_name  avatar category members ")
+    .lean();
+
+  const allCommunities = await Community.find({
+    members: { $ne: user._id },
+  }).select("_id community_name  avatar category members ");
+  const trending = allCommunities.sort(
+    (a: any, b: any) => b.members.length - a.members.length
+  );
+
+  return {
+    recommended: recommended,
+    trending: trending,
+    all_communities: [],
+  };
 }

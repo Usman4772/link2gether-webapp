@@ -5,7 +5,7 @@ import { CommunityPostsProps } from "@/utils/backend/modules/auth/types/communit
 
 function useLike(data: CommunityPostsProps) {
   const [likes, setLikes] = useState(data?.likes || 0);
-  const [isLiked, setIsLiked] = useState(data.isLiked || false);
+  const [isLiked, setIsLiked] = useState(data?.isLiked || false);
   const [optimisticIsLiked, setOptimisticIsLiked] = useOptimistic(
     isLiked || false
   );

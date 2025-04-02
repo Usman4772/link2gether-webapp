@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import Paragraph from "./Paragraph";
+import { twMerge } from "tailwind-merge";
 
 interface ShowMoreTextProps {
   text: string;
   maxLength?: number;
+  className?: string;
 }
 
 const ShowMoreText: React.FC<ShowMoreTextProps> = ({
   text,
   maxLength = 100,
+  className,
+  ...props
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -17,13 +21,19 @@ const ShowMoreText: React.FC<ShowMoreTextProps> = ({
   }
 
   return (
-    <div className="flex items-center relative w-full ">
-      <Paragraph text={isExpanded ? text : `${text.slice(0, maxLength)}...`} className="pr-[75px]"/>
+    <div className={twMerge("flex items-center relative w-full ", className)} {...props}>
+      <Paragraph
+        text={isExpanded ? text : `${text.slice(0, maxLength)}...`}
+        className="pr-[75px]"
+      />
       <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="absolute right-0 top-0"
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="absolute right-0 top-0"
       >
-        <Paragraph text={isExpanded ? "Show Less" : "Show More"} className="flex"/>
+        <Paragraph
+          text={isExpanded ? "Show Less" : "Show More"}
+          className="flex"
+        />
       </button>
     </div>
   );

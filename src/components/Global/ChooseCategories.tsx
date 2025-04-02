@@ -1,21 +1,21 @@
 "use client";
 import useHandleChooseCategories from "@/featuers/onboarding/hooks/useHandleChooseCategories";
+import useFetchUser from "@/hooks/useFetchUser";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import {
   categories,
   chooseCategoryHeading,
   chooseCategorySubHeading,
 } from "../../featuers/onboarding/static-data";
 import MaskButton from "./MaskButton";
+import NotFound from "./NotFound";
 import { TextGenerateEffect } from "./TextGenerateEffect";
 import { ThreeDCard } from "./ThreeDCard";
 import { TypewriterEffectSmooth } from "./TypewriterEffect ";
-import useFetchCategories from "@/featuers/onboarding/hooks/useFetchCategories";
-import Loading from "./Loading";
-import NotFound from "./NotFound";
 export interface CategoryType {
   name: string;
   icon: string;
-  onboardingStatus: string;
   description: string;
   value: string;
 }
@@ -26,12 +26,15 @@ function ChooseCategories() {
     setSelectedCategories,
     selectedCategories,
   } = useHandleChooseCategories();
+  const { data } = useFetchUser();
+  const router = useRouter();
 
-  
-  const { categories, pageLoading } = useFetchCategories();
+  useEffect(() => {
+    if (data?.onboardingStatus === "completed") {
+      router.push("/dashboard");
+    }
+  }, [data]);
 
-  //TODO: in future we can fetch categories which are created already from backend
-  if (pageLoading) return <Loading />;
   if (!categories || categories.length === 0)
     return <NotFound text="No Categories Available" />;
 
@@ -52,35 +55,35 @@ function ChooseCategories() {
           {categories &&
             categories.length > 0 &&
             categories?.map((category: CategoryType) => {
-                return (
-                  <ThreeDCard
-                    key={category.name}
-                    data={category}
-                    okText={
-                      selectedCategories
-                        .map((item: any) => item.name)
-                        .includes(category.name)
-                        ? "Remove"
-                        : "Add"
-                    }
-                    onClick={() =>
-                      selectedCategories
-                        .map((item: any) => item.name)
-                        .includes(category.name)
-                        ? setSelectedCategories((prev) =>
-                            prev.filter(
-                              (item:any) =>
-                                item.name !== category.name &&
-                                item.value !== category.value
-                            )
+              return (
+                <ThreeDCard
+                  key={category.name}
+                  data={category}
+                  okText={
+                    selectedCategories
+                      .map((item: any) => item.name)
+                      .includes(category.name)
+                      ? "Remove"
+                      : "Add"
+                  }
+                  onClick={() =>
+                    selectedCategories
+                      .map((item: any) => item.name)
+                      .includes(category.name)
+                      ? setSelectedCategories((prev) =>
+                          prev.filter(
+                            (item: any) =>
+                              item.name !== category.name &&
+                              item.value !== category.value
                           )
-                        : setSelectedCategories((prev:any) => [
-                            ...prev,
-                            { name: category.name, value: category.value },
-                          ])
-                    }
-                  />
-                );
+                        )
+                      : setSelectedCategories((prev: any) => [
+                          ...prev,
+                          { name: category.name, value: category.value },
+                        ])
+                  }
+                />
+              );
             })}
         </div>
       </div>

@@ -1,10 +1,10 @@
 import React from "react";
-import { ClimbingBoxLoader } from "react-spinners";
+import { PuffLoader } from "react-spinners";
 
 function Loading() {
   return (
-    <div className="w-screen h-screen flex items-center justify-center">
-      <ClimbingBoxLoader size={9} color="#0A70D9" />
+    <div className="flex items-center justify-center h-full w-full">
+      <PuffLoader size={30} color="#7bf1a8" />
     </div>
   );
 }

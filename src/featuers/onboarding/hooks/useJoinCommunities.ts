@@ -3,6 +3,7 @@ import { joinCommunitiesAPI } from "../apis/api";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { setCookie } from "cookies-next/client";
 
 function useJoinCommunities() {
   const [btnLoading, setBtnLoading] = useState(false);
@@ -14,7 +15,8 @@ function useJoinCommunities() {
       const response = await joinCommunitiesAPI(data);
       if (response?.data?.success) {
         toast.success(response?.data?.message);
-        router.push("/");
+        setCookie("onboardingStatus", response?.data?.data?.onboardingStatus);
+        router.push("/dashboard");
       }
     } catch (error) {
       handleAPIErrors(error);

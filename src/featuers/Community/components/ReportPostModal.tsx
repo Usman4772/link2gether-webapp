@@ -12,7 +12,7 @@ const { Title, Paragraph, Text } = Typography;
 interface ReportModalProps {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
-  postId: string | number;
+  postId: string | number |null;
   communityId: string | number | undefined;
 }
 
