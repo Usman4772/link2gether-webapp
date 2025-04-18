@@ -4,6 +4,10 @@ import User from "@/models/user";
 import apiErrors from "@/utils/backend/helpers/apiErrors";
 import { handleMediaUpload } from "./authServices";
 import Post from "@/models/posts";
+import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
+import { generateShareableLink } from "./post.services";
+import { NextRequest } from "next/server";
 
 export async function createCommunity(data: CommunityProps, userId: any) {
   const alreadyPresent = await Community.findOne({
@@ -120,13 +124,13 @@ export async function getUserCreatedCommunities(userId: any) {
   return communities;
 }
 
-export async function getSavedPosts(userId: any) {
+export async function getSavedPosts(req: NextRequest, userId: any) {
   const posts = await User.findById(userId)
     .populate({
       path: "savedPosts",
       model: Post,
       select:
-        "_id description media created_at type likes comments community author",
+        "_id description media created_at type likes comments community author publicId",
       populate: {
         path: "author",
         model: User,
@@ -134,12 +138,15 @@ export async function getSavedPosts(userId: any) {
       },
     })
     .select("savedPosts");
+
   return posts.savedPosts.map((post: any) => {
     return {
       id: post._id,
       description: post.description,
       media: post.media,
       created_at: post.created_at,
+      url: generateShareableLink(req, post),
+      isLiked: post.likes.includes(userId),
       type: post.type,
       likes: post.likes.length,
       author: {
@@ -150,4 +157,62 @@ export async function getSavedPosts(userId: any) {
       comments: post.comments.length,
     };
   });
+}
+
+export async function getUserPosts(
+  req: NextRequest,
+  profileUserId: string,
+  userId: any
+) {
+  if (!profileUserId || !Types.ObjectId.isValid(profileUserId)) {
+    throw new apiErrors([], "Please provide a valid userId", 400);
+  }
+  const user = await User.findById(profileUserId)
+    .populate({
+      path: "posts",
+      select:
+        "media type description _id likes comments author created_at publicId",
+      populate: {
+        path: "author",
+        select: "username profileImage _id",
+      },
+    })
+    .select("-_id posts");
+  if (!user) throw new apiErrors([], "User not found", 404);
+  return user.posts.map((post: any) => {
+    return {
+      id: post?._id,
+      description: post?.description,
+      url: generateShareableLink(req, post),
+      isLiked: post?.likes.includes(userId),
+      author: {
+        id: post?.author?._id,
+        username: post?.author?.username,
+        profileImage: post?.author?.profileImage,
+      },
+      media: post?.media,
+      type: post?.type,
+      likes: post?.likes.length,
+      comments: post?.comments.length,
+      created_at: post?.created_at,
+    };
+  });
+}
+
+export async function getUserDetails(profileUserId: string) {
+  if (!profileUserId || !Types.ObjectId.isValid(profileUserId)) {
+    throw new apiErrors([], "Please provide a valid userId", 400);
+  }
+  const user = await User.findOne({ _id: profileUserId }).select(
+    "username email profileImage created_at onboardingStatus"
+  );
+  if (!user) throw new apiErrors([], "User not found", 404);
+  return {
+    id: user?._id,
+    username: user?.username,
+    email: user?.email,
+    profileImage: user?.profileImage,
+    created_at: user?.created_at,
+    onboardingStatus: user?.onboardingStatus,
+  };
 }

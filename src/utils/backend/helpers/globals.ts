@@ -4,8 +4,12 @@ import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import apiErrors from "./apiErrors";
 import User from "@/models/user";
+import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 
-export async function validateToken(req: NextRequest) {
+export async function validateToken(
+  req: NextRequest
+): Promise<{ userId: string; user: any }> {
   const headers = req.headers;
   const token = headers.get("Authorization")?.split(" ")[1];
   if (!token) throw new apiErrors([], "Unauthenticated", 401);
@@ -17,7 +21,7 @@ export async function validateToken(req: NextRequest) {
     token,
     new TextEncoder().encode("u$man2309")
   );
-  const userId = tokenDetails?.payload?.id;
+  const userId = tokenDetails?.payload?.id as string;
   const user = await User.findById(userId);
   return { userId, user };
 }
@@ -58,3 +62,13 @@ export const errorHandler = (error: any) => {
     { status: 500 }
   );
 };
+
+export function generateChannelId(
+  loggedInUserId: string,
+  receiverId: string
+): string {
+  if (!receiverId || !Types.ObjectId.isValid(receiverId)) {
+    throw new apiErrors([], "Invalid receiver Id", 400);
+  }
+  return `${loggedInUserId}_${receiverId}`;
+}
