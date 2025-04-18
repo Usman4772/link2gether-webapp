@@ -21,7 +21,7 @@ import ReactTimeAgo from "react-time-ago";
 import { RemoveFromSaved } from "@/components/icons/icons";
 import { twMerge } from "tailwind-merge";
 
-function SavedPost({
+function UserPost({
   data,
   className = "",
   refetch = () => {},
@@ -34,16 +34,16 @@ function SavedPost({
 
   const [openShareModal, setOpenShareModal] = useState(false);
   const formRef = React.useRef<HTMLFormElement>(null);
-  const { savePost } = useSavePost(refetch);
+//   const { savePost } = useSavePost(refetch);
 
-  const userDropdownItems = [
-    {
-      key: "Remove from saved",
-      label: "Remove from saved",
-      icon: <RemoveFromSaved className="w-4 h-4" />,
-      onClick: () => savePost(data?.id),
-    },
-  ];
+//   const userDropdownItems = [
+//     {
+//       key: "Save Post",
+//       label: "Post",
+//       icon: <RemoveFromSaved className="w-4 h-4" />,
+//       onClick: () => savePost(data?.id),
+//     },
+//   ];
 
   return (
     <div
@@ -55,7 +55,7 @@ function SavedPost({
       <div className="flex items-center justify-between  px-2">
         <UserHeader author={data.author} created_at={data.created_at} />
         <div>
-          <DotDropdown items={userDropdownItems} />
+          {/* <DotDropdown items={userDropdownItems} /> */}
         </div>
       </div>
       <div className="flex flex-col justify-center px-2">
@@ -127,7 +127,7 @@ function SavedPost({
   );
 }
 
-export default SavedPost;
+export default UserPost;
 
 interface UserHeaderProps {
   id: string | number;
@@ -153,7 +153,7 @@ function UserHeader({
       />
       <div className="flex flex-col justify-center ">
         <Link
-          href={`profile/${author?.id}`}
+          href={`/profile/${author?.id}`}
           className="text-[#0D171C] text-[16px] font-[600] tracking-tighter"
         >
           {author?.username}

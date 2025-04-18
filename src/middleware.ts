@@ -24,11 +24,12 @@ export async function middleware(req: NextRequest) {
   }
 
   if (
+    token &&
+    onboardingStatus &&
     onboardingStatus !== "completed" &&
     pathname !== "/onboarding/communities" &&
     pathname !== "/onboarding/categories"
   ) {
-    console.log("redirecting");
     return NextResponse.redirect(new URL("/onboarding/categories", req.url));
   }
 
@@ -43,6 +44,7 @@ export const config = {
     "/",
     "/login",
     "/explore",
+    "/chat",
     "/register",
     "/feed",
     "/onboarding/:path*",

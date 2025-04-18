@@ -2,8 +2,10 @@ import { SparklesText } from "../ui/sparkles-text";
 import { MessageCircle, Bell, Home, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 function Header() {
+  const router = useRouter();
   return (
     <header className="px-6 py-4 rounded-tl-2xl border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 w-full flex items-center justify-between shadow-sm">
       {/* Breadcrumbs */}
@@ -36,6 +38,7 @@ function Header() {
             "hover:text-emerald-600 dark:hover:text-emerald-400",
             "border border-transparent hover:border-neutral-200 dark:hover:border-neutral-700"
           )}
+          onClick={()=>router.push("/chats")}
         >
           <MessageCircle className="h-5 w-5" />
           <span className="absolute top-0 right-0 h-2 w-2 bg-emerald-500 rounded-full"></span>

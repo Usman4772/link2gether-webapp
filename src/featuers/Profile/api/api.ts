@@ -11,3 +11,11 @@ export function fetchJoinedCommunitiesAPI() {
 export function fetchUserCommunitiesAPI() {
   return axios.get("/user/profile/communities/created");
 }
+
+export function fetchUserDetailsAPI(id: string) {
+  return axios.get(`user/profile/${id}`);
+}
+
+export function fetchUserPostsAPI(id: string) {
+  return axios.get(`user/profile/${id}/posts`);
+}
