@@ -1,6 +1,6 @@
-export interface MessageType {
+export interface RawMessage {
   _id: string;
-  channelId: string;
+  chatId:string;
   senderId: {
     _id: string;
     profileImage: string | null;
@@ -10,8 +10,7 @@ export interface MessageType {
   updatedAt: string;
 }
 export interface ChatMessage {
-  _id: string;
-  channelId: string;
+  messageId: string;
   sender: {
       _id: string;
       type: string;
@@ -20,4 +19,13 @@ export interface ChatMessage {
   message: string;
   createdAt: string;
   updatedAt: string;
+}
+export interface SelectedChat {
+  chatId: string;
+  receiver: {
+    id: string;
+    username: string;
+    profileImage: string | null;
+    email: string;
+  };
 }

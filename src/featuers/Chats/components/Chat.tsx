@@ -5,24 +5,18 @@ import { Avatar } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Send, MoreVertical, Phone, Video } from "lucide-react";
-import { Conversation } from "../hooks/useFetchConversations";
-import { ChatMessage } from "@/utils/backend/modules/auth/types/chat.types";
+import { ChatMessage, SelectedChat } from "@/utils/backend/modules/auth/types/chat.types";
 
-interface Message {
-  id: string;
-  content: string;
-  sender: "user" | "contact";
-  timestamp: string;
-}
+
 
 interface ChatProps {
-  contact: Conversation;
+  selectedChat: SelectedChat;
   messages: any[];
   onSendMessage: (message: string) => void;
 }
 
 const Chat: React.FC<ChatProps> = ({
-  contact,
+  selectedChat,
   messages = [],
   onSendMessage,
 }) => {
@@ -55,8 +49,8 @@ const Chat: React.FC<ChatProps> = ({
           <div className="relative">
             <Avatar className="h-10 w-10">
               <img
-                src={contact?.receiver?.profileImage || "/placeholder.svg"}
-                alt={contact?.receiver?.username}
+                src={selectedChat?.receiver?.profileImage || "/placeholder.svg"}
+                alt={selectedChat?.receiver?.username}
               />
             </Avatar>
             {/* {contact.isOnline && (
@@ -64,7 +58,7 @@ const Chat: React.FC<ChatProps> = ({
             )} */}
           </div>
           <div>
-            <h3 className="font-medium text-gray-900">{contact?.receiver?.username}</h3>
+            <h3 className="font-medium text-gray-900">{selectedChat?.receiver?.username}</h3>
             {/* <p className="text-xs text-gray-500">
               {contact.isOnline ? "Online" : `Last seen ${contact.lastSeen}`}
             </p> */}
@@ -88,7 +82,7 @@ const Chat: React.FC<ChatProps> = ({
         <div className="space-y-4">
           {messages.map((message:ChatMessage) => (
             <div
-              key={message?._id}
+              key={message?.messageId}
               className={`flex ${
                 message.sender?.type === "user" ? "justify-end" : "justify-start"
               }`}

@@ -1,7 +1,6 @@
 import { validateSendMessageRequest } from "@/utils/backend/helpers/chat.helpers";
 import {
   errorHandler,
-  generateChannelId,
   validateToken,
 } from "@/utils/backend/helpers/globals";
 import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";

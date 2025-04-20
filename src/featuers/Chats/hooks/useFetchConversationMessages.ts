@@ -5,17 +5,19 @@ import { fetchMessagesAPI } from "../apis/api";
 import { pusherClient } from "@/lib/pusher";
 import { ChatMessage } from "@/utils/backend/modules/auth/types/chat.types";
 
-function useFetchConversationMessages(id: string) {
+function useFetchConversationMessages(receiverId: string) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [chatId,setChatId]=useState<string |null>(null)
   const { isLoading, refetch } = useQuery({
-    queryKey: ["messages", id],
+    queryKey: ["messages", receiverId],
     queryFn: fetchConversationMessages,
   });
   async function fetchConversationMessages() {
     try {
-      const response: any = await fetchMessagesAPI(id);
+      const response: any = await fetchMessagesAPI(receiverId);
       if (response?.data?.success) {
-        setMessages(response?.data?.data);
+        setMessages(response?.data?.data?.messages);
+        setChatId(response?.data?.data?.chatId)
         return response?.data?.data;
       }
     } catch (error) {
@@ -24,18 +26,18 @@ function useFetchConversationMessages(id: string) {
   }
 
   useEffect(() => {
-    if (!id) return;
-    const channelId = id;
-    pusherClient.subscribe(channelId);
+    if (!chatId) return;
+
+    pusherClient.subscribe(chatId);
     pusherClient.bind("incoming-message", (message: any) => {
       console.log("Received message:", message);
       // setMessages((prevMessages) => [...prevMessages, message]);
     });
     return () => {
-      pusherClient.unsubscribe(channelId);
+      pusherClient.unsubscribe(chatId);
       pusherClient.unbind("incoming-message", () => {});
     };
-  }, [id]);
+  }, [chatId]);
 
   return {
     messages: messages || [],

@@ -1,10 +1,10 @@
 import { pusherClient } from "@/lib/pusher";
 import { handleAPIErrors } from "@/utils/frontend/handleErrors";
 
-export function subscribeChannels(channelIds: string[]) {
+export function subscribeChannels(chatIds: string[]) {
   try {
-    channelIds.forEach((channelId) => {
-      pusherClient.subscribe(channelId);
+    chatIds.forEach((chatId) => {
+      pusherClient.subscribe(chatId);
       pusherClient.bind("incoming-message", (message: any) => {
         console.log("Received message:", message);
       });

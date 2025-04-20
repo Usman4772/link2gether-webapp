@@ -14,8 +14,3 @@ export async function validateSendMessageRequest(
   if (!receiver) throw new apiErrors([], "Receiver not found", 404);
 }
 
-export function getSenderReceiverIds(channelId: string) {
-  if (!channelId) throw new apiErrors([], "Chat ID is required", 400);
-  const [senderId, receiverId] = channelId.split("_");
-  return { senderId, receiverId };
-}

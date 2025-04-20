@@ -62,13 +62,3 @@ export const errorHandler = (error: any) => {
     { status: 500 }
   );
 };
-
-export function generateChannelId(
-  loggedInUserId: string,
-  receiverId: string
-): string {
-  if (!receiverId || !Types.ObjectId.isValid(receiverId)) {
-    throw new apiErrors([], "Invalid receiver Id", 400);
-  }
-  return `${loggedInUserId}_${receiverId}`;
-}

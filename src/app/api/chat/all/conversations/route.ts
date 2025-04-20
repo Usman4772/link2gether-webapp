@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
 async function fetchUserConversations(userId: string) {
   const conversations = await Chats.find({
     participants: { $in: [userId] },
-  }).select("channelId participants");
+  }).select("participants");
   const conversationsPayload = await Promise.all(conversations.map(async (conversation) => {
     const receiverId = conversation.participants.find(
       (participant: string) => participant !== userId
@@ -32,7 +32,7 @@ async function fetchUserConversations(userId: string) {
       "username profileImage _id email"
     );
     return {
-      channelId: conversation.channelId,
+      chatId: conversation._id,
       receiver: {
         id: receiverId,
         username: receiverData?.username,

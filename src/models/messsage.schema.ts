@@ -2,10 +2,6 @@ import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema(
   {
-    channelId: {
-      type: String,
-      required: true,
-    },
     chatId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Chats",

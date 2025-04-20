@@ -5,15 +5,16 @@ import { Avatar } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import type React from "react";
-import useFetchConversations, { Conversation } from "../hooks/useFetchConversations";
+import useFetchConversations from "../hooks/useFetchConversations";
+import { SelectedChat } from "@/utils/backend/modules/auth/types/chat.types";
 
 
-interface ChatListProps {
-  selectedChat: Conversation | null;
-  onSelectChat: (chat: Conversation) => void;
+interface ChatsListProps {
+  selectedChat: SelectedChat | null;
+  onSelectChat: (chat: SelectedChat) => void;
 }
 
-const ChatList: React.FC<ChatListProps> = ({
+const ChatsList: React.FC<ChatsListProps> = ({
   selectedChat,
   onSelectChat,
 }) => {
@@ -38,9 +39,9 @@ const ChatList: React.FC<ChatListProps> = ({
       <div className="overflow-y-auto flex-1">
         {conversations.map((conversation) => (
           <div
-            key={conversation.channelId}
+            key={conversation.chatId}
             className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 transition-colors ${
-              selectedChat?.channelId === conversation.channelId ? "bg-gray-100" : ""
+              selectedChat?.chatId === conversation.chatId ? "bg-gray-100" : ""
             }`}
             onClick={() => onSelectChat(conversation)}
           >
@@ -85,4 +86,4 @@ const ChatList: React.FC<ChatListProps> = ({
   );
 };
 
-export default ChatList;
+export default ChatsList;

@@ -2,7 +2,6 @@
 import Loading from "@/components/Global/Loading";
 import useFetchUser from "@/hooks/useFetchUser";
 import { pusherClient } from "@/lib/pusher";
-import { generateChannelId } from "@/utils/backend/helpers/globals";
 import React, { useEffect } from "react";
 
 function Page({ params }: { params: { receiverId: string } }) {

@@ -5,9 +5,9 @@ import { ChatMessage } from "../../modules/auth/types/chat.types";
 
 
 
-export async function sendPusherMessage(message: ChatMessage, channelId: string) {
+export async function sendPusherMessage(message: ChatMessage, chatId: string) {
   try {
-    pusherServer.trigger(channelId, "incoming-message", {
+    pusherServer.trigger(chatId, "incoming-message", {
       message,
     });
   } catch (error: any) {
