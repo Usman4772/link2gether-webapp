@@ -15,7 +15,6 @@ const createCommunitySlice = createSlice({
     initialState,
     reducers: {
         setOpenCreateCommunityModal: (state, action) => {
-            console.log('here')
             state.create.openCreateCommunityModal = action.payload
         },
        

@@ -1,43 +1,43 @@
 "use client";
 
-import React from "react";
 import { Avatar } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send, MoreVertical, Phone, Video } from "lucide-react";
-import { ChatMessage, SelectedChat } from "@/utils/backend/modules/auth/types/chat.types";
-
-
+import { Input } from "@/components/ui/input";
+import useFetchUser from "@/hooks/useFetchUser";
+import {
+  ChatMessage,
+  SelectedChat,
+} from "@/utils/backend/modules/auth/types/chat.types";
+import { Loader2, MoreVertical, Phone, Send, Video } from "lucide-react";
+import React, { useEffect } from "react";
+import useSendMessage from "../hooks/useSendMessage";
+import { AIMessage } from "./AIMessage";
+import Message from "./Message";
 
 interface ChatProps {
   selectedChat: SelectedChat;
   messages: any[];
-  onSendMessage: (message: string) => void;
 }
 
-const Chat: React.FC<ChatProps> = ({
-  selectedChat,
-  messages = [],
-  onSendMessage,
-}) => {
-  const [newMessage, setNewMessage] = React.useState("");
-  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+const Chat: React.FC<ChatProps> = ({ selectedChat, messages = [] }) => {
+  const { sendMessage, isSending, newMessage, setNewMessage } =
+    useSendMessage();
+  const { data } = useFetchUser();
 
-  const handleSend = () => {
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+  const handleSend = async () => {
     if (newMessage.trim()) {
-      onSendMessage(newMessage);
-      setNewMessage("");
+      await sendMessage(selectedChat?.receiver?.id!, newMessage);
     }
   };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyPress = async (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSend();
+      await handleSend();
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -49,7 +49,9 @@ const Chat: React.FC<ChatProps> = ({
           <div className="relative">
             <Avatar className="h-10 w-10">
               <img
-                src={selectedChat?.receiver?.profileImage || "/placeholder.svg"}
+                src={
+                  selectedChat?.receiver?.profileImage || "/default-user.jpeg"
+                }
                 alt={selectedChat?.receiver?.username}
               />
             </Avatar>
@@ -58,8 +60,10 @@ const Chat: React.FC<ChatProps> = ({
             )} */}
           </div>
           <div>
-            <h3 className="font-medium text-gray-900">{selectedChat?.receiver?.username}</h3>
-            {/* <p className="text-xs text-gray-500">
+            <h3 className="font-medium text-gray-900">
+              {selectedChat?.receiver?.username}
+            </h3>
+            {/* <p className="text-xs text-gray-500">f
               {contact.isOnline ? "Online" : `Last seen ${contact.lastSeen}`}
             </p> */}
           </div>
@@ -80,33 +84,22 @@ const Chat: React.FC<ChatProps> = ({
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
         <div className="space-y-4">
-          {messages.map((message:ChatMessage) => (
-            <div
-              key={message?.messageId}
-              className={`flex ${
-                message.sender?.type === "user" ? "justify-end" : "justify-start"
-              }`}
-            >
-              <div
-                className={`max-w-[70%] px-4 py-2 rounded-lg ${
-                  message.sender?.type === "user"
-                    ? "bg-blue-600 text-white rounded-br-none"
-                    : "bg-white text-gray-800 border rounded-bl-none"
-                }`}
-              >
-                <p>{message?.message}</p>
-                <p
-                  className={`text-xs mt-1 text-right ${
-                    message.sender?.type === "user"
-                      ? "text-blue-100"
-                      : "text-gray-500"
-                  }`}
-                >
-                  {message.createdAt}
-                </p>
-              </div>
-            </div>
-          ))}
+          {messages.map((message: ChatMessage) => {
+            return (
+              <>
+                {message?.by_ai ? (
+                  <AIMessage message={message} />
+                ) : (
+                  <Message
+                    message={message}
+                    origin={
+                      data?.id == message?.sender?._id ? "user" : "receiver"
+                    }
+                  />
+                )}
+              </>
+            );
+          })}
           <div ref={messagesEndRef} />
         </div>
       </div>
@@ -126,7 +119,11 @@ const Chat: React.FC<ChatProps> = ({
             disabled={!newMessage.trim()}
             className="rounded-full h-10 w-10 p-0 flex items-center justify-center"
           >
-            <Send className="h-5 w-5" />
+            {isSending ? (
+              <Loader2 className="animate-spin h-5 w-5" />
+            ) : (
+              <Send className="h-5 w-5" />
+            )}
           </Button>
         </div>
       </div>

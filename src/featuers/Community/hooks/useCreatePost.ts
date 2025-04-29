@@ -47,7 +47,6 @@ function useCreatePost({
         }
       } catch (error: any) {
         handleAPIErrors(error);
-        //todo change this to form errors.
       } finally {
         setBtnLoading(false);
       }

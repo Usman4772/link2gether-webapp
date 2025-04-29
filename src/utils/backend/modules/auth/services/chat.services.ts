@@ -1,8 +1,12 @@
 import Chats from "@/models/chat.schema";
 import Message from "@/models/messsage.schema";
 import User from "@/models/user";
+import apiErrors from "@/utils/backend/helpers/apiErrors";
 import { sendPusherMessage } from "@/utils/backend/pusher/actions/send.message";
+import { GoogleGenAI } from "@google/genai";
 import mongoose from "mongoose";
+import { createMessageArgs } from "../types/chat.types";
+import { createdMessageResponse } from "@/utils/backend/helpers/chat.helpers";
 
 export async function sendMessageService(
   senderId: string,
@@ -13,11 +17,12 @@ export async function sendMessageService(
     participants: { $all: [senderId, receiverId] },
   });
   if (!chat) {
-    const newChat = await createChat(senderId,receiverId);
-    const messageResponse = await createMessage(
+    const newChat = await createChat(senderId, receiverId);
+    const messageResponse = await createMessageService(
       senderId,
+      receiverId,
       message,
-      newChat._id,
+      newChat
     );
     newChat.messages.push(messageResponse.messageId);
     await newChat.save();
@@ -25,10 +30,11 @@ export async function sendMessageService(
     return messageResponse;
   }
 
-  const messageResponse = await createMessage(
+  const messageResponse = await createMessageService(
     senderId,
+    receiverId,
     message,
-    chat._id,
+    chat
   );
   chat.messages.push(messageResponse.messageId);
   await chat.save();
@@ -36,7 +42,9 @@ export async function sendMessageService(
   return messageResponse;
 }
 
-async function createChat(senderId: string,receiverId:string) {
+export async function createChat(senderId: string, receiverId: string) {
+  const receiver = User.findById(receiverId);
+  if (!receiver) throw new apiErrors([], "Receiver not found", 404);
   const senderObjectId = new mongoose.Types.ObjectId(senderId);
   const receiverObjectId = new mongoose.Types.ObjectId(receiverId);
   const newChat = await Chats.create({
@@ -45,28 +53,74 @@ async function createChat(senderId: string,receiverId:string) {
   return newChat;
 }
 
-async function createMessage(
+async function createMessageService(
   senderId: string,
+  receiverId: string,
   message: string,
-  chatId: string,
+  chat: any
 ) {
-  const messageResponse = await Message.create({
+  if (message.includes("@ai")) {
+    const userMessage = await createMessage({
+      senderId,
+      receiverId,
+      message: message,
+      chatId: chat?._id,
+    });
+    await chat.messages.push(userMessage._id);
+    await chat.save();
+    const sender = await User.findById(senderId).select("_id profileImage");
+    const userMessageRes = createdMessageResponse(userMessage, sender);
+    await sendPusherMessage(userMessageRes, chat?._id);
+    message = message.replace("@ai", "").trim();
+    const aiResponse = await getAIResponse(message);
+    const messageResponse = await createMessage({
+      senderId: senderId,
+      receiverId: receiverId,
+      message: aiResponse,
+      by_ai: true,
+      chatId: chat?._id,
+    });
+
+    const response = createdMessageResponse(messageResponse, "ai");
+    return response;
+  }
+
+  const messageResponse = await createMessage({
     senderId,
+    receiverId,
     message,
-    chatId,
+    chatId: chat?._id,
   });
   const sender = await User.findById(senderId).select("_id profileImage");
+  const response = createdMessageResponse(messageResponse, sender);
+  return response;
+}
 
-  return {
-    messageId: messageResponse._id,
-    chatId: messageResponse.chatId,
-    sender: {
-      _id: sender._id,
-      type: senderId === messageResponse.senderId ? "user" : "receiver",
-      profileImage: sender.profileImage,
-    },
-    message: messageResponse.message,
-    createdAt: messageResponse.createdAt,
-    updatedAt: messageResponse.updatedAt,
-  };
+async function createMessage({
+  senderId,
+  receiverId,
+  message,
+  by_ai = false,
+  chatId,
+}: createMessageArgs) {
+  const response = await Message.create({
+    senderId,
+    receiverId,
+    message: message,
+    by_ai,
+    chatId,
+  });
+  return response;
+}
+
+async function getAIResponse(message: string) {
+  const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY,
+  });
+  const response = await ai.models.generateContent({
+    model: process.env.GEMINI_AI_MODEL!,
+    contents: message,
+  });
+  const res = response?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+  return res;
 }

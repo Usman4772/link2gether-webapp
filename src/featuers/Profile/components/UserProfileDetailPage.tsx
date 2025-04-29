@@ -42,7 +42,7 @@ export default function UserDetails({ id }: { id: string }) {
         <CustomButton
           variant={"ghost"}
           text="Message"
-          onClick={() => router.push(`/chat/${data?.id}`)}
+          onClick={() => router.push(`/chats/${data?.id}`)}
         />
       </div>
       <Tabs activeKey={"posts"} className="user-profile-tabs">

@@ -13,7 +13,6 @@ const [loading,setLoading]=useState(true)
   async function getAllPosts() {
     try {
       setLoading(true)
-      console.log("fetching posts");
       const response = await fetchAllPostsAPI();
       if (response.data?.success) {
         return response?.data?.data;

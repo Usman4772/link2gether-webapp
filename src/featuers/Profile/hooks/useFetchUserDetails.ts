@@ -3,7 +3,7 @@ import { fetchUserDetailsAPI, fetchUserPostsAPI } from "../api/api";
 import { handleAPIErrors } from "@/utils/frontend/handleErrors";
 import { UserProps } from "@/featuers/Dashboard/components/Header";
 
-function useFetchUserDetails(id: string) {
+function useFetchUserDetails(id: string, fetchPosts: boolean = true) {
   const [data, setData] = useState<UserProps | null>(null);
   const [dataLoading, setDataLoading] = useState(true);
   const [posts, setPosts] = useState([]);
@@ -38,7 +38,7 @@ function useFetchUserDetails(id: string) {
 
   useEffect(() => {
     fetchUserDetails(id);
-    fetchUserPosts(id);
+    fetchPosts && fetchUserPosts(id);
   }, [id]);
 
   return {

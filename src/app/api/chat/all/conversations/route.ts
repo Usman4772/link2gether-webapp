@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     const { userId } = await validateToken(req);
     const conversations = await fetchUserConversations(userId);
     return SUCCESS_RESPONSE(
-      conversations, 
+      conversations,
       200,
       "Conversations fetched successfully"
     );
@@ -24,22 +24,25 @@ async function fetchUserConversations(userId: string) {
   const conversations = await Chats.find({
     participants: { $in: [userId] },
   }).select("participants");
-  const conversationsPayload = await Promise.all(conversations.map(async (conversation) => {
-    const receiverId = conversation.participants.find(
-      (participant: string) => participant !== userId
-    );
-    const receiverData = await User.findById(receiverId).select(
-      "username profileImage _id email"
-    );
-    return {
-      chatId: conversation._id,
-      receiver: {
-        id: receiverId,
-        username: receiverData?.username,
-        profileImage: receiverData?.profileImage,
-        email: receiverData?.email,
-      },
-    };
-  }));
+  const conversationsPayload = await Promise.all(
+    conversations.map(async (conversation) => {
+      const receiverId = conversation.participants.find(
+        (participant: string) => participant.toString() !== userId.toString()
+      );
+      const receiverData = await User.findById(receiverId).select(
+        "username profileImage _id email"
+      );
+
+      return {
+        chatId: conversation._id,
+        receiver: {
+          id: receiverId?._id,
+          username: receiverData?.username,
+          profileImage: receiverData?.profileImage,
+          email: receiverData?.email,
+        },
+      };
+    })
+  );
   return conversationsPayload;
 }

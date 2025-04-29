@@ -17,12 +17,11 @@ function useFetchConversations() {
   async function fetchConversations() {
     try {
       const response = await fetchUserConversationsAPI();
-      console.log(response?.data);
       if (response?.data?.success) {
-        const chatIds = response?.data?.data.map(
-          (conversation: SelectedChat) => conversation?.chatId
-        );
-         subscribeChannels(chatIds);
+        // const chatIds = response?.data?.data.map(
+        //   (conversation: SelectedChat) => conversation?.chatId
+        // );
+        //  subscribeChannels(chatIds);
         return response.data.data;
       }
     } catch (error) {
