@@ -19,3 +19,9 @@ export function fetchUserDetailsAPI(id: string) {
 export function fetchUserPostsAPI(id: string) {
   return axios.get(`user/profile/${id}/posts`);
 }
+
+
+export function fetchLoggedInUserDetails() {
+  return axios.get("user/profile");
+}
+

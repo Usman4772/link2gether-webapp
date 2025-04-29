@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Definitions -->
+  <defs>
+    <linearGradient id="headGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#4F46E5" />
+    </linearGradient>
+    <linearGradient id="eyeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#60A5FA" />
+      <stop offset="100%" stop-color="#34D399" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="100" fill="#1E293B" />
+  
+  <!-- Robot Head -->
+  <rect x="50" y="40" width="100" height="120" rx="10" fill="url(#headGradient)" />
+  
+  <!-- Antenna -->
+  <line x1="100" y1="25" x2="100" y2="40" stroke="#94A3B8" stroke-width="4" />
+  <circle cx="100" cy="22" r="6" fill="#F43F5E" />
+  
+  <!-- Eyes -->
+  <rect x="65" y="70" width="25" height="15" rx="2" fill="url(#eyeGradient)" />
+  <rect x="110" y="70" width="25" height="15" rx="2" fill="url(#eyeGradient)" />
+  
+  <!-- Mouth/Speaker -->
+  <rect x="75" y="100" width="50" height="10" rx="2" fill="#94A3B8" />
+  <rect x="75" y="115" width="50" height="5" rx="2" fill="#94A3B8" />
+  <rect x="75" y="125" width="50" height="5" rx="2" fill="#94A3B8" />
+  
+  <!-- Tech Details -->
+  <circle cx="40" cy="60" r="5" fill="#F59E0B" />
+  <circle cx="160" cy="60" r="5" fill="#F59E0B" />
+  
+  <!-- Circuit Lines -->
+  <line x1="40" y1="60" x2="50" y2="60" stroke="#94A3B8" stroke-width="2" />
+  <line x1="150" y1="60" x2="160" y2="60" stroke="#94A3B8" stroke-width="2" />
+  
+  <!-- Bottom Connector -->
+  <rect x="85" y="160" width="30" height="10" rx="2" fill="#94A3B8" />
+  <rect x="95" y="170" width="10" height="5" fill="#94A3B8" />
+</svg>

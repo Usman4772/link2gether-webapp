@@ -7,7 +7,10 @@ export function getFormattedDate(date: string): string {
   if (!date) return "";
   return dayjs(date).format("DD-MM-YYYY");
 }
-
+export function getFormattedTime(date: string): string {
+  if (!date) return "";
+  return dayjs(date).format("hh:mm A");
+}
 export function capitalize(text: string): string {
   if (!text) return "";
   const data = text.charAt(0).toUpperCase() + text.slice(1);

@@ -12,6 +12,12 @@ const messageSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    by_ai: { type: Boolean, default: false },
+    receiverId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     message: { type: String, required: true },
     created_at: { type: Date, default: Date.now },
   },

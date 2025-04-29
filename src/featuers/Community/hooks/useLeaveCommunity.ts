@@ -17,7 +17,6 @@ function useLeaveCommunity(id: string | number) {
       toast.success("Left community successfully");
     },
       onError: (error) => {
-        console.log(error,'err');
       handleAPIErrors(error);
     },
   });
