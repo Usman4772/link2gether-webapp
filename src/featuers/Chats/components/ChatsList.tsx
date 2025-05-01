@@ -1,89 +1,144 @@
 "use client";
 
-import Loading from "@/components/Global/Loading";
-import { Avatar } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
 import type React from "react";
-import useFetchConversations from "../hooks/useFetchConversations";
-import { SelectedChat } from "@/utils/backend/modules/auth/types/chat.types";
 
+import {useState} from "react";
+import {Input, Avatar, List, Badge, Spin, Typography, Empty} from "antd";
+import {SearchOutlined} from "@ant-design/icons";
+import useFetchConversations from "../hooks/useFetchConversations";
+import type {SelectedChat} from "@/utils/backend/modules/auth/types/chat.types";
+import Loading from "@/components/Global/Loading";
+import Image from "next/image";
+import DotDropdown from "@/components/Global/DotDropdown";
+import {useDeleteChat} from "@/featuers/Chats/hooks/useDeleteChat";
+
+const {Title, Text} = Typography;
 
 interface ChatsListProps {
-  selectedChat: SelectedChat | null;
-  onSelectChat: (chat: SelectedChat) => void;
+    selectedChat: SelectedChat | null;
+    onSelectChat: (chat: SelectedChat) => void;
 }
 
 const ChatsList: React.FC<ChatsListProps> = ({
-  selectedChat,
-  onSelectChat,
-}) => {
-  const { conversations, isLoading } = useFetchConversations();
+                                                 selectedChat,
+                                                 onSelectChat,
+                                             }) => {
+    const {conversations, isLoading} = useFetchConversations();
+    const [searchQuery, setSearchQuery] = useState("");
+    const {deleteChat} = useDeleteChat({setSelectedChat:onSelectChat})
 
- 
+    const filteredConversations = conversations.filter((conversation) =>
+        conversation?.receiver?.username
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase())
+    );
 
-  if (isLoading) return <Loading />;
-  return (
-    <div className="flex flex-col h-full border-r">
-      <div className="p-4 border-b">
-        <h2 className="text-xl font-semibold mb-4">Chats</h2>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            placeholder="Search chats..."
-            className="pl-10 bg-gray-50 border-gray-200"
-          />
-        </div>
-      </div>
+    if (isLoading)
+        return (
+            <div className="h-full flex items-center justify-center">
+                <Loading/>
+            </div>
+        );
 
-      <div className="overflow-y-auto flex-1">
-        {conversations.map((conversation) => (
-          <div
-            key={conversation.chatId}
-            className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 transition-colors ${
-              selectedChat?.chatId === conversation.chatId ? "bg-gray-100" : ""
-            }`}
-            onClick={() => onSelectChat(conversation)}
-          >
-            <div className="relative">
-              <Avatar className="h-12 w-12">
-                <img
-                  src={
-                    conversation?.receiver?.profileImage || "/default-user.jpeg"
-                  }
-                  alt={conversation?.receiver?.username}
-                  className="object-cover"
+    return (
+        <div className="flex flex-col h-full">
+            <div className="p-4 border-b border-gray-100">
+                <Title level={4} style={{margin: "0 0 16px 0"}}>
+                    Messages
+                </Title>
+                <Input
+                    placeholder="Search conversations..."
+                    prefix={<SearchOutlined style={{color: "#1a936f"}}/>}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    style={{
+                        borderRadius: "5px",
+                        height: "40px",
+                        padding: "0 12px",
+                        backgroundColor: "#f9f9f9",
+                        border: "1px solid #eaeaea",
+                    }}
                 />
-              </Avatar>
-              {/* {chat.isOnline && (
-                <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white"></span>
-              )} */}
             </div>
 
-            <div className="flex-1 min-w-0">
-              <div className="flex justify-between items-center">
-                <h3 className="font-medium text-gray-900 truncate">
-                  {conversation?.receiver?.username}
-                </h3>
-                {/* <span className="text-xs text-gray-500">{chat.time}</span> */}
-              </div>
-              {/* <p className="text-sm text-gray-500 truncate">
-                {chat.lastMessage}
-              </p> */}
+            <div className="overflow-y-auto flex-1">
+                {filteredConversations.length > 0 ? (
+                    <List
+                        dataSource={filteredConversations}
+                        renderItem={(conversation) => {
+                            const isSelected = selectedChat?.chatId === conversation.chatId;
+                            return (
+                                <List.Item
+                                    className={`cursor-pointer transition-colors duration-200 hover:bg-gray-50 ${
+                                        isSelected ? "bg-[#e6f7f1]" : ""
+                                    }`}
+                                    style={{padding: "12px 16px"}}
+                                    onClick={() => onSelectChat(conversation)}
+                                >
+                                    <List.Item.Meta
+                                        avatar={
+                                            <div className="relative">
+                                                <Badge
+                                                    dot
+                                                    status="success"
+                                                    offset={[-4, 32]}
+                                                    style={{
+                                                        display: Math.random() > 0.5 ? "block" : "none",
+                                                    }}
+                                                >
+                                                    <Image
+                                                        src={
+                                                            conversation?.receiver?.profileImage ||
+                                                            "/default-user.jpeg"
+                                                        }
+                                                        className="h-10 w-10 rounded-lg object-cover border-2 border-white dark:border-neutral-700 shadow-sm"
+                                                        width={50}
+                                                        height={50}
+                                                        alt="Avatar"
+                                                    />
+                                                </Badge>
+                                            </div>
+                                        }
+                                        title={
+                                            <div className={"w-full flex items-center justify-between"}>
+                                                <div className="flex flex-col items-center">
+                                                    <Text strong style={{fontSize: "15px"}}>
+                                                        {conversation?.receiver?.username}
+                                                    </Text>
+                                                    <Text type="secondary" style={{fontSize: "12px"}}>
+                                                        {new Date().toLocaleTimeString([], {
+                                                            hour: "2-digit",
+                                                            minute: "2-digit",
+                                                        })}
+                                                    </Text>
+                                                </div>
+                                                <DotDropdown items={[
+                                                    {
+                                                        id: "1",
+                                                        label: "Delete Chat",
+                                                        onClick: async () => {
+                                                            await deleteChat(conversation?.chatId)
+                                                        },
+                                                        danger: true
+                                                    }
+                                                ]}/>
+                                            </div>
+                                        }
+                                    />
+                                </List.Item>
+                            );
+                        }}
+                    />
+                ) : (
+                    <Empty
+                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                        description="No conversations found"
+                        style={{margin: "40px 0"}}
+                    />
+                )}
             </div>
-            {/* 
-            {chat.unread > 0 && (
-              <div className="flex-shrink-0 h-5 w-5 bg-blue-600 rounded-full flex items-center justify-center">
-                <span className="text-xs text-white font-medium">
-                  {chat.unread > 9 ? "9+" : chat.unread}
-                </span>
-              </div>
-            )} */}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+        </div>
+    );
 };
 
 export default ChatsList;

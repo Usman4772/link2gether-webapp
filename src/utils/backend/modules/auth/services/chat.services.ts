@@ -7,6 +7,10 @@ import { GoogleGenAI } from "@google/genai";
 import mongoose from "mongoose";
 import { createMessageArgs } from "../types/chat.types";
 import { createdMessageResponse } from "@/utils/backend/helpers/chat.helpers";
+import {
+  ChatMessage,
+  RawMessage,
+} from "@/utils/backend/modules/auth/types/chat.types";
 
 export async function sendMessageService(
   senderId: string,
@@ -123,4 +127,57 @@ async function getAIResponse(message: string) {
   });
   const res = response?.candidates?.[0]?.content?.parts?.[0]?.text || "";
   return res;
+}
+
+
+
+export async function fetchChatMessages(userId: string, receiverId: string) {
+  const chat = await Chats.findOne({
+    participants: { $all: [userId, receiverId] },
+  })
+      .populate({
+        path: "messages",
+        model: Message,
+        populate: {
+          path: "senderId",
+          model: User,
+          select: "_id profileImage ",
+        },
+        select: "-_-id -created_at -__v",
+      })
+      .select(" messages");
+  if (!chat) {
+    const chat = await createChat(userId, receiverId);
+    return {
+      chatId: chat?._id,
+      messages: [],
+    };
+  }
+  const messages = chat?.messages?.map((message: RawMessage): ChatMessage => {
+    return {
+      chatId: chat._id,
+      messageId: message._id,
+      sender: {
+        _id: message.senderId._id,
+        profileImage: message?.by_ai
+            ? process.env.NEXT_PUBLIC_AI_AVATAR || null
+            : message.senderId.profileImage,
+      },
+      by_ai: message.by_ai,
+      message: message.message,
+      createdAt: message.createdAt,
+      updatedAt: message.updatedAt,
+    };
+  });
+  return {
+    chatId: chat?._id,
+    messages: messages,
+  };
+}
+
+
+export async function deleteChat(chatId: string): Promise<void> {
+  if(!chatId)throw new apiErrors([],"Chat id is required",400)
+  const chat = await Chats.findOneAndDelete({_id: chatId});
+  if(!chat)throw new apiErrors([],"Chat could not be found",404)
 }
