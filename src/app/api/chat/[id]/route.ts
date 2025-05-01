@@ -1,15 +1,9 @@
-import Chats from "@/models/chat.schema";
-import Message from "@/models/messsage.schema";
-import User from "@/models/user";
+
 import { errorHandler, validateToken } from "@/utils/backend/helpers/globals";
 import { SUCCESS_RESPONSE } from "@/utils/backend/helpers/responseHelpers";
 import { connectToDatabase } from "@/utils/backend/modules/auth/services/authServices";
-import { createChat } from "@/utils/backend/modules/auth/services/chat.services";
-import {
-  ChatMessage,
-  RawMessage,
-} from "@/utils/backend/modules/auth/types/chat.types";
 import { NextRequest } from "next/server";
+import {deleteChat, fetchChatMessages} from "@/utils/backend/modules/auth/services/chat.services";
 
 export async function GET(req: NextRequest) {
   try {
@@ -23,47 +17,15 @@ export async function GET(req: NextRequest) {
   }
 }
 
-async function fetchChatMessages(userId: string, receiverId: string) {
-  const chat = await Chats.findOne({
-    participants: { $all: [userId, receiverId] },
-  })
-    .populate({
-      path: "messages",
-      model: Message,
-      populate: {
-        path: "senderId",
-        model: User,
-        select: "_id profileImage ",
-      },
-      select: "-_-id -created_at -__v",
-    })
-    .select(" messages");
-  console.log("chat", chat);
-  if (!chat) {
-    const chat = await createChat(userId, receiverId);
-    return {
-      chatId: chat?._id,
-      messages: [],
-    };
+
+export async function DELETE(req:NextRequest){
+  try {
+    await connectToDatabase()
+    await validateToken(req)
+    const chatId=req.nextUrl.pathname.split("/").at(-1) as string;
+    await deleteChat(chatId);
+    return SUCCESS_RESPONSE([], 200, "Chat deleted successfully");
+  }catch(error) {
+    return errorHandler(error);
   }
-  const messages = chat?.messages?.map((message: RawMessage): ChatMessage => {
-    return {
-      chatId: chat._id,
-      messageId: message._id,
-      sender: {
-        _id: message.senderId._id,
-        profileImage: message?.by_ai
-          ? process.env.NEXT_PUBLIC_AI_AVATAR || null
-          : message.senderId.profileImage,
-      },
-      by_ai: message.by_ai,
-      message: message.message,
-      createdAt: message.createdAt,
-      updatedAt: message.updatedAt,
-    };
-  });
-  return {
-    chatId: chat?._id,
-    messages: messages,
-  };
 }

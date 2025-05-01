@@ -11,3 +11,7 @@ export function fetchMessagesAPI(id: string) {
 export function sendMessageAPI(receiverId: string, message: string) {
   return axios.post(`/chat/${receiverId}/message`, { message });
 }
+
+export function deleteChatAPI(chatId:string){
+  return axios.delete(`/chat/${chatId}`);
+}
