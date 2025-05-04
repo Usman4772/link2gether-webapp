@@ -4,13 +4,9 @@ import Community from "@/models/community";
 import Post from "@/models/posts";
 import User from "@/models/user";
 import apiErrors from "@/utils/backend/helpers/apiErrors";
-import {
-  calculateBanExpiresAt,
-  communityDetailPagePayload,
-  getCommunityMembershipStatus,
-} from "@/utils/backend/helpers/community.helper";
-import dayjs from "dayjs";
-import { ObjectId, Types } from "mongoose";
+import {calculateBanExpiresAt, communityDetailPagePayload,} from "@/utils/backend/helpers/community.helper";
+import Notification from "@/models/notifications.schema"
+import {sendPusherNotification} from "@/utils/backend/pusher/actions/send.notification";
 
 export async function JoinCommunity(userId: any, community: any) {
   const user = await User.findById(userId);
@@ -142,11 +138,10 @@ export async function deleteCommunity(communityId: any) {
 }
 
 export async function addModerators(communityId: any, moderatorsId: any) {
-  const community = await Community.updateOne(
-    { _id: communityId },
-    { $addToSet: { moderators: { $each: moderatorsId } } }
+  return Community.updateOne(
+      {_id: communityId},
+      {$addToSet: {moderators: {$each: moderatorsId}}}
   );
-  return community;
 }
 
 export async function removeModerator(communityId: string, modId: string) {
@@ -175,7 +170,7 @@ export async function addRules(data: RulesPayload, community: any) {
       { $set: { rules: data.rules } }
     );
   }
-  return await Community.findById(community._id);
+  return Community.findById(community._id);
 }
 
 export async function banUser(
@@ -188,8 +183,7 @@ export async function banUser(
     user: bannedUserId,
     community: community._id,
   });
-  if (isAlreadyBanned) throw new apiErrors([], "User is already banned", 400);
-
+  // if (isAlreadyBanned) throw new apiErrors([], "User is already banned", 400);
   const expires_at = calculateBanExpiresAt(data.duration);
   const bannedUser = await BannedUser.create({
     user: bannedUserId,
@@ -201,7 +195,39 @@ export async function banUser(
   });
   community.bannedUsers.push(bannedUser._id);
   await community.save();
+
+await sendNotificationToBannedUser(bannedUserId,community,data?.duration,data?.reason,modId)
+
   return bannedUser;
+}
+
+
+
+
+
+
+
+export async function sendNotificationToBannedUser(bannedUserId:string,community:any,ban_duration:string,reason:string,modId:string){
+  const mod=await User.findById(modId)
+  let  notificationData={
+    title:`You have been banned from ${community?.community_name}`,
+    body:`You have been banned from ${community?.community_name} for ${ban_duration} by ${mod?.username} due to ${reason}`,
+    avatar:community?.avatar,
+    userId:bannedUserId,
+  }
+  const notification=await createNotification(notificationData)
+  await sendPusherNotification(bannedUserId,notification)
+}
+
+
+
+export async function createNotification(data:any){
+  const user=await User.findById(data.userId)
+  const notification= await Notification.create(data)
+  user.notifications.push(notification?._id)
+  await user.save()
+  return notification
+
 }
 
 export async function fetchExploreCommunities(user: any, query: string | null) {
