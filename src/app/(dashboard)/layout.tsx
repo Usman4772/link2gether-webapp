@@ -3,6 +3,7 @@ import TimeAgoProvider from "@/components/Global/TImeAgoProvider";
 import CreateCommunityModal from "@/featuers/Community/components/CreateCommunityModal";
 import {AntdRegistry} from "@ant-design/nextjs-registry";
 import NextTopLoader from 'nextjs-toploader';
+import TawkToChat from "@/components/Global/TawkToBeacon";
 
 
 export default function RootLayout({
@@ -21,6 +22,7 @@ export default function RootLayout({
                             color={"#00b07c"}
                         />
                         {children}
+                        <TawkToChat/>
                     </AntdRegistry>
                     <CreateCommunityModal/>
                 </AppSidebar>
