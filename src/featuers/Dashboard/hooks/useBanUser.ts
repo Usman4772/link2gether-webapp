@@ -10,6 +10,7 @@ function useBanUser(communityId: any, userId: any, setBanUserId: any) {
   const [banBtnLoading, setBanBtnLoading] = useState(false);
   const [openBanModal, setOpenBanModal] = useState(false);
   const queryClient = useQueryClient();
+
   async function banUser(
     data: { reason: string; duration: string }
   ) {
@@ -32,6 +33,10 @@ function useBanUser(communityId: any, userId: any, setBanUserId: any) {
     }
   }
 
+
+ async function unbanUser(){
+    
+ }
     return {
       form,
     banUser,

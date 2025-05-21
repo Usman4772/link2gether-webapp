@@ -183,7 +183,7 @@ export async function banUser(
     user: bannedUserId,
     community: community._id,
   });
-  // if (isAlreadyBanned) throw new apiErrors([], "User is already banned", 400);
+  if (isAlreadyBanned) throw new apiErrors([], "User is already banned", 400);
   const expires_at = calculateBanExpiresAt(data.duration);
   const bannedUser = await BannedUser.create({
     user: bannedUserId,
@@ -204,6 +204,15 @@ await sendNotificationToBannedUser(bannedUserId,community,data?.duration,data?.r
 
 
 
+export async function unbanUser(bannedUserId:string,community:any){
+  const bannedUser=await BannedUser.findOneAndDelete({user:bannedUserId,community:community?._id})
+  if(!bannedUser) throw new apiErrors([],"User is not banned",400)
+  if(!community?.bannedUsers?.includes(bannedUser?._id)) throw new apiErrors([],"User is not banned",400)
+  community.bannedUsers=community.bannedUsers.filter((id:string)=>id.toString()!==bannedUser?._id.toString())
+  await community.save()
+  return bannedUser
+}
+
 
 
 
@@ -222,9 +231,11 @@ export async function sendNotificationToBannedUser(bannedUserId:string,community
 
 
 export async function createNotification(data:any){
+  if(!data || !data.userId) throw new apiErrors([],"Invalid data",400)
+  if(!data.title || !data.body  || !data.userId) throw new apiErrors([],"Invalid data",400)
   const user=await User.findById(data.userId)
   const notification= await Notification.create(data)
-  user.notifications.push(notification?._id)
+  user?.notifications.push(notification?._id)
   await user.save()
   return notification
 

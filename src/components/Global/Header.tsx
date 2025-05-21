@@ -7,30 +7,19 @@ import {useRouter} from "next/navigation";
 import useFetchUser from "@/hooks/useFetchUser";
 import NotificationsDrawer from "@/featuers/Profile/components/NotificatoinsDrawer";
 import {useFetchNotifications} from "@/featuers/Profile/hooks/useFetchNotifications";
+import BreadCrumbs from "@/components/Global/Breadcrumbs";
 
 function Header() {
     const router = useRouter();
     const {data} = useFetchUser();
-    const {notifications, openNotifications, setOpenNotifications, setOptimisticNotifications,optimisticNotifications} = useFetchNotifications(data?.id)
+    const { openNotifications, setOpenNotifications,notifications,setNotifications} = useFetchNotifications(data?.id)
 
 
     return (
         <header
             className="px-6 py-4 rounded-tl-2xl border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 w-full flex items-center justify-between shadow-sm">
             {/* Breadcrumbs */}
-            <div className="flex items-center text-sm text-neutral-500 dark:text-neutral-400">
-                <Link
-                    href="/dashboard"
-                    className="flex items-center hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
-                >
-                    <Home className="h-4 w-4 mr-1"/>
-                    <span>Home</span>
-                </Link>
-                <ChevronRight className="h-4 w-4 mx-2 text-neutral-400 dark:text-neutral-600"/>
-                <span className="text-neutral-800 dark:text-neutral-200 font-medium">
-          Dashboard
-        </span>
-            </div>
+          <BreadCrumbs/>
 
             {/* Logo */}
             <div className="absolute left-1/2 transform -translate-x-1/2 hidden md:block">
@@ -64,11 +53,11 @@ function Header() {
                     onClick={() => setOpenNotifications(true)}
                 >
                     <Bell className="h-5 w-5"/>
-                    <span className="absolute top-0 right-0 h-2 w-2 bg-emerald-500 rounded-full"></span>
+                    <span className="absolute -top-2 -right-2 flex items-center justify-center text-sm h-4 w-4 p-3 text-white bg-emerald-500 rounded-full">{notifications?.length}</span>
                 </button>
             </div>
-            <NotificationsDrawer openDrawer={openNotifications} optimisticNotifications={optimisticNotifications}
-                                 setOpenDrawer={setOpenNotifications} setOptimisticNotifications={setOptimisticNotifications}/>
+            <NotificationsDrawer openDrawer={openNotifications} notifications={notifications}
+                                 setOpenDrawer={setOpenNotifications} setNotifications={setNotifications}/>
         </header>
     );
 }

@@ -4,24 +4,17 @@ import toast from "react-hot-toast";
 import {useQueryClient} from "@tanstack/react-query";
 import React from "react";
 
-export function useDeleteNotifications({setOptimisticNotifications}:{setOptimisticNotifications:React.Dispatch<React.SetStateAction<any>>}) {
+
+interface Props{
+    setOptimisticNotifications:React.Dispatch<React.SetStateAction<any>>
+}
+
+export function useDeleteNotifications() {
     const queryClient = useQueryClient()
 
     async function deleteNotifications(notificationId:string) {
         try {
-            //remove notification optimistically here.
-            setOptimisticNotifications((prev:any) =>{
-                if(notificationId=="all"){
-                    return []
-                }
-                return prev.filter((notification:any) => {
-                    console.log(notification?._id,notificationId)
-                    console.log(notification?._id==notificationId,'equal?')
-                    return (
-                        notification?._id !== notificationId
-                    )
-                })
-            } )
+
 
             const response = await deleteNotificationAPI(notificationId)
             if (response?.data?.success) {
@@ -33,6 +26,9 @@ export function useDeleteNotifications({setOptimisticNotifications}:{setOptimist
             handleAPIErrors(e)
         }
     }
+
+
+
 return {
         deleteNotifications
 }

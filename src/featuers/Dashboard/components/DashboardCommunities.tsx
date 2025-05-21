@@ -3,19 +3,17 @@
 import { useState } from "react";
 import CustomTable from "@/components/Global/CustomTable";
 import { getFormattedDate } from "@/utils/frontend/helpers/globals";
-import { Card, Input, Button, Tooltip } from "antd";
+import { Card} from "antd";
 import useGetDashboardCommunities from "../hooks/useGetDashbaordCommunities";
 import Status from "@/components/Global/Status";
-import {
-  SearchOutlined,
-  PlusOutlined,
-  FilterOutlined,
-} from "@ant-design/icons";
 import { Users, TrendingUp, AlertTriangle, UserPlus } from "lucide-react";
+import DotDropdown from "@/components/Global/DotDropdown";
+import {useRouter} from "next/navigation";
 
 function DashboardCommunities() {
   const { data, isLoading } = useGetDashboardCommunities();
   const [searchText, setSearchText] = useState("");
+  const router=useRouter()
 
   // Filter data based on search text
   const filteredData = data?.filter((item: any) =>
@@ -125,6 +123,23 @@ function DashboardCommunities() {
           </div>
         );
       },
+    },
+      {
+      title: "Actions",
+      key: "actions",
+          render: (_: any, record: any) => {
+          const items=[
+              {
+                  key:"1",
+                  label:"View",
+                  onClick:()=>{
+                      router.push(`/community/${record.id}`)
+                  }
+              }
+          ]
+
+              return <DotDropdown items={items} />
+          }
     },
   ];
 

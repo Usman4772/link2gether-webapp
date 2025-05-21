@@ -31,6 +31,6 @@ export function fetchNotificationsAPI() {
   return axios.get("user/notifications");
 }
 
-export function deleteNotificationAPI(notificationId:string,clear_all=false) {
+export function deleteNotificationAPI(notificationId:string) {
   return axios.delete(`/user/notifications/${notificationId}`);
 }

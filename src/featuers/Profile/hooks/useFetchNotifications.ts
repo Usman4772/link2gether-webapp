@@ -1,4 +1,4 @@
-import {useEffect, useOptimistic, useState} from "react";
+import {useEffect, useState} from "react";
 import {pusherClient} from "@/lib/pusher";
 import {useQuery} from "@tanstack/react-query";
 import {fetchNotificationsAPI} from "@/featuers/Profile/api/api";
@@ -10,19 +10,20 @@ export interface NotificationProps {
     body: string,
     avatar: string | null,
     _id: string,
-    cratedAt: string,
+    createdAt: string,
     updatedAt: string,
     userId: string,
 }
 
 export function useFetchNotifications(userId: string) {
     const [notifications, setNotifications] = useState<NotificationProps[] | []>([]);
-    const [optimisticNotifications, setOptimisticNotifications] = useOptimistic<NotificationProps[] | []>(notifications || [])
     const [openNotifications, setOpenNotifications] = useState(false);
 
     const {data, isLoading} = useQuery({
         queryKey: ["notifications"],
-        queryFn: fetchNotifications
+        queryFn: fetchNotifications,
+        refetchOnWindowFocus: false, // Prevent refetching on window focus
+        refetchOnMount: false, // Only fetch on initial mount
     })
 
 
@@ -30,9 +31,10 @@ export function useFetchNotifications(userId: string) {
         try {
             const response = await fetchNotificationsAPI()
             if (response?.data?.success) {
-                setNotifications(response?.data?.data)
+                setNotifications(response?.data?.data);
                 return response?.data?.data;
             }
+            return []
         } catch (error) {
             handleAPIErrors(error)
         }
@@ -48,8 +50,10 @@ export function useFetchNotifications(userId: string) {
     useEffect(() => {
         if (!userId) return;
         pusherClient.subscribe(userId)
+        console.log('subscribing to ', userId)
 
         function handleIncomingNotification(data: any) {
+            console.log('incoming notification', data)
             setNotifications(prevNotifications => {
                 // @ts-ignore
                 if (prevNotifications.includes(data?.data?._id)) return prevNotifications;
@@ -73,8 +77,6 @@ export function useFetchNotifications(userId: string) {
         isLoading,
         setNotifications,
         setOpenNotifications,
-        optimisticNotifications,
-        setOptimisticNotifications
     }
 
 }

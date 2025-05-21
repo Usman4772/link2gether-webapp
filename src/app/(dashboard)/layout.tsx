@@ -18,7 +18,7 @@ export default function RootLayout({
                     <AntdRegistry>
                         <NextTopLoader
                             showSpinner={false}
-                            color={"green"}
+                            color={"#00b07c"}
                         />
                         {children}
                     </AntdRegistry>

@@ -170,3 +170,21 @@ export async function validateCommunityAndPost(
     );
   }
 }
+
+
+export  const reportReasons: Record<string, string> = {
+    "Harassment": "Your post has been reported for harassment. Please ensure all interactions remain respectful and follow our community guidelines.",
+    "Threatening violence": "Your post has been reported for containing threats of violence. This is a serious violation of our safety policies.",
+    "Hate": "Your post has been reported for promoting hate or discrimination. Such content is strictly against our community standards.",
+    "Minor abuse": "Your post has been reported for potential abuse involving minors. We do not tolerate any form of harm or exploitation of minors.",
+    "Sharing personal information": "Your post has been reported for sharing personal or sensitive information. Please respect others' privacy.",
+    "Non-consensual intimate media": "Your post has been reported for sharing intimate media without consent. This is a serious violation of our policies.",
+    "Prohibited transaction": "Your post has been reported for involving a prohibited transaction. Please ensure all posts comply with our transaction policies.",
+    "Impersonation": "Your post has been reported for impersonating another individual or entity. Misrepresentation is not allowed.",
+    "Copyright violation": "Your post has been reported for potentially violating copyright. Please only share content you have the rights to use.",
+    "Trademark violation": "Your post has been reported for potentially violating trademark rules. Please ensure your content respects brand rights.",
+    "Self-harm or suicide": "Your post has been reported for referencing self-harm or suicide. If you're in distress, please seek professional help or contact support.",
+    "Spam": "Your post has been reported as spam. Avoid repetitive, irrelevant, or promotional content that doesn't contribute to the community.",
+    "Contributor Program violation": "Your post has been reported for violating our Contributor Program guidelines. Please review the program rules to stay compliant.",
+  };
+

@@ -2,14 +2,12 @@ import Community from "@/models/community";
 import ReportedPosts from "@/models/reported.posts";
 import User from "@/models/user";
 import apiErrors from "@/utils/backend/helpers/apiErrors";
-import { Types } from "mongoose";
-import { NextRequest } from "next/server";
-import { ObjectId } from "mongodb";
+import {Types} from "mongoose";
+import {NextRequest} from "next/server";
+import {ObjectId} from "mongodb";
 import Post from "@/models/posts";
-import {
-  getCommunityMembersPayload,
-  getReportedPostsPayload,
-} from "@/utils/backend/helpers/admin.community.helpers";
+import {getCommunityMembersPayload, getReportedPostsPayload,} from "@/utils/backend/helpers/admin.community.helpers";
+import BannedUser from "@/models/bannedUsers";
 
 export async function getReportedPosts(communityId: any) {
   const community = await Community.findById(communityId)
@@ -114,8 +112,11 @@ export async function getCommunityMembers(communityId: string) {
       path: "members",
       model: User,
       select: "_id username profileImage email created_at",
-    })
-    .select("moderators members createdBy");
-  const payload = getCommunityMembersPayload(members);
-  return payload;
+    }).populate({
+        path:"bannedUsers",
+        model:BannedUser,
+        select:"user"
+      })
+    .select("moderators members createdBy bannedUsers");
+  return await getCommunityMembersPayload(members);
 }

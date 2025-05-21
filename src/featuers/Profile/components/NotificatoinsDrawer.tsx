@@ -4,12 +4,11 @@ import React from "react";
 interface NotificationsDrawerProps  {
     openDrawer:boolean,
     setOpenDrawer:React.Dispatch<React.SetStateAction<boolean>>,
-    optimisticNotifications:any,
-    setOptimisticNotifications:React.Dispatch<React.SetStateAction<any>>
+    notifications:any,
+    setNotifications:React.Dispatch<React.SetStateAction<any>>
 }
-export default function NotificationsDrawer({openDrawer,setOpenDrawer,optimisticNotifications,setOptimisticNotifications}:NotificationsDrawerProps) {
+export default function NotificationsDrawer({openDrawer,setOpenDrawer,notifications,setNotifications}:NotificationsDrawerProps) {
 
-    return <CustomDrawer title={<NotificationsTitle/>} body={<NotificationsBox optimisticNotifications={optimisticNotifications} setOptimisticNotifications={setOptimisticNotifications}/>} openDrawer={openDrawer} setOpenDrawer={setOpenDrawer}/>
-
+    return <CustomDrawer title={<NotificationsTitle notifications={notifications}/>} body={<NotificationsBox notifications={notifications} setNotifications={setNotifications}/>} openDrawer={openDrawer} setOpenDrawer={setOpenDrawer}/>
 
 }
