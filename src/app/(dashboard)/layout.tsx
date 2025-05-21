@@ -11,13 +11,14 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
+
         <div>
             <TimeAgoProvider>
                 <AppSidebar>
                     <AntdRegistry>
                         <NextTopLoader
                             showSpinner={false}
-                            color={"green"}
+                            color={"#00b07c"}
                         />
                         {children}
                     </AntdRegistry>

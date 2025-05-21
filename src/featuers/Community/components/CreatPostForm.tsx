@@ -57,6 +57,7 @@ const CreatePostForm = forwardRef<any, CreatePostFormProps>(
             <Uploader
               fileList={fileList}
               setFileList={setFileList}
+              accept={"video/*,image/*"}
               placeholder={"Media"}
             />
           </div>

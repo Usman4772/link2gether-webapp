@@ -76,7 +76,7 @@ function Header({ handleCancel }: any) {
 
 function ReportModalBody({ reportPost, btnLoading,reason,setReason }: any) {
 
-  const reportCategories = [
+   const reportCategories = [
     "Harassment",
     "Threatening violence",
     "Hate",

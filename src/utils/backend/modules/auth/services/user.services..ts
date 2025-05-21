@@ -1,13 +1,13 @@
 import Community from "@/models/community";
-import { CommunityProps } from "../types/types";
+import {CommunityProps} from "../types/types";
 import User from "@/models/user";
 import apiErrors from "@/utils/backend/helpers/apiErrors";
-import { handleMediaUpload } from "./authServices";
+import {handleMediaUpload} from "./authServices";
 import Post from "@/models/posts";
-import { Types } from "mongoose";
-import { ObjectId } from "mongodb";
-import { generateShareableLink } from "./post.services";
-import { NextRequest } from "next/server";
+import {Types} from "mongoose";
+import {generateShareableLink} from "./post.services";
+import {NextRequest} from "next/server";
+import Notification from "@/models/notifications.schema";
 
 export async function createCommunity(data: CommunityProps, userId: any) {
   const alreadyPresent = await Community.findOne({
@@ -215,4 +215,33 @@ export async function getUserDetails(profileUserId: string) {
     created_at: user?.created_at,
     onboardingStatus: user?.onboardingStatus,
   };
+}
+
+
+
+export async function deleteNotification(userId:string,notificationId:string){
+  if(notificationId==='all'){
+    return await deleteAllNotifications(userId)
+  }
+  const notification =await Notification.findByIdAndDelete(notificationId)
+  if(!notification) throw new apiErrors([],"Notification not found",404)
+  const user=  await User.findByIdAndUpdate(userId,{$pull:{notifications:notificationId}}).populate({path:"notifications"}).select("-_id notifications")
+  await user.save()
+  return user?.notifications
+}
+
+
+export async function deleteAllNotifications(userId:string){
+await Notification.deleteMany({userId:userId})
+ const user=  await User.findByIdAndUpdate(userId,{notifications:[]}).populate({path:"notifications"}).select("-_id notifications")
+  await user.save()
+  return user?.notifications
+}
+
+
+export async function getUserNotifications(userId:string){
+  const user:any= await User.findById(userId.toString()).populate({
+    path: "notifications"
+  }).select("-_id notifications");
+  return user?.notifications
 }

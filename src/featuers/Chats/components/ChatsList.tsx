@@ -3,7 +3,7 @@
 import type React from "react";
 
 import {useState} from "react";
-import {Input, Avatar, List, Badge, Spin, Typography, Empty} from "antd";
+import {Input, List, Badge, Typography, Empty} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
 import useFetchConversations from "../hooks/useFetchConversations";
 import type {SelectedChat} from "@/utils/backend/modules/auth/types/chat.types";
@@ -25,7 +25,7 @@ const ChatsList: React.FC<ChatsListProps> = ({
                                              }) => {
     const {conversations, isLoading} = useFetchConversations();
     const [searchQuery, setSearchQuery] = useState("");
-    const {deleteChat} = useDeleteChat({setSelectedChat:onSelectChat})
+    const {deleteChat} = useDeleteChat({setSelectedChat: onSelectChat})
 
     const filteredConversations = conversations.filter((conversation) =>
         conversation?.receiver?.username

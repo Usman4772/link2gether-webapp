@@ -68,3 +68,13 @@ export interface ReportPostProps {
   postId: string;
   userId: any;
 }
+
+
+
+export interface banUserNotificationPayload{
+  title:string,
+  body:string,
+  avatar:string | null,
+  communityId:string,
+  userId:string
+}

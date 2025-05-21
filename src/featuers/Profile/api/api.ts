@@ -25,3 +25,12 @@ export function fetchLoggedInUserDetails() {
   return axios.get("user/profile");
 }
 
+
+
+export function fetchNotificationsAPI() {
+  return axios.get("user/notifications");
+}
+
+export function deleteNotificationAPI(notificationId:string) {
+  return axios.delete(`/user/notifications/${notificationId}`);
+}

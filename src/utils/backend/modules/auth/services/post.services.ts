@@ -4,13 +4,15 @@ import User from "@/models/user";
 import apiErrors from "@/utils/backend/helpers/apiErrors";
 import {
   createPayload,
-  createPostPayload,
+  createPostPayload, reportReasons,
 } from "@/utils/backend/helpers/post.helpers";
 import { Types } from "mongoose";
 import { ObjectId } from "mongodb";
 import ReportedPosts from "@/models/reported.posts";
 import { ReportPostProps } from "../types/community.types";
 import { NextRequest } from "next/server";
+import {sendPusherNotification} from "@/utils/backend/pusher/actions/send.notification";
+import {createNotification} from "@/utils/backend/modules/auth/services/community.services";
 
 export async function getAllPosts(userId: any, req: NextRequest) {
   const userCommunities = await Community.find({ members: userId }).select(
@@ -99,6 +101,7 @@ export async function reportPost({ data, postId, userId }: ReportPostProps) {
     reported_post.report_count += 1;
     reported_post.reported_by.push(userId);
     await reported_post.save();
+    await sendReportedPostNotification(postId,userId,data?.reason)
     return reported_post;
   }
 
@@ -112,9 +115,32 @@ export async function reportPost({ data, postId, userId }: ReportPostProps) {
 
   const community = await Community.findById(data.community_id);
   community.reportedPosts.push(report._id);
+  await sendReportedPostNotification(postId,userId,data?.reason)
   await community.save();
 
   return report;
+}
+
+
+
+async  function sendReportedPostNotification(postId:string,userId:string,reason:string){
+const post=await Post.findById(postId).populate({
+  path:"community",
+  select:"community_name avatar"
+})
+const user=await User.findById(userId).select("username")
+
+
+const notificationData={
+  title:`Your post "${post?.description}" in ${post?.community?.community_name} has been reported by ${user?.username}`,
+  body:reportReasons[reason] || "Your post has been reported",
+  avatar:post?.community?.avatar,
+  userId:post?.author
+}
+console.log(notificationData,'data')
+const notification=await createNotification(notificationData)
+await sendPusherNotification(post?.author,notification)
+
 }
 
 export function generateShareableLink(req: NextRequest, post: any) {

@@ -118,8 +118,8 @@ function MembersTable({ id }: { id: string }) {
           },
           {
             key: "3",
-            label: "Ban User",
-            danger: true,
+            label: record?.isBanned ? "Unban User" : "Ban User",
+            danger: !record?.isBanned,
             onClick: () => {
               setOpenBanModal(true);
               setBanUserId(record?.id);

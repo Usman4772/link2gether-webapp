@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { communitySchema } from "../validation-schema/community.schema";
 import { updateProfileSchema } from "../validation-schema/user.schema";
 import apiErrors from "./apiErrors";
+import mongoose from "mongoose";
 
 export async function parseCommunityFormData(formData: FormData) {
   let avatar: any = formData?.get("avatar");
@@ -80,4 +81,17 @@ export async function validateUpdateProfilePayload(req: NextRequest) {
     throw new apiErrors(errors, "Validation errors found!", 400);
   }
   return data;
+}
+
+
+export function validateNotificationId(req: NextRequest) {
+  const notificationId=req.nextUrl.pathname.split("/")[4];
+  if(!mongoose.Types.ObjectId.isValid(notificationId) && notificationId!=="all"){
+    throw new apiErrors(
+      [],
+      "Invalid notification id.",
+      400
+    );
+  }
+  return notificationId;
 }
