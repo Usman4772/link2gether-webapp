@@ -47,3 +47,10 @@ export const loginSchema = z
   .required();
 
 
+
+
+export const forgotPasswordSchema = z
+  .object({
+    email: z
+      .string({ message: "Email is required" })
+  }).required();

@@ -3,7 +3,7 @@
 import Heading from "@/components/Global/Heading";
 import Paragraph from "@/components/Global/Paragraph";
 import TimeAgo from "@/components/Global/TimeAgo";
-import { convertNumberToK } from "@/utils/frontend/helpers/globals";
+import {censor, convertNumberToK} from "@/utils/frontend/helpers/globals";
 import React from "react";
 import { RiHeart3Line as Like } from "react-icons/ri";
 import { RiHeart3Fill as LikeFill } from "react-icons/ri";
@@ -68,7 +68,7 @@ function Comment({
 
         {/* Comment content */}
         <Paragraph
-          text={comment.content || "N/A"}
+          text={censor(comment.content) || "N/A"}
           className="text-gray-700 text-[15px] leading-relaxed pl-[52px]"
         />
 

@@ -20,7 +20,7 @@ function useUpdatePassword(reset:()=>void) {
     async function updatePassword(data: UpdatePasswordProps) {
         setPasswordBtnLoading(true)
         try {
-            const response = await axios.post("/auth/change-password", data)
+            const response = await axios.post("/auth/password/change", data)
             if (response?.data?.success) {
                 toast.success(response?.data?.message)
                 reset()
