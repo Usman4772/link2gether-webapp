@@ -25,7 +25,7 @@ export async function PUT(req: NextRequest) {
 }
 
 async function updateRules(
-  rules: RulesPayload,
+  rules: {rule:string}[],
   merge: boolean,
   community: any
 ) {
@@ -38,7 +38,7 @@ async function updateRules(
   await mergeRules(rules, community);
 }
 
-async function mergeRules(rules: RulesPayload, community: any) {
+async function mergeRules(rules: {rule:string}[], community: any) {
   const mergedRules = [...community.rules, ...rules];
   community.rules = mergedRules;
   await community.save();
