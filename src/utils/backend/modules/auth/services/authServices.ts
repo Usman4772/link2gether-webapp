@@ -57,9 +57,9 @@ export async function createUser(userData: any) {
 }
 
 export function createToken(id: ObjectId, remember: boolean = false) {
-  let maxAge = "1d";
-  if (remember) maxAge = "7d";
-  return jwt.sign({ id }, "u$man2309", { expiresIn: maxAge });
+  let maxAge: jwt.SignOptions["expiresIn"] = "1d";
+if (remember) maxAge = "7d";
+return jwt.sign({ id }, "u$man2309", { expiresIn: maxAge });
 }
 
 export async function hashPassword(password: string): Promise<string> {
