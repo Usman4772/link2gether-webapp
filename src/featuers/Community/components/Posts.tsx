@@ -5,7 +5,7 @@ function Posts({data}:any) {
   return (
     <div className="w-[65%] h-auto flex flex-col gap-8">
       {data?.posts?.map((post:any) => (
-        <Post data={post} />
+        <Post data={post}  />
       ))}
     </div>
   );

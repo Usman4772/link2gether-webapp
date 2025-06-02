@@ -9,7 +9,7 @@ export interface PostProps {
   isMode?: boolean;
   isPublicPage?: boolean;
   communityId?: string | number;
-  communityDetails: any,
+  communityDetails?: any,
   className?: string;
   
 }
