@@ -4,6 +4,7 @@ import {connectToDatabase} from "@/utils/backend/modules/auth/services/authServi
 import {SUCCESS_RESPONSE} from "@/utils/backend/helpers/responseHelpers";
 import User from "@/models/user";
 import Community from "@/models/community";
+import Posts from "@/models/posts";
 
 
 export async function GET(req: NextRequest) {
@@ -20,6 +21,7 @@ export async function GET(req: NextRequest) {
 
 
 async function search(query: string) {
+    console.log(query, 'query')
     if (!query || query.trim() === "") return [];
 
     const users = await User.find({
@@ -28,16 +30,25 @@ async function search(query: string) {
 
     const communities = await Community.find({
         community_name: {$regex: query, $options: "i"},
-    }).select("_id community_name avatar");
+    }).select("_id community_name avatar members description");
 
-    return [
-        ...users.map((user) => ({
+    const posts = await Posts.find({
+        description: {$regex: query, $options: "i"},
+    }).select("_id description");
+
+
+    return {
+        users:[...users.map((user) => ({
             ...user.toObject(),
             type: "user",
-        })),
-        ...communities.map((community) => ({
+        }))],
+        communities:[...communities.map((community) => ({
             ...community.toObject(),
             type: "community",
-        })),
-    ];
+        }))],
+        posts:[...posts.map((post) => ({
+            ...post.toObject(),
+            type: "post",
+        }))]
+    }
 }

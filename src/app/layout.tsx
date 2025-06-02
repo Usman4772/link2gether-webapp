@@ -4,6 +4,7 @@ import { QueryClient } from "@tanstack/react-query";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Toaster } from "react-hot-toast";
+
 import "./globals.css";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

@@ -12,6 +12,7 @@ import {
 import { communitySchema } from "@/utils/backend/validation-schema/community.schema";
 import { useAppDispatch } from "@/hooks/useAppSelector";
 import { setOpenCreateCommunityModal } from "@/redux/Slices/create.community.slice";
+import {isVulgar} from "@/utils/frontend/helpers/globals";
 
 function useCreateCommunity({ form }: { form: any }) {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
@@ -19,6 +20,7 @@ function useCreateCommunity({ form }: { form: any }) {
   const dispatch = useAppDispatch();
 
   async function createCommunity(values: z.infer<typeof communitySchema>) {
+    if(isVulgar(values?.community_name)) return toast.error("Community name must be appropriate and does not include any bad words.")
     try {
       setBtnLoading(true);
       const formData = new FormData();

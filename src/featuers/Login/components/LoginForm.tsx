@@ -1,7 +1,7 @@
 "use client";
 import FormInput from "@/components/Global/FormInput";
+import { useState } from "react";
 import PasswordInput from "@/components/Global/PasswordInput";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -9,16 +9,16 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import useFormConfigration from "../hooks/useFormConfigration";
 import useLogin from "../hooks/useLogin";
 import CustomButton from "@/components/Global/CustomButton";
+import {Checkbox} from "antd";
 
 function LoginForm() {
-  const { form, setError } = useFormConfigration();
-  const { handleLogin, btnLoading } = useLogin(setError);
+  const { form } = useFormConfigration();
+  const { handleLogin, btnLoading,setRemember } = useLogin();
 
   return (
     <div className="w-full overflow-x-hidden min-h-screen flex  items-center justify-center flex-col lg:flex-row md:justify-between  pb-12 md:px-16 bg-white md:rounded-[1rem] shadow-sm lg:w-full lg:h-full">
@@ -63,6 +63,12 @@ function LoginForm() {
               </FormItem>
             )}
           />
+            <div className={"mx-[16px] w-full flex items-start gap-2"}>
+                <Checkbox onChange={(e)=>setRemember(e.target.checked)}/>
+                <div>Remember me</div>
+            </div>
+
+            <a className={"ml-auto font-bold  text-btn py-2 px-2"} href={"/forget-password"}>Forget Password?</a>
 
           <CustomButton
             text="Login"

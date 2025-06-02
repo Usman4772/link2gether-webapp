@@ -1,16 +1,22 @@
 import {handleAPIErrors} from "@/utils/frontend/handleErrors";
 import {useEffect, useState} from "react";
 import axios from "@/utils/config/axios";
+import useDebounce from "@/hooks/useDebounce";
 
-export default function useSearch(query: string) {
-    const [data, setData] = useState<any[]>()
-    const [loading, setLoading] = useState(false)
+export default function useSearch() {
+    const [data, setData] = useState<any>()
+    const [isLoading, setLoading] = useState(false)
+    const [searchQuery,setSearchQuery] = useState<string>("")
+    const debouncedQuery=useDebounce(searchQuery)
 
-    async function search(query: string) {
-        if (!query || query.trim() == "") return
+    async function search(debouncedQuery: string) {
+        if (!debouncedQuery || debouncedQuery.trim() == ""){
+            setData(null)
+            return
+        }
         try {
             setLoading(true)
-            const response = await axios.get(`/search?query=${query}`)
+            const response = await axios.get(`/search?query=${debouncedQuery}`)
             if (response?.data?.success) {
                 setData(response?.data?.data)
             }
@@ -22,11 +28,13 @@ export default function useSearch(query: string) {
     }
 
     useEffect(() => {
-        search(query)
-    }, [query]);
+        search(debouncedQuery)
+    }, [debouncedQuery]);
     return {
         data,
         search,
-        loading
+        setSearchQuery,
+        searchQuery,
+        isLoading
     }
 }

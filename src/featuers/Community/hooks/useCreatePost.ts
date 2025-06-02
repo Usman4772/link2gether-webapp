@@ -1,64 +1,69 @@
-import { postSchema } from "@/utils/backend/validation-schema/post.schema";
+import {postSchema} from "@/utils/backend/validation-schema/post.schema";
 import {
-  handleAPIErrors,
-  handleFormErrors,
+    handleAPIErrors,
 } from "@/utils/frontend/handleErrors";
-import { UploadFile } from "antd";
-import React, { useState } from "react";
-import { UseFormSetError } from "react-hook-form";
+import {UploadFile} from "antd";
+import React, {useState} from "react";
 import toast from "react-hot-toast";
-import { z } from "zod";
-import { createCommunityAPI, createPostAPI } from "../api/api";
-import { useQueryClient } from "@tanstack/react-query";
+import {z} from "zod";
+import { createPostAPI} from "../api/api";
+import {useQueryClient} from "@tanstack/react-query";
+import {profanity, CensorType} from '@2toad/profanity';
+
 
 function useCreatePost({
-  id,
-  form,
-  setOpenModal = () => {},
-}: {
-  form: any;
-  id: string | number;
-  setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+                           id,
+                           form,
+                           setOpenModal = () => {
+                           },
+                       }: {
+    form: any;
+    id: string | number;
+    setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const [fileList, setFileList] = useState<UploadFile[]>([]);
-  const [btnLoading, setBtnLoading] = useState(false);
-  const queryClient = useQueryClient();
+    const [fileList, setFileList] = useState<UploadFile[]>([]);
+    const [btnLoading, setBtnLoading] = useState(false);
+    const queryClient = useQueryClient();
 
-  async function createPost(values: z.infer<typeof postSchema>) {
-    {
-      try {
-        setBtnLoading(true);
-        const formData = new FormData();
-        const media = fileList[0]?.originFileObj;
-        formData.append("description", values?.description);
-        formData.append("media", media || "");
+    async function createPost(values: z.infer<typeof postSchema>) {
+        {
+            const isVulgar = profanity.exists(values?.description)
+            if (isVulgar) {
+                toast.error("Your post include vulgar content it will be removed soon by community admins.")
+            }
+            try {
+                setBtnLoading(true);
+                const formData = new FormData();
+                const media = fileList[0]?.originFileObj;
+                formData.append("description", values?.description);
+                formData.append("media", media || "");
 
-        const response = await createPostAPI(formData, id);
-        if (response?.data?.success) {
-          toast.success(response?.data?.message);
-          setOpenModal(false);
-          queryClient.invalidateQueries({ queryKey: ["community-details"] });
-          queryClient.invalidateQueries({
-            queryKey: ["community-posts"],
-          });
+                const response = await createPostAPI(formData, id);
+                if (response?.data?.success) {
+                    toast.success(response?.data?.message);
+                    setOpenModal(false);
+                    queryClient.invalidateQueries({queryKey: ["community-details"]});
+                    queryClient.invalidateQueries({
+                        queryKey: ["community-posts"],
+                    });
 
-          form.resetFields();
-          setFileList([]);
+                    form.resetFields();
+                    setFileList([]);
+                }
+            } catch (error: any) {
+                handleAPIErrors(error);
+            } finally {
+                setBtnLoading(false);
+            }
         }
-      } catch (error: any) {
-        handleAPIErrors(error);
-      } finally {
-        setBtnLoading(false);
-      }
     }
-  }
 
-  return {
-    createPost,
-    fileList,
-    setFileList,
-    btnLoading,
-  };
+    return {
+        createPost,
+        fileList,
+        setFileList,
+        btnLoading,
+    };
 }
 
 export default useCreatePost;
