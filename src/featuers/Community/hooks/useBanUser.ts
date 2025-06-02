@@ -28,8 +28,8 @@ const [banBtnLoading, setBanBtnLoading] = useState(false);
       if (response?.data?.success) {
         toast.success(response.data.message);
         setOpenModal(false);
-        queryClient.invalidateQueries({ queryKey: "community-details" });
-        queryClient.invalidateQueries({ queryKey: "community-posts" });
+        queryClient.invalidateQueries({ queryKey: ["community-details"] });
+        queryClient.invalidateQueries({ queryKey: ["community-posts"] });
       }
     } catch (error) {
       handleAPIErrors(error)
