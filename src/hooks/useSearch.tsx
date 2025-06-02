@@ -4,13 +4,16 @@ import axios from "@/utils/config/axios";
 import useDebounce from "@/hooks/useDebounce";
 
 export default function useSearch() {
-    const [data, setData] = useState<any[]>()
-    const [loading, setLoading] = useState(false)
+    const [data, setData] = useState<any>()
+    const [isLoading, setLoading] = useState(false)
     const [searchQuery,setSearchQuery] = useState<string>("")
     const debouncedQuery=useDebounce(searchQuery)
 
     async function search(debouncedQuery: string) {
-        if (!debouncedQuery || debouncedQuery.trim() == "") return
+        if (!debouncedQuery || debouncedQuery.trim() == ""){
+            setData(null)
+            return
+        }
         try {
             setLoading(true)
             const response = await axios.get(`/search?query=${debouncedQuery}`)
@@ -32,6 +35,6 @@ export default function useSearch() {
         search,
         setSearchQuery,
         searchQuery,
-        loading
+        isLoading
     }
 }

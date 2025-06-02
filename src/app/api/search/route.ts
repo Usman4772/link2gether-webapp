@@ -30,27 +30,25 @@ async function search(query: string) {
 
     const communities = await Community.find({
         community_name: {$regex: query, $options: "i"},
-    }).select("_id community_name avatar");
+    }).select("_id community_name avatar members description");
 
     const posts = await Posts.find({
         description: {$regex: query, $options: "i"},
     }).select("_id description");
 
 
-
-
-    return [
-        ...users.map((user) => ({
+    return {
+        users:[...users.map((user) => ({
             ...user.toObject(),
             type: "user",
-        })),
-        ...communities.map((community) => ({
+        }))],
+        communities:[...communities.map((community) => ({
             ...community.toObject(),
             type: "community",
-        })),
-        ...posts.map((post) => ({
+        }))],
+        posts:[...posts.map((post) => ({
             ...post.toObject(),
             type: "post",
-        }))
-    ];
+        }))]
+    }
 }

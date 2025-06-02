@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { Input, Tabs, List, Avatar, Badge, Tag, Spin, Empty, Typography, Space, Button, ConfigProvider } from "antd"
+import {useState, useEffect, useRef} from "react"
+import {Input, Tabs, List, Avatar, Badge, Tag, Spin, Empty, Typography, Space, Button, ConfigProvider} from "antd"
 import {
     SearchOutlined,
     CloseOutlined,
@@ -15,109 +15,24 @@ import {
 } from "@ant-design/icons"
 import Loading from "@/components/Global/Loading";
 import useSearch from "@/hooks/useSearch";
+import Link from "next/link";
+import {useRouter} from "next/navigation";
 
-const { Text, Title } = Typography
-const { TabPane } = Tabs
+const {Text, Title} = Typography
 
 interface SearchOverlayProps {
     isOpen: boolean
     onClose: () => void
 }
 
-// Mock data - replace with your actual API calls
-const mockSearchResults = {
-    communities: [
-        {
-            id: 1,
-            name: "React Developers",
-            description: "A community for React developers to share knowledge",
-            members: 15420,
-            avatar: "/community-1.jpg",
-            isJoined: true,
-        },
-        {
-            id: 2,
-            name: "Web Design",
-            description: "Beautiful web design inspiration and tutorials",
-            members: 8930,
-            avatar: "/community-2.jpg",
-            isJoined: false,
-        },
-        {
-            id: 3,
-            name: "JavaScript Masters",
-            description: "Advanced JavaScript concepts and best practices",
-            members: 12340,
-            avatar: "/community-3.jpg",
-            isJoined: true,
-        },
-    ],
-    posts: [
-        {
-            id: 1,
-            title: "How to optimize React performance in 2024",
-            author: "john_doe",
-            community: "React Developers",
-            likes: 234,
-            comments: 45,
-            timeAgo: "2h ago",
-        },
-        {
-            id: 2,
-            title: "CSS Grid vs Flexbox: When to use what?",
-            author: "sarah_design",
-            community: "Web Design",
-            likes: 189,
-            comments: 32,
-            timeAgo: "4h ago",
-        },
-        {
-            id: 3,
-            title: "Modern JavaScript ES2024 features you should know",
-            author: "alex_dev",
-            community: "JavaScript Masters",
-            likes: 156,
-            comments: 28,
-            timeAgo: "6h ago",
-        },
-    ],
-    users: [
-        {
-            id: 1,
-            username: "john_doe",
-            displayName: "John Doe",
-            avatar: "/user-1.jpg",
-            followers: 1240,
-            isFollowing: false,
-        },
-        {
-            id: 2,
-            username: "sarah_design",
-            displayName: "Sarah Wilson",
-            avatar: "/user-2.jpg",
-            followers: 890,
-            isFollowing: true,
-        },
-        {
-            id: 3,
-            username: "alex_dev",
-            displayName: "Alex Rodriguez",
-            avatar: "/user-3.jpg",
-            followers: 2100,
-            isFollowing: false,
-        },
-    ],
-}
 
 const recentSearches = ["React hooks", "CSS animations", "Next.js tutorial", "JavaScript tips", "UI components"]
 
 const trendingTopics = ["#ReactJS", "#WebDev", "#CSS", "#JavaScript", "#NextJS", "#TypeScript", "#AI", "#Design"]
 
 export default ({isOpen, onClose}: SearchOverlayProps) => {
-    const [searchResults, setSearchResults] = useState<any>(null)
-    const [isLoading, setIsLoading] = useState(false)
     const [activeTab, setActiveTab] = useState("all")
-const {searchQuery, setSearchQuery,data}=useSearch()
+    const {searchQuery, setSearchQuery, data, isLoading} = useSearch()
     const inputRef = useRef<any>(null)
 
     // Custom theme for green color scheme
@@ -130,11 +45,10 @@ const {searchQuery, setSearchQuery,data}=useSearch()
         },
     }
 
-    // Handle keyboard shortcuts
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.key === "Escape") {
-                onClose()
+               closeModal()
             }
         }
 
@@ -154,29 +68,6 @@ const {searchQuery, setSearchQuery,data}=useSearch()
         }
     }, [isOpen])
 
-    // Mock search function
-    const handleSearch = async (query: string) => {
-        if (!query.trim()) {
-            setSearchResults(null)
-            return
-        }
-
-        setIsLoading(true)
-        // Simulate API call
-        setTimeout(() => {
-            setSearchResults(mockSearchResults)
-            setIsLoading(false)
-        }, 500)
-    }
-
-    // Debounced search
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            handleSearch(searchQuery)
-        }, 300)
-
-        return () => clearTimeout(timer)
-    }, [searchQuery])
 
     if (!isOpen) return null
 
@@ -184,45 +75,50 @@ const {searchQuery, setSearchQuery,data}=useSearch()
         {
             key: "all",
             label: "All",
-            children: <AllResults results={searchResults} />,
+            children: <AllResults results={data} closeModal={closeModal}/>,
         },
         {
             key: "communities",
             label: (
                 <Space>
-                    <TeamOutlined />
+                    <TeamOutlined/>
                     Communities
                 </Space>
             ),
-            children: <CommunitiesResults communities={searchResults?.communities || []} />,
+            children: <CommunitiesResults communities={data?.communities || []} closeModal={closeModal}/>,
         },
         {
             key: "posts",
             label: (
                 <Space>
-                    <FileTextOutlined />
+                    <FileTextOutlined/>
                     Posts
                 </Space>
             ),
-            children: <PostsResults posts={searchResults?.posts || []} />,
+            children: <PostsResults posts={data?.posts || []} closeModal={closeModal}/>,
         },
         {
             key: "users",
             label: (
                 <Space>
-                    <UserOutlined />
+                    <UserOutlined/>
                     Users
                 </Space>
             ),
-            children: <UsersResults users={searchResults?.users || []} />,
+            children: <UsersResults users={data?.users || []} closeModal={closeModal}/>,
         },
     ]
 
+    function closeModal(){
+        onClose()
+        setSearchQuery("")
+    }
     return (
         <ConfigProvider theme={theme}>
-            <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" style={{ backdropFilter: "blur(4px)" }}>
+            <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" style={{backdropFilter: "blur(4px)"}}>
                 <div className="flex items-start justify-center min-h-screen pt-16 px-4">
-                    <div className="w-full max-w-4xl bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
+                    <div
+                        className="w-full max-w-4xl bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden">
                         {/* Search Header */}
                         <div className="p-6 border-b border-gray-200">
                             <div className="flex items-center gap-4">
@@ -230,8 +126,9 @@ const {searchQuery, setSearchQuery,data}=useSearch()
                                     ref={inputRef}
                                     size="large"
                                     placeholder="Search communities, posts, users..."
-                                    prefix={<SearchOutlined style={{ color: "#1a936f" }} />}
-                                    suffix={<Button type="text" icon={<CloseOutlined />} onClick={onClose} style={{ color: "#666" }} />}
+                                    prefix={<SearchOutlined style={{color: "#1a936f"}}/>}
+                                    suffix={<Button type="text" icon={<CloseOutlined/>} onClick={closeModal}
+                                                    style={{color: "#666"}}/>}
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     style={{
@@ -247,26 +144,27 @@ const {searchQuery, setSearchQuery,data}=useSearch()
                                         e.target.style.boxShadow = "none"
                                     }}
                                 />
-                                <Tag color="default" style={{ fontSize: "12px",padding: "4px 12px", borderRadius: "20px" }}>
+                                <Tag color="default"
+                                     style={{fontSize: "12px", padding: "4px 12px", borderRadius: "20px"}}>
                                     ESC to close
                                 </Tag>
                             </div>
                         </div>
 
                         {/* Search Content */}
-                        <div style={{ maxHeight: "500px", overflowY: "auto" }}>
+                        <div style={{maxHeight: "500px", overflowY: "auto"}}>
                             {isLoading ? (
                                 <div className="flex items-center justify-center py-20">
                                     <Loading/>
                                 </div>
-                            ) : searchResults ? (
+                            ) : data ? (
                                 <div className="p-6">
                                     <Tabs
                                         activeKey={activeTab}
                                         onChange={setActiveTab}
                                         items={tabItems}
                                         size="large"
-                                        tabBarStyle={{ marginBottom: "24px" }}
+                                        tabBarStyle={{marginBottom: "24px"}}
                                     />
                                 </div>
                             ) : (
@@ -284,91 +182,85 @@ const {searchQuery, setSearchQuery,data}=useSearch()
     )
 }
 
-function AllResults({ results }: { results: any }) {
+function AllResults({results,closeModal}: { results: any,closeModal: ()=>void }) {
     if (!results) return null
 
     return (
-        <Space direction="vertical" size="large" style={{ width: "100%" }}>
+        <Space direction="vertical" size="large" style={{width: "100%"}}>
             {/* Communities Section */}
             {results.communities.length > 0 && (
                 <div>
-                    <Title level={5} style={{ marginBottom: "16px", color: "#1a936f" }}>
-                        <TeamOutlined style={{ marginRight: "8px" }} />
+                    <Title level={5} style={{marginBottom: "16px", color: "#1a936f"}}>
+                        <TeamOutlined style={{marginRight: "8px"}}/>
                         Communities
                     </Title>
-                    <CommunitiesResults communities={results.communities.slice(0, 3)} />
+                    <CommunitiesResults communities={results.communities.slice(0, 3)} closeModal={closeModal}/>
                 </div>
             )}
 
             {/* Posts Section */}
             {results.posts.length > 0 && (
                 <div>
-                    <Title level={5} style={{ marginBottom: "16px", color: "#1a936f" }}>
-                        <FileTextOutlined style={{ marginRight: "8px" }} />
+                    <Title level={5} style={{marginBottom: "16px", color: "#1a936f"}}>
+                        <FileTextOutlined style={{marginRight: "8px"}}/>
                         Posts
                     </Title>
-                    <PostsResults posts={results.posts.slice(0, 3)} />
+                    <PostsResults posts={results.posts.slice(0, 3)} closeModal={closeModal}/>
                 </div>
             )}
 
             {/* Users Section */}
             {results.users.length > 0 && (
                 <div>
-                    <Title level={5} style={{ marginBottom: "16px", color: "#1a936f" }}>
-                        <UserOutlined style={{ marginRight: "8px" }} />
+                    <Title level={5} style={{marginBottom: "16px", color: "#1a936f"}}>
+                        <UserOutlined style={{marginRight: "8px"}}/>
                         Users
                     </Title>
-                    <UsersResults users={results.users.slice(0, 3)} />
+                    <UsersResults users={results.users.slice(0, 3)} closeModal={closeModal}/>
                 </div>
             )}
         </Space>
     )
 }
 
-function CommunitiesResults({ communities }: { communities: any[] }) {
+function CommunitiesResults({communities,closeModal}: { communities: any[],closeModal: ()=>void }) {
+    const router=useRouter()
     return (
         <List
             dataSource={communities}
             renderItem={(community) => (
                 <List.Item
                     className="hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
-                    style={{ padding: "12px" }}
+                    style={{padding: "12px"}}
+                    onClick={()=>{
+                         router.push(`/community/${community?._id}`)
+                        closeModal()
+                    }}
                     actions={[
-                        <Button
-                            key="join"
-                            type={community.isJoined ? "default" : "primary"}
-                            size="small"
-                            icon={community.isJoined ? <CheckCircleOutlined /> : undefined}
-                        >
-                            {community.isJoined ? "Joined" : "Join"}
-                        </Button>,
-                        <ArrowRightOutlined key="arrow" style={{ color: "#1a936f" }} />,
+                       <ArrowRightOutlined key="arrow" style={{color: "#1a936f"}}/>,
                     ]}
                 >
                     <List.Item.Meta
                         avatar={
                             <Avatar
                                 size={48}
-                                src={community.avatar || "/default-community.png"}
-                                icon={<TeamOutlined />}
-                                style={{ border: "2px solid #f0f0f0" }}
+                                src={community.avatar || "/default-avatar.jpeg"}
+                                icon={<TeamOutlined/>}
+                                style={{border: "2px solid #f0f0f0"}}
                             />
                         }
                         title={
                             <Space>
-                                <Text strong style={{ fontSize: "16px" }}>
-                                    {community.name}
+                                <Text strong style={{fontSize: "16px"}}>
+                                    {community?.community_name}
                                 </Text>
-                                {community.isJoined && (
-                                    <Badge count="Joined" style={{ backgroundColor: "#e6f7f1", color: "#1a936f" }} />
-                                )}
                             </Space>
                         }
                         description={
                             <Space direction="vertical" size="small">
-                                <Text type="secondary">{community.description}</Text>
-                                <Text type="secondary" style={{ fontSize: "12px" }}>
-                                    {community.members.toLocaleString()} members
+                                <Text type="secondary">{community?.description}</Text>
+                                <Text type="secondary" style={{fontSize: "12px"}}>
+                                    {community?.members?.length} members
                                 </Text>
                             </Space>
                         }
@@ -379,41 +271,27 @@ function CommunitiesResults({ communities }: { communities: any[] }) {
     )
 }
 
-function PostsResults({ posts }: { posts: any[] }) {
+function PostsResults({posts,closeModal}: { posts: any[],closeModal: ()=>void }) {
+    const router=useRouter()
     return (
         <List
             dataSource={posts}
             renderItem={(post) => (
                 <List.Item
                     className="hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
-                    style={{ padding: "12px" }}
-                    actions={[<ArrowRightOutlined key="arrow" style={{ color: "#1a936f" }} />]}
+                    style={{padding: "12px"}}
+                    onClick={()=>{
+                        router.push(`/post/${post?._id}`)
+                        closeModal()
+                    }}
+                    actions={[<ArrowRightOutlined key="arrow" style={{color: "#1a936f"}}/>]}
                 >
                     <List.Item.Meta
-                        avatar={<FileTextOutlined style={{ fontSize: "24px", color: "#1a936f" }} />}
+                        avatar={<FileTextOutlined style={{fontSize: "24px", color: "#1a936f"}}/>}
                         title={
-                            <Text strong style={{ fontSize: "16px", color: "#1a936f" }}>
-                                {post.title}
+                            <Text strong style={{fontSize: "16px", color: "#1a936f"}}>
+                                {post?.description}
                             </Text>
-                        }
-                        description={
-                            <Space direction="vertical" size="small">
-                                <Space size="small">
-                                    <Text type="secondary">by {post.author}</Text>
-                                    <Text type="secondary">•</Text>
-                                    <Text type="secondary">in {post.community}</Text>
-                                    <Text type="secondary">•</Text>
-                                    <Text type="secondary">{post.timeAgo}</Text>
-                                </Space>
-                                <Space size="large">
-                                    <Text type="secondary" style={{ fontSize: "12px" }}>
-                                        {post.likes} likes
-                                    </Text>
-                                    <Text type="secondary" style={{ fontSize: "12px" }}>
-                                        {post.comments} comments
-                                    </Text>
-                                </Space>
-                            </Space>
                         }
                     />
                 </List.Item>
@@ -422,51 +300,42 @@ function PostsResults({ posts }: { posts: any[] }) {
     )
 }
 
-function UsersResults({ users }: { users: any[] }) {
+function UsersResults({users,closeModal}: { users: any[],closeModal: ()=>void }) {
+    const router=useRouter()
     return (
         <List
             dataSource={users}
             renderItem={(user) => (
                 <List.Item
                     className="hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
-                    style={{ padding: "12px" }}
+                    style={{padding: "12px"}}
+                    onClick={()=>{
+                        router.push(`/user/profile/${user?._id}`)
+                        closeModal()
+                    }}
                     actions={[
-                        <Button
-                            key="follow"
-                            type={user.isFollowing ? "default" : "primary"}
-                            size="small"
-                            icon={user.isFollowing ? <CheckCircleOutlined /> : undefined}
-                        >
-                            {user.isFollowing ? "Following" : "Follow"}
-                        </Button>,
-                        <ArrowRightOutlined key="arrow" style={{ color: "#1a936f" }} />,
+                       <ArrowRightOutlined key="arrow" style={{color: "#1a936f"}}/>
                     ]}
                 >
                     <List.Item.Meta
                         avatar={
                             <Avatar
                                 size={48}
-                                src={user.avatar || "/default-user.jpeg"}
-                                icon={<UserOutlined />}
-                                style={{ border: "2px solid #f0f0f0" }}
+                                src={user?.profileImage || "/default-user.jpeg"}
+                                icon={<UserOutlined/>}
+                                style={{border: "2px solid #f0f0f0"}}
                             />
                         }
                         title={
                             <Space>
-                                <Text strong style={{ fontSize: "16px" }}>
-                                    {user.displayName}
+                                <Text strong style={{fontSize: "16px"}}>
+                                    {user?.username}
                                 </Text>
-                                {user.isFollowing && (
-                                    <Badge count="Following" style={{ backgroundColor: "#e6f7f1", color: "#1a936f" }} />
-                                )}
                             </Space>
                         }
                         description={
                             <Space direction="vertical" size="small">
                                 <Text type="secondary">@{user.username}</Text>
-                                <Text type="secondary" style={{ fontSize: "12px" }}>
-                                    {user.followers.toLocaleString()} followers
-                                </Text>
                             </Space>
                         }
                     />
@@ -487,11 +356,11 @@ function EmptySearchState({
 }) {
     return (
         <div className="p-6">
-            <Space direction="vertical" size="large" style={{ width: "100%" }}>
+            <Space direction="vertical" size="large" style={{width: "100%"}}>
                 {/* Recent Searches */}
                 <div>
-                    <Title level={5} style={{ marginBottom: "16px", color: "#1a936f" }}>
-                        <ClockCircleOutlined style={{ marginRight: "8px" }} />
+                    <Title level={5} style={{marginBottom: "16px", color: "#1a936f"}}>
+                        <ClockCircleOutlined style={{marginRight: "8px"}}/>
                         Recent Searches
                     </Title>
                     <List
@@ -499,12 +368,12 @@ function EmptySearchState({
                         renderItem={(search) => (
                             <List.Item
                                 className="hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
-                                style={{ padding: "8px 12px" }}
+                                style={{padding: "8px 12px"}}
                                 onClick={() => onSearchClick(search)}
                             >
                                 <List.Item.Meta
-                                    avatar={<SearchOutlined style={{ color: "#1a936f" }} />}
-                                    title={<Text style={{ color: "#1a936f" }}>{search}</Text>}
+                                    avatar={<SearchOutlined style={{color: "#1a936f"}}/>}
+                                    title={<Text style={{color: "#1a936f"}}>{search}</Text>}
                                 />
                             </List.Item>
                         )}
@@ -513,8 +382,8 @@ function EmptySearchState({
 
                 {/* Trending Topics */}
                 <div>
-                    <Title level={5} style={{ marginBottom: "16px", color: "#1a936f" }}>
-                        <FireOutlined style={{ marginRight: "8px" }} />
+                    <Title level={5} style={{marginBottom: "16px", color: "#1a936f"}}>
+                        <FireOutlined style={{marginRight: "8px"}}/>
                         Trending Topics
                     </Title>
                     <Space wrap>
@@ -544,7 +413,7 @@ function EmptySearchState({
                     image={Empty.PRESENTED_IMAGE_SIMPLE}
                     description={
                         <Space direction="vertical" align="center">
-                            <Text type="secondary" style={{ fontSize: "16px" }}>
+                            <Text type="secondary" style={{fontSize: "16px"}}>
                                 Start typing to search
                             </Text>
                             <Text type="secondary">Find communities, posts, and users across the platform</Text>
