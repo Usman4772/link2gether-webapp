@@ -6,6 +6,7 @@ import { jwtVerify } from "jose";
 import jwt from "jsonwebtoken";
 import moment from "moment";
 import { ObjectId } from "mongoose";
+import mongoose from "mongoose";
 import { NextRequest } from "next/server";
 import { UserPayload } from "../../../../frontend/types";
 import { uploadMedia } from "../../../../frontend/uploadMedia";
@@ -14,9 +15,14 @@ import apiErrors from "@/utils/backend/helpers/apiErrors";
 import { loginSchema, registerSchema } from "@/utils/backend/validation-schema/auth.schema";
 
 export async function connectToDatabase() {
-  if (!(await connectDb())) {
-    throw new apiErrors([], "Database connection error", 500);
+  try {
+    await mongoose.connect(
+        process.env.MONGODB_URI!,
+    );
+  } catch (error:any) {
+    throw new apiErrors(error, "Database connection error", 500)
   }
+
 }
 
 export function validateUserData(userData: any, route: "register" | "login") {
